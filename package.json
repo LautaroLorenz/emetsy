@@ -1,27 +1,27 @@
 {
   "name": "emetsy",
   "version": "0.0.0",
-  "main": "./app/main.js",
+  "main": "index.js",
   "build": {
     "appId": "com.emetsy.EMeTSy",
     "productName": "EMeTSy",
     "files": [
-      "./app/main.js",
       "dist/emetsy"
     ]
   },
   "scripts": {
     "ng": "ng serve",
     "clean": "rimraf dist",
-    "prestart": "npm run build",
-    "start": "electron .",
+    "prestart": "npm run clean",
+    "start": "concurrently -k \"ng serve\" \"npm run electron\"",
     "prebuild": "npm run clean",
     "build": "ng build",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
     "prerelease": "npm run build --prod",
-    "release": "electron-builder"
+    "release": "electron-builder",
+    "electron": "wait-on http://localhost:4200 && electron ."
   },
   "private": true,
   "dependencies": {
@@ -42,6 +42,7 @@
     "@angular/cli": "~14.0.2",
     "@angular/compiler-cli": "^14.0.0",
     "@types/jasmine": "~4.0.0",
+    "concurrently": "^7.2.2",
     "electron": "^19.0.4",
     "electron-builder": "^23.0.3",
     "jasmine-core": "~4.1.0",
@@ -51,6 +52,7 @@
     "karma-jasmine": "~5.0.0",
     "karma-jasmine-html-reporter": "~1.7.0",
     "rimraf": "^3.0.2",
-    "typescript": "~4.7.2"
+    "typescript": "~4.7.2",
+    "wait-on": "^6.0.1"
   }
 }
