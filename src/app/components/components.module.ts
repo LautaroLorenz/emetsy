@@ -1,26 +1,55 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
+import {
+  ConfirmationService,
+  MessageService
+} from 'primeng/api';
+
 import { MenubarModule } from 'primeng/menubar';
 import { MenuComponent } from './menu/menu.component';
 import { AbmComponent } from './abm/abm.component';
-import { MatIconModule } from '@angular/material/icon';
+import { CardModule } from 'primeng/card';
+import { FieldsetModule } from 'primeng/fieldset';
+import { PanelModule } from 'primeng/panel';
+import { ToolbarModule } from 'primeng/toolbar';
+import { ButtonModule } from 'primeng/button';
+import { InputTextModule } from 'primeng/inputtext';
+import { TableModule } from 'primeng/table';
+import { DividerModule } from 'primeng/divider';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { ConfirmDialogComponent } from './confirm-dialog/confirm-dialog.component';
+import { ToastModule } from 'primeng/toast';
 
 const PrimeNgModules = [
-  MenubarModule
+  MenubarModule,
+  CardModule,
+  FieldsetModule,
+  PanelModule,
+  ToolbarModule,
+  ButtonModule,
+  InputTextModule,
+  TableModule,
+  DividerModule,
+  ConfirmDialogModule,
+  ToastModule
 ];
+
+const PrimeNgServices = [
+  MessageService,
+  ConfirmationService,
+]
 
 const EmetsyComponents = [
   MenuComponent,
-  AbmComponent
+  AbmComponent,
+  ConfirmDialogComponent
 ]
 
-const MaterialModules = [
-  MatIconModule
-]
 @NgModule({
   declarations: [EmetsyComponents],
-  imports: [CommonModule, PrimeNgModules, MaterialModules],
-  exports: [EmetsyComponents, PrimeNgModules, MaterialModules]
+  imports: [CommonModule, PrimeNgModules],
+  exports: [EmetsyComponents, PrimeNgModules],
+  providers: [PrimeNgServices]
 })
 export class ComponentsModule { }
