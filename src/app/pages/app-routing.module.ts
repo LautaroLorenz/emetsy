@@ -1,46 +1,47 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { EnsayosDisponiblesComponent } from './ensayos-disponibles/ensayos-disponibles.component';
-import { ExportarComponent } from './exportar/exportar.component';
-import { HistorialYReportesComponent } from './historial-y-reportes/historial-y-reportes.component';
-import { ImportarComponent } from './importar/importar.component';
-import { MarcasComponent } from './marcas/marcas.component';
-import { MedidoresComponent } from './medidores/medidores.component';
-import { UsuariosComponent } from './usuarios/usuarios.component';
+
+import { AvailableTestComponent } from './available-test/available-test.component';
+import { ImportComponent } from './import/import.component';
+import { ExportComponent } from './export/export.component';
+import { UsersComponent } from './users/users.component';
+import { HistoryAndReportsComponent } from './history-and-reports/history-and-reports.component';
+import { MetersComponent } from './meters/meters.component';
+import { BrandsComponent } from './brands/brands.component';
 
 const routes: Routes = [
   {
     path: '',
     redirectTo: 'ensayos-disponibles',
-    pathMatch: 'prefix'
+    pathMatch: 'full'
   },
   {
     path: 'ensayos-disponibles',
-    component: EnsayosDisponiblesComponent
+    component: AvailableTestComponent
   },
   {
     path: 'historial-y-reportes',
-    component: HistorialYReportesComponent
+    component: HistoryAndReportsComponent
   },
   {
     path: 'medidores',
-    component: MedidoresComponent
+    component: MetersComponent
   },
   {
     path: 'marcas',
-    component: MarcasComponent
+    component: BrandsComponent
   },
   {
     path: 'usuarios',
-    component: UsuariosComponent
+    component: UsersComponent
   },
   {
     path: 'importar',
-    component: ImportarComponent
+    component: ImportComponent
   },
   {
     path: 'exportar',
-    component: ExportarComponent
+    component: ExportComponent
   }
 ];
 
