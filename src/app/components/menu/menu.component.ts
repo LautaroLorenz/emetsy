@@ -16,7 +16,7 @@ export class MenuComponent implements OnInit {
     this.items = [
       {
         label: 'Ensayos',
-        icon: 'pi pi-fw pi-check-square',
+        icon: PrimeIcons.CHECK_SQUARE,
         items: [
           {
             label: 'Ensayos disponibles',
@@ -32,7 +32,7 @@ export class MenuComponent implements OnInit {
       },
       {
         label: 'ABMs',
-        icon: 'pi pi-fw pi-folder',
+        icon: PrimeIcons.FOLDER,
         items: [
           {
             label: 'Medidores',
@@ -53,7 +53,7 @@ export class MenuComponent implements OnInit {
       },
       {
         label: 'Backup',
-        icon: 'pi pi-fw pi-database',
+        icon: PrimeIcons.DATABASE,
         items: [
           {
             label: 'Importar',
