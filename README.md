@@ -30,6 +30,3 @@ Clonar el repositorio, y ejecutar `npm install` para descargar las dependencias.
     Si los cambios se hacen en Node Js, será necesario volver a buildear. 
   </p>
 </details>
-
-
-
