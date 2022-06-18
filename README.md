@@ -4,7 +4,7 @@ Proyecto EMeTSy
 
 ## Puesta en marcha
 
-Clonar el repositorio, y ejecutar `npm install` para descargar las dependencias.
+Clonar el repositorio y ejecutar `npm install` para descargar las dependencias.
 
 ## Comandos disponibles
 
