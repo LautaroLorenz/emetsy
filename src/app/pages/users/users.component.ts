@@ -1,6 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { PrimeIcons } from 'primeng/api';
+import { first } from 'rxjs';
 import { AbmColum, User } from 'src/app/models';
+import { MessagesService } from 'src/app/services/messages.service';
+import { DatabaseService } from 'src/app/services/database.service';
 
 @Component({
   templateUrl: './users.component.html',
@@ -13,7 +16,10 @@ export class UsersComponent implements OnInit {
   users: User[] = [];
   cols: AbmColum[] = [];
 
-  constructor() { }
+  constructor(
+    private databaseService: DatabaseService,
+    private messagesService: MessagesService
+  ) { }
 
   ngOnInit(): void {
     this.cols = [
@@ -30,64 +36,22 @@ export class UsersComponent implements OnInit {
         header: 'Identificación'
       }
     ];
+  }
 
-    this.users = [
-      {
-        name: 'Lautaro',
-        surname: 'Lorenz',
-        identification: Math.random().toString(),
-      },
-      {
-        name: 'Gabriel',
-        surname: 'Maciel',
-        identification: Math.random().toString(),
-      },
-      {
-        name: 'Marcelo',
-        surname: 'Lorenz',
-        identification: Math.random().toString(),
-      },
-      {
-        name: 'Gustavo',
-        surname: 'Celestino',
-        identification: Math.random().toString(),
-      },
-      {
-        name: 'Juan',
-        surname: 'Barrios',
-        identification: Math.random().toString(),
-      },
-      {
-        name: 'Pablo',
-        surname: 'Arce',
-        identification: Math.random().toString(),
-      },
-      {
-        name: 'Gabriel',
-        surname: 'Maciel',
-        identification: Math.random().toString(),
-      },
-      {
-        name: 'Marcelo',
-        surname: 'Lorenz',
-        identification: Math.random().toString(),
-      },
-      {
-        name: 'Gustavo',
-        surname: 'Celestino',
-        identification: Math.random().toString(),
-      },
-      {
-        name: 'Juan',
-        surname: 'Barrios',
-        identification: Math.random().toString(),
-      },
-      {
-        name: 'Pablo',
-        surname: 'Arce',
-        identification: Math.random().toString(),
-      }
-    ];
+  createUser(user: User) {
+    console.log('createUser', { user });
+    // this.sqlService.addElementToTable<User>(User.name, user)
+    //   .pipe(
+    //     first(),
+    //   ).subscribe({
+    //     next: () => this.messagesService.success('Usuario creado'),
+    //     error: () => this.messagesService.error('No se pudo crear el usuario')
+    //   })
+  }
+
+  deleteUsers(ids: string[] = []) {
+    console.log(ids);
+    // this.messagesService.success('Elementos eliminados');
   }
 
 }

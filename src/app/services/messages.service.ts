@@ -36,4 +36,12 @@ export class MessagesService {
       life: this.messageLifeMs
     });
   }
+
+  public error(message: string): void {
+    this.messageService.add({
+      severity: 'error',
+      summary: 'Error',
+      detail: message
+    });
+  }
 }

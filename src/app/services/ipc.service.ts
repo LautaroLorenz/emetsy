@@ -40,6 +40,13 @@ export class IpcService {
     this.ipc.send(channel, ...args);
   }
 
+  public sendSync(channel: string, ...args: any[]): void {
+    if (!this.ipc) {
+      return;
+    }
+    this.ipc.sendSync(channel, ...args);
+  }
+
   public removeAllListeners(channel: string): void {
     if (!this.ipc) {
       return;

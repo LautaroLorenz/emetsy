@@ -1,44 +1,47 @@
 const { app, BrowserWindow } = require('electron')
 require('./resources/ping')
 
+// Keep a global reference of the window object, if you don't, the window will
+// be closed automatically when the JavaScript object is garbage collected.
+let win;
+let productionMode;
+
+function createWindow() {
+  // Create the browser window.
+  win = new BrowserWindow({
+    width: 1024,
+    height: 768,
+    title: "EMeTSy",
+    webPreferences: {
+      contextIsolation: false,
+      nodeIntegration: true
+    }
+  });
+
+  if (productionMode) {
+    win.loadFile('dist/emetsy/index.js');
+  } else {
+    win.loadURL('http://localhost:4200');
+    win.webContents.openDevTools();
+  }
+
+  // Emitted when the window is closed.
+  win.on('closed', () => {
+    // Dereference the window object, usually you would store windows
+    // in an array if your app supports multi windows, this is the time
+    // when you should delete the corresponding element.
+    win = null
+  });
+}
+
 module.exports = {
   initApp: ({ isProduction }) => {
-    function createWindow() {
-      // Create the browser window.
-      win = new BrowserWindow({
-        width: 1024,
-        height: 768,
-        title: "EMeTSy",
-        webPreferences: {
-          contextIsolation: false,
-          nodeIntegration: true
-        }
-      })
-
-      if (isProduction) {
-        win.loadFile('dist/emetsy/index.js')
-      } else {
-        win.loadURL('http://localhost:4200')
-        win.webContents.openDevTools()
-      }
-
-      // Emitted when the window is closed.
-      win.on('closed', () => {
-        // Dereference the window object, usually you would store windows
-        // in an array if your app supports multi windows, this is the time
-        // when you should delete the corresponding element.
-        win = null
-      })
-    }
-
-    // Keep a global reference of the window object, if you don't, the window will
-    // be closed automatically when the JavaScript object is garbage collected.
-    let win
+    productionMode = isProduction;
 
     // This method will be called when Electron has finished
     // initialization and is ready to create browser windows.
     // Some APIs can only be used after this event occurs.
-    app.on('ready', createWindow)
+    app.on('ready', createWindow);
 
     // Quit when all windows are closed.
     app.on('window-all-closed', () => {
@@ -47,7 +50,7 @@ module.exports = {
       if (process.platform !== 'darwin') {
         app.quit()
       }
-    })
+    });
 
     app.on('activate', () => {
       // On macOS it's common to re-create a window in the app when the
@@ -55,6 +58,6 @@ module.exports = {
       if (win === null) {
         createWindow()
       }
-    })
+    });
   }
 }

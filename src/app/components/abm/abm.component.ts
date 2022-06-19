@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { ConfirmationService, PrimeIcons } from 'primeng/api';
 import { Table } from 'primeng/table';
 import { AbmColum } from 'src/app/models';
@@ -10,12 +10,16 @@ import { MessagesService } from 'src/app/services/messages.service';
   styleUrls: ['./abm.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class AbmComponent implements OnInit {
+export class AbmComponent implements OnInit, OnChanges {
 
   @Input() title: string = '';
   @Input() headerIcon: PrimeIcons = '';
   @Input() dataset: any[] = [];
   @Input() columns: AbmColum[] = [];
+
+  @Output() deleteEvent = new EventEmitter<string[]>();
+  @Output() editEvent = new EventEmitter<any>();
+  @Output() createEvent = new EventEmitter<any>();
 
   @ViewChild('primeNgTable', { static: true }) primeNgTable: Table | undefined;
 
@@ -29,11 +33,20 @@ export class AbmComponent implements OnInit {
 
   constructor(
     private confirmationService: ConfirmationService,
-    private messagesService: MessagesService,
-    private changesDetectorRef: ChangeDetectorRef
+    private messagesService: MessagesService
   ) { }
 
   ngOnInit() { }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if(changes['dataset'].currentValue !== changes['dataset'].previousValue) {
+      this.clearSelected();
+    }
+  }
+
+  clearSelected() {
+    this.selected = [];
+  }
 
   filterDataset(event: Event) {
     if(!this.primeNgTable) {
@@ -42,11 +55,6 @@ export class AbmComponent implements OnInit {
 
     const { value } = event.target as HTMLInputElement;
     this.primeNgTable.filterGlobal(value, 'contains')
-  }
-
-  clearSelected() {
-    this.selected = [];
-    this.changesDetectorRef.detectChanges();
   }
 
   deleteSelected() {
@@ -62,10 +70,7 @@ export class AbmComponent implements OnInit {
       defaultFocus: "reject",
       acceptButtonStyleClass: "p-button-danger",
       accept: () => {
-        // TODO:
-        // this.products = this.products.filter(val => !this.selectedProducts.includes(val));
-        this.clearSelected();
-        this.messagesService.success('Elementos eliminados');
+        this.deleteEvent.emit(this.selected.map(s => s.id));
       },
       reject: () => {
         this.messagesService.warn('Borrado cancelado correctamente');
@@ -75,12 +80,31 @@ export class AbmComponent implements OnInit {
   
   deleteElement(element: any) {
     // TODO:
-    console.log(element);
+    this.deleteEvent.emit([element.id]);
   }
 
   editElement(element: any) {
     // TODO:
-    console.log(element);
+    this.editEvent.emit(element);
   }
 
+  createElement() {
+    // TODO:
+    // this.createEvent.emit(element);
+    this.createEvent.emit({
+      name: this.createRandomString(),
+      surname: this.createRandomString(),
+      identification: this.createRandomString()
+    });
+  }
+
+  // FIXME:
+  createRandomString(): string {
+    let id = '';
+    var chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    for ( var i = 0; i < 15; i++ ) {
+        id += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    return id;
+}
 }

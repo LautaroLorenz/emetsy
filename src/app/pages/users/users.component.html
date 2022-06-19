@@ -3,5 +3,7 @@
   [title]="title"
   [headerIcon]="haderIcon"
   [columns]="cols"
+  (deleteEvent)="deleteUsers($event)"
+  (createEvent)="createUser($event)"
 >
 </app-abm>

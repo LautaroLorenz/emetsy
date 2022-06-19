@@ -1,7 +1,7 @@
 {
   "name": "emetsy",
   "version": "0.0.0",
-  "main": "dist/emetsy/index.js",
+  "main": "index.js",
   "author": {
     "name": "Lautaro Lorenz",
     "email": "lautaro.lorenz@gmail.com"
@@ -10,7 +10,9 @@
     "appId": "com.emetsy.EMeTSy",
     "productName": "EMeTSy",
     "files": [
-      "dist/emetsy"
+      "dist/emetsy",
+      "app/**/*",
+      "package.json"
     ]
   },
   "scripts": {
