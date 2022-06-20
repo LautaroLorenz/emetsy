@@ -6,7 +6,7 @@ import { MessageService } from "primeng/api";
   providedIn: "root"
 })
 export class MessagesService {
-  private messageLifeMs = 6000;
+  private messageLifeMs = 5000;
 
   constructor(private messageService: MessageService) { }
 

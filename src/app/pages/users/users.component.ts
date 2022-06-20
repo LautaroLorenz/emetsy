@@ -56,16 +56,30 @@ export class UsersComponent implements OnInit {
   }
 
   private editUser(user: User) {
-    // this.dbService.addElementToTable$(UserTableName, user)
-    //   .pipe(
-    //     first(),
-    //     tap(() => {
-    //       this.requestTableDataFromDatabase(UserTableName);
-    //       this.messagesService.success('Agregado correctamente');
-    //     }),
-    //   ).subscribe({
-    //     error: () => this.messagesService.error('No se pudo crear el elemento')
-    //   });
+    this.dbService.editElementFromTable$(UserTableName, user)
+      .pipe(
+        first(),
+        tap(() => {
+          this.requestTableDataFromDatabase(UserTableName);
+          this.messagesService.success('Editado correctamente');
+        }),
+      ).subscribe({
+        error: () => this.messagesService.error('No se pudo editar el elemento')
+      });
+  }
+
+  deleteUsers(ids: string[] = []) {
+    this.dbService.deleteTableElements$(UserTableName, ids)
+      .pipe(
+        first(),
+        filter((numberOfElementsDeleted) => numberOfElementsDeleted === ids.length),
+        tap(() => {
+          this.requestTableDataFromDatabase(UserTableName);
+          this.messagesService.success('Eliminado correctamente');
+        })
+      ).subscribe({
+        error: () => this.messagesService.error('No se pudo borrar')
+      });
   }
 
   setFormValues(user: User) {
@@ -84,18 +98,6 @@ export class UsersComponent implements OnInit {
     } else {
       this.createUser(user);
     }
-  }
-
-  deleteUsers(ids: string[] = []) {
-    this.dbService.deleteTableElements$(UserTableName, ids)
-      .pipe(
-        first(),
-        filter((numberOfElementsDeleted) => numberOfElementsDeleted === ids.length),
-        tap(() => {
-          this.requestTableDataFromDatabase(UserTableName);
-          this.messagesService.success('Eliminado correctamente');
-        })
-      ).subscribe();
   }
 
 }

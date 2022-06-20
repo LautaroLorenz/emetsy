@@ -31,6 +31,9 @@ export class DatabaseService<T> {
   private addRowToTable = (tableName: string, element: T): Promise<number[]> => {
     return this.ipcService.invoke('add-to-table', { tableName, element });
   }
+  private editTableRow = (tableName: string, element: T): Promise<number> => {
+    return this.ipcService.invoke('edit-from-table', { tableName, element });
+  }
 
   constructor(
     private ipcService: IpcService,
@@ -53,5 +56,9 @@ export class DatabaseService<T> {
 
   addElementToTable$(tableName: string, element: T): Observable<number> {
     return from(this.addRowToTable(tableName, element)).pipe(map(([newElementId]) => newElementId));
+  }
+
+  editElementFromTable$(tableName: string, element: T): Observable<number> {
+    return from(this.editTableRow(tableName, element));
   }
 }

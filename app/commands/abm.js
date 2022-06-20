@@ -22,6 +22,12 @@ ipcMain.handle('add-to-table', async (_, { tableName, element }) => {
   return newElementsIds;
 });
 
+ipcMain.handle('edit-from-table', async (_, { tableName, element }) => {
+  const { id } = element;
+  const numberOfElementsUpdated = await knex(tableName).update(element).where('id', id);
+  return numberOfElementsUpdated;
+});
+
 module.exports = {
     setKnex: (args) => knex = args,
 }
