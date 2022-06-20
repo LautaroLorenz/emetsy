@@ -1,5 +1,5 @@
 import { Injectable, NgZone } from "@angular/core";
-import { filter, map, Observable, Subject } from "rxjs";
+import { filter, from, map, Observable, Subject } from "rxjs";
 import { RequestTableResponse } from "../models";
 import { IpcService } from "./ipc.service";
 
@@ -9,12 +9,12 @@ import { IpcService } from "./ipc.service";
 export class DatabaseService<T> {
   private readonly _getTableReply$ = new Subject<RequestTableResponse<T>>();
   private readonly updateLocalTableData = (response: RequestTableResponse<T>) => {
-    this._getTableReply$.next(response)
+    this._getTableReply$.next(response);
   };
-  private readonly requestTableToDatabase = (tableName: string): void => {
+  private readonly getDatabaseTable = (tableName: string): void => {
     this.ipcService.send('get-table', { tableName });
   };
-  private readonly listenDatabaseTableResponses = (ipcService: IpcService): void => {
+  private readonly listenGetDatabaseTableReply = (ipcService: IpcService): void => {
     ipcService.on('get-table-reply', (_: any, args: any) => {
       this.ngZone.run(() => this.updateLocalTableData(args));
     });
@@ -25,18 +25,26 @@ export class DatabaseService<T> {
       map(({ rows }) => (rows)),
     )
   );
+  private deleteElementsFromDatabaseTable = (tableName: string, ids: any[]): Promise<number> => {
+    return this.ipcService.invoke('delete-from-table', { tableName, ids });
+  }
 
   constructor(
     private ipcService: IpcService,
     private ngZone: NgZone,
   ) {
-    this.listenDatabaseTableResponses(ipcService);
+    this.listenGetDatabaseTableReply(ipcService);
   }
 
   getTable(tableName: string): void {
-    this.requestTableToDatabase(tableName);
+    this.getDatabaseTable(tableName);
   }
+
   getTableReply$(tableName: string): Observable<T[]> {
     return this.getTableDataAsObservable(tableName);
+  }
+
+  deleteTableElements$(tableName: string, ids: any[]): Observable<number> {
+    return from(this.deleteElementsFromDatabaseTable(tableName, ids));
   }
 }

@@ -39,12 +39,9 @@ export class AbmComponent implements OnInit, OnChanges {
   ngOnInit() { }
 
   ngOnChanges(changes: SimpleChanges): void {
-    // console.log(changes);
-    // //   // TODO:
-    // //   // console.log(changes);
-    // if (changes['dataset'].currentValue !== changes['dataset'].previousValue) {
-    //   this.clearSelected();
-    // }
+    if (changes['dataset'].currentValue !== changes['dataset'].previousValue) {
+      this.clearSelected();
+    }
   }
 
   clearSelected() {
@@ -82,8 +79,19 @@ export class AbmComponent implements OnInit, OnChanges {
   }
 
   deleteElement(element: any) {
-    // TODO:
-    this.deleteEvent.emit([element.id]);
+    this.confirmationService.confirm({
+      message: '¿Eliminar fila de la tabla?',
+      header: 'Confirmar borrado',
+      icon: PrimeIcons.EXCLAMATION_TRIANGLE,
+      defaultFocus: "reject",
+      acceptButtonStyleClass: "p-button-danger",
+      accept: () => {
+        this.deleteEvent.emit([element.id]);
+      },
+      reject: () => {
+        this.messagesService.warn('Borrado cancelado correctamente');
+      }
+    });
   }
 
   editElement(element: any) {

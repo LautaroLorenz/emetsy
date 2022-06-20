@@ -3,10 +3,19 @@ const { ipcMain } = require('electron');
 
 let knex;
 
-ipcMain.on('get-table', async (event, { tableName }) => {
-  const queryBuilder = knex(tableName);
+const sendGetTableReply = async (reply, tableNameReply) => {
+  const queryBuilder = knex(tableNameReply);
   const rows = await queryBuilder;
-  event.reply('get-table-reply', { tableNameReply: tableName, rows });
+  reply('get-table-reply', { tableNameReply, rows });
+};
+
+ipcMain.on('get-table', ({ reply }, { tableName }) => {
+  sendGetTableReply(reply, tableName);
+});
+
+ipcMain.handle('delete-from-table', async (_, { tableName, ids }) => {
+  const numberOfElementsDeleted = await knex(tableName).delete().whereIn('id', ids);
+  return numberOfElementsDeleted;
 });
 
 module.exports = {

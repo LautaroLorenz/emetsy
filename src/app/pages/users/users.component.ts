@@ -3,7 +3,7 @@ import { PrimeIcons } from 'primeng/api';
 import { User, UserTableColums, UserTableName } from 'src/app/models';
 import { MessagesService } from 'src/app/services/messages.service';
 import { DatabaseService } from 'src/app/services/database.service';
-import { Observable, tap } from 'rxjs';
+import { filter, first, Observable, tap } from 'rxjs';
 
 @Component({
   templateUrl: './users.component.html',
@@ -15,11 +15,11 @@ export class UsersComponent implements OnInit {
   readonly haderIcon = PrimeIcons.USERS;
   readonly cols = UserTableColums;
   users$: Observable<User[]> = new Observable<User[]>();
-   // //FIXME: TODO: clear tap operator
-  private readonly refreshDataWhenChange = (tableName: string) => {
-    this.users$ = this.dbService.getTableReply$(tableName).pipe(tap(console.log));
+
+  private readonly refreshDataWhenDatabaseReply = (tableName: string) => {
+    this.users$ = this.dbService.getTableReply$(tableName).pipe(tap(console.warn));
   }
-  private readonly initDataFromDatabase = (tableName: string) => {
+  private readonly requestTableDataFromDatabase = (tableName: string) => {
     this.dbService.getTable(tableName);
   }
 
@@ -29,8 +29,8 @@ export class UsersComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.refreshDataWhenChange(UserTableName);
-    this.initDataFromDatabase(UserTableName);
+    this.refreshDataWhenDatabaseReply(UserTableName);
+    this.requestTableDataFromDatabase(UserTableName);
   }
 
   createUser(user: User) {
@@ -45,8 +45,15 @@ export class UsersComponent implements OnInit {
   }
 
   deleteUsers(ids: string[] = []) {
-    console.log(ids);
-    // this.messagesService.success('Elementos eliminados');
+    this.dbService.deleteTableElements$(UserTableName, ids)
+      .pipe(
+        first(),
+        filter((numberOfElementsDeleted) => numberOfElementsDeleted === ids.length),
+        tap(() => {
+          this.requestTableDataFromDatabase(UserTableName);
+          this.messagesService.success('Eliminado correctamente');
+        })
+      ).subscribe();
   }
 
 }
