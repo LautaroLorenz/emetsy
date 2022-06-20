@@ -1,3 +1,6 @@
-const { initApp } = require('./app')
+const { initApp } = require('./app');
 
-initApp({ isProduction: true })
+initApp({ 
+  isProduction: true,
+  baseUrl: 'dist/emetsy/index.js',
+});
