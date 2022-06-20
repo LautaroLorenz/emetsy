@@ -1,4 +1,4 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { PrimeIcons } from 'primeng/api';
 import { User, UserTableColums, UserTableName } from 'src/app/models';
 import { MessagesService } from 'src/app/services/messages.service';
@@ -15,13 +15,13 @@ export class UsersComponent implements OnInit {
   readonly haderIcon = PrimeIcons.USERS;
   readonly cols = UserTableColums;
   users$: Observable<User[]> = new Observable<User[]>();
+   // //FIXME: TODO: clear tap operator
   private readonly refreshDataWhenChange = (tableName: string) => {
-    this.users$ = this.dbService.getTableReply$(tableName).pipe(tap(console.log)); // TODO:
+    this.users$ = this.dbService.getTableReply$(tableName).pipe(tap(console.log));
   }
   private readonly initDataFromDatabase = (tableName: string) => {
     this.dbService.getTable(tableName);
   }
-  @Output() dataUpdated = new EventEmitter();
 
   constructor(
     private dbService: DatabaseService<User>,

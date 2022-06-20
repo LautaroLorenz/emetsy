@@ -39,7 +39,7 @@ export class AbmComponent implements OnInit, OnChanges {
   ngOnInit() { }
 
   ngOnChanges(changes: SimpleChanges): void {
-    console.log(changes);
+    // console.log(changes);
     // //   // TODO:
     // //   // console.log(changes);
     // if (changes['dataset'].currentValue !== changes['dataset'].previousValue) {

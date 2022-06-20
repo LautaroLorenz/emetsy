@@ -1,4 +1,4 @@
-import { Injectable } from "@angular/core";
+import { Injectable, NgZone } from "@angular/core";
 import { filter, map, Observable, Subject } from "rxjs";
 import { RequestTableResponse } from "../models";
 import { IpcService } from "./ipc.service";
@@ -9,14 +9,14 @@ import { IpcService } from "./ipc.service";
 export class DatabaseService<T> {
   private readonly _getTableReply$ = new Subject<RequestTableResponse<T>>();
   private readonly updateLocalTableData = (response: RequestTableResponse<T>) => {
-    this._getTableReply$.next(response);
+    this._getTableReply$.next(response)
   };
   private readonly requestTableToDatabase = (tableName: string): void => {
     this.ipcService.send('get-table', { tableName });
   };
   private readonly listenDatabaseTableResponses = (ipcService: IpcService): void => {
     ipcService.on('get-table-reply', (_: any, args: any) => {
-      this.updateLocalTableData(args);
+      this.ngZone.run(() => this.updateLocalTableData(args));
     });
   }
   private readonly getTableDataAsObservable = (tableName: string): Observable<T[]> => (
@@ -26,7 +26,10 @@ export class DatabaseService<T> {
     )
   );
 
-  constructor(private ipcService: IpcService) {
+  constructor(
+    private ipcService: IpcService,
+    private ngZone: NgZone,
+  ) {
     this.listenDatabaseTableResponses(ipcService);
   }
 
