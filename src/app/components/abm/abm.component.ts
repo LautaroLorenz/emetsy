@@ -16,9 +16,11 @@ export class AbmComponent implements OnInit, AfterContentInit, OnChanges {
   @Input() headerIcon: PrimeIcons = '';
   @Input() dataset: any[] = [];
   @Input() columns: AbmColum[] = [];
+  @Input() detailFormValid = false;
 
   @Output() deleteEvent = new EventEmitter<string[]>();
   @Output() saveDetailEvent = new EventEmitter<any>();
+  @Output() openDetailEvent = new EventEmitter<any>();
 
   @ViewChild('primeNgTable', { static: true }) primeNgTable: Table | undefined;
 
@@ -28,7 +30,6 @@ export class AbmComponent implements OnInit, AfterContentInit, OnChanges {
   rows = 5;
   selected: any[] = [];
   detailDialogVisible = false;
-  detailDialogElement: any = {};
 
   get deleteDisabled(): boolean {
     return this.selected.length === 0;
@@ -48,9 +49,12 @@ export class AbmComponent implements OnInit, AfterContentInit, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['dataset'].currentValue !== changes['dataset'].previousValue) {
-      this.clearSelected();
-      this.closeDialog();
+    if (changes['dataset']) {
+      const { dataset } = changes;
+      if (dataset.currentValue !== dataset.previousValue) {
+        this.clearSelected();
+        this.closeDialog();
+      }
     }
   }
 
@@ -113,8 +117,8 @@ export class AbmComponent implements OnInit, AfterContentInit, OnChanges {
   }
 
   openDialog(element: any): void {
-    this.detailDialogElement = element;
     this.detailDialogVisible = true;
+    this.openDetailEvent.emit(element);
   }
 
   saveElement() {

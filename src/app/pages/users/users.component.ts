@@ -4,6 +4,7 @@ import { User, UserTableColums, UserTableName } from 'src/app/models';
 import { MessagesService } from 'src/app/services/messages.service';
 import { DatabaseService } from 'src/app/services/database.service';
 import { filter, first, Observable, tap } from 'rxjs';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 
 @Component({
   templateUrl: './users.component.html',
@@ -14,56 +15,75 @@ export class UsersComponent implements OnInit {
   readonly title: string = 'Administración de usuarios';
   readonly haderIcon = PrimeIcons.USERS;
   readonly cols = UserTableColums;
+  readonly form: FormGroup;
   users$: Observable<User[]> = new Observable<User[]>();
 
   private readonly refreshDataWhenDatabaseReply = (tableName: string) => {
-    this.users$ = this.dbService.getTableReply$(tableName).pipe(tap(console.warn));
+    this.users$ = this.dbService.getTableReply$(tableName);
   }
   private readonly requestTableDataFromDatabase = (tableName: string) => {
     this.dbService.getTable(tableName);
   }
 
   constructor(
-    private dbService: DatabaseService<User>,
-    private messagesService: MessagesService,
-  ) { }
+    private readonly dbService: DatabaseService<User>,
+    private readonly messagesService: MessagesService,
+  ) {
+    this.form = new FormGroup({
+      id: new FormControl(),
+      name: new FormControl(),
+      surname: new FormControl(),
+      identification: new FormControl(undefined, Validators.required),
+    });
+  }
 
   ngOnInit(): void {
     this.refreshDataWhenDatabaseReply(UserTableName);
     this.requestTableDataFromDatabase(UserTableName);
   }
 
-  // createUser() {
-  // TODO:
-  // this.dbService.addElementToTable$(UserTableName, user)
-  //   .pipe(
-  //     first(),
-  //     tap(() => {
-  //       this.requestTableDataFromDatabase(UserTableName);
-  //       this.messagesService.success('Agregado correctamente');
-  //     }),
-  //   ).subscribe({
-  //     error: () => this.messagesService.error('No se pudo crear el elemento')
-  //   });
-  // }
+  private createUser(user: User) {
+    this.dbService.addElementToTable$(UserTableName, user)
+      .pipe(
+        first(),
+        tap(() => {
+          this.requestTableDataFromDatabase(UserTableName);
+          this.messagesService.success('Agregado correctamente');
+        }),
+      ).subscribe({
+        error: () => this.messagesService.error('No se pudo crear el elemento')
+      });
+  }
 
-  // editUser() {
-  // TODO:
-  // console.warn(user);
-  // this.dbService.addElementToTable$(UserTableName, user)
-  //   .pipe(
-  //     first(),
-  //     tap(() => {
-  //       this.requestTableDataFromDatabase(UserTableName);
-  //       this.messagesService.success('Agregado correctamente');
-  //     }),
-  //   ).subscribe({
-  //     error: () => this.messagesService.error('No se pudo crear el elemento')
-  //   });
-  // }
+  private editUser(user: User) {
+    // this.dbService.addElementToTable$(UserTableName, user)
+    //   .pipe(
+    //     first(),
+    //     tap(() => {
+    //       this.requestTableDataFromDatabase(UserTableName);
+    //       this.messagesService.success('Agregado correctamente');
+    //     }),
+    //   ).subscribe({
+    //     error: () => this.messagesService.error('No se pudo crear el elemento')
+    //   });
+  }
+
+  setFormValues(user: User) {
+    this.form.reset();
+    this.form.patchValue(user);
+  }
 
   saveUser() {
-    // TODO:
+    if (!this.form.valid) {
+      return;
+    }
+
+    const user: User = this.form.getRawValue()
+    if (this.form.get('id')?.value) {
+      this.editUser(user);
+    } else {
+      this.createUser(user);
+    }
   }
 
   deleteUsers(ids: string[] = []) {

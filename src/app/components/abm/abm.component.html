@@ -102,7 +102,7 @@
 >
   <ng-template pTemplate="content">
     <ng-container
-      *ngTemplateOutlet="abmDetailForm; context: { $implicit: detailDialogElement }"
+      *ngTemplateOutlet="abmDetailForm"
     ></ng-container>
   </ng-template>
 
@@ -122,6 +122,7 @@
       icon="pi pi-check"
       class="p-button"
       (click)="saveElement()"
+      [disabled]="!detailFormValid"
     ></button>
   </ng-template>
 </p-dialog>
