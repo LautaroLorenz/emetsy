@@ -5,7 +5,39 @@
     [headerIcon]="haderIcon"
     [columns]="cols"
     (deleteEvent)="deleteUsers($event)"
-    (createEvent)="createUser($event)"
+    (saveDetailEvent)="saveUser()"
   >
+    <ng-template
+      #abmDetailForm
+      let-element
+    >
+      <div class="p-field">
+        <label for="name">Nombre</label>
+        {{element?.name}}
+        <!-- <input
+          type="text"
+          pInputText
+          id="name"
+          [(ngModel)]="element.name"
+          required
+          autofocus
+        /> -->
+        <!-- <small
+          class="p-invalid"
+          *ngIf="submitted && !product.name"
+        >Name is required.</small> -->
+      </div>
+      <!-- <div class="p-field">
+        <label for="description">Description</label>
+        <textarea
+          id="description"
+          pInputTextarea
+          [(ngModel)]="product.description"
+          required
+          rows="3"
+          cols="20"
+        ></textarea>
+      </div> -->
+    </ng-template>
   </app-abm>
 </ng-container>

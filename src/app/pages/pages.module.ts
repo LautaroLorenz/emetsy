@@ -9,6 +9,7 @@ import { UsersComponent } from './users/users.component';
 import { HistoryAndReportsComponent } from './history-and-reports/history-and-reports.component';
 import { MetersComponent } from './meters/meters.component';
 import { BrandsComponent } from './brands/brands.component';
+import { ReactiveFormsModule } from '@angular/forms';
 
 
 @NgModule({
@@ -21,7 +22,11 @@ import { BrandsComponent } from './brands/brands.component';
     MetersComponent,
     BrandsComponent,
   ],
-  imports: [CommonModule, ComponentsModule],
+  imports: [
+    CommonModule,
+    ComponentsModule,
+    ReactiveFormsModule,
+  ],
   exports: []
 })
 export class PagesModule { }

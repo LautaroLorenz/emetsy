@@ -33,15 +33,37 @@ export class UsersComponent implements OnInit {
     this.requestTableDataFromDatabase(UserTableName);
   }
 
-  createUser(user: User) {
-    this.dbService.addElementToTable$(UserTableName, user)
-      .pipe(
-        first(),
-        tap(() => {
-          this.requestTableDataFromDatabase(UserTableName);
-          this.messagesService.success('Agregado correctamente');
-        })
-      ).subscribe();
+  // createUser() {
+  // TODO:
+  // this.dbService.addElementToTable$(UserTableName, user)
+  //   .pipe(
+  //     first(),
+  //     tap(() => {
+  //       this.requestTableDataFromDatabase(UserTableName);
+  //       this.messagesService.success('Agregado correctamente');
+  //     }),
+  //   ).subscribe({
+  //     error: () => this.messagesService.error('No se pudo crear el elemento')
+  //   });
+  // }
+
+  // editUser() {
+  // TODO:
+  // console.warn(user);
+  // this.dbService.addElementToTable$(UserTableName, user)
+  //   .pipe(
+  //     first(),
+  //     tap(() => {
+  //       this.requestTableDataFromDatabase(UserTableName);
+  //       this.messagesService.success('Agregado correctamente');
+  //     }),
+  //   ).subscribe({
+  //     error: () => this.messagesService.error('No se pudo crear el elemento')
+  //   });
+  // }
+
+  saveUser() {
+    // TODO:
   }
 
   deleteUsers(ids: string[] = []) {

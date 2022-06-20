@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
+import { AfterContentInit, ChangeDetectionStrategy, Component, ContentChild, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, TemplateRef, ViewChild } from '@angular/core';
 import { ConfirmationService, PrimeIcons } from 'primeng/api';
 import { Table } from 'primeng/table';
 import { AbmColum } from 'src/app/models';
@@ -10,7 +10,7 @@ import { MessagesService } from 'src/app/services/messages.service';
   styleUrls: ['./abm.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class AbmComponent implements OnInit, OnChanges {
+export class AbmComponent implements OnInit, AfterContentInit, OnChanges {
 
   @Input() title: string = '';
   @Input() headerIcon: PrimeIcons = '';
@@ -18,14 +18,17 @@ export class AbmComponent implements OnInit, OnChanges {
   @Input() columns: AbmColum[] = [];
 
   @Output() deleteEvent = new EventEmitter<string[]>();
-  @Output() editEvent = new EventEmitter<any>();
-  @Output() createEvent = new EventEmitter<any>();
+  @Output() saveDetailEvent = new EventEmitter<any>();
 
   @ViewChild('primeNgTable', { static: true }) primeNgTable: Table | undefined;
+
+  @ContentChild(TemplateRef) abmDetailForm: any;
 
   paginator = true;
   rows = 5;
   selected: any[] = [];
+  detailDialogVisible = false;
+  detailDialogElement: any = {};
 
   get deleteDisabled(): boolean {
     return this.selected.length === 0;
@@ -38,9 +41,16 @@ export class AbmComponent implements OnInit, OnChanges {
 
   ngOnInit() { }
 
+  ngAfterContentInit() {
+    if (!this.abmDetailForm) {
+      throw new Error("@Input abmDetailForm is required");
+    }
+  }
+
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['dataset'].currentValue !== changes['dataset'].previousValue) {
       this.clearSelected();
+      this.closeDialog();
     }
   }
 
@@ -73,7 +83,7 @@ export class AbmComponent implements OnInit, OnChanges {
         this.deleteEvent.emit(this.selected.map(s => s.id));
       },
       reject: () => {
-        this.messagesService.warn('Borrado cancelado correctamente');
+        this.messagesService.warn('Borrado cancelado');
       }
     });
   }
@@ -89,33 +99,29 @@ export class AbmComponent implements OnInit, OnChanges {
         this.deleteEvent.emit([element.id]);
       },
       reject: () => {
-        this.messagesService.warn('Borrado cancelado correctamente');
+        this.messagesService.warn('Borrado cancelado');
       }
     });
   }
 
   editElement(element: any) {
-    // TODO:
-    this.editEvent.emit(element);
+    this.openDialog(element);
   }
 
   createElement() {
-    // TODO:
-    // this.createEvent.emit(element);
-    this.createEvent.emit({
-      name: this.createRandomString(),
-      surname: this.createRandomString(),
-      identification: this.createRandomString()
-    });
+    this.openDialog({});
   }
 
-  // FIXME:
-  createRandomString(): string {
-    let id = '';
-    var chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    for (var i = 0; i < 15; i++) {
-      id += chars.charAt(Math.floor(Math.random() * chars.length));
-    }
-    return id;
+  openDialog(element: any): void {
+    this.detailDialogElement = element;
+    this.detailDialogVisible = true;
+  }
+
+  saveElement() {
+    this.saveDetailEvent.emit();
+  }
+
+  closeDialog() {
+    this.detailDialogVisible = false;
   }
 }

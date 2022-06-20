@@ -92,3 +92,36 @@
     </tr>
   </ng-template>
 </p-table>
+
+<p-dialog
+  [(visible)]="detailDialogVisible"
+  [style]="{width: '450px'}"
+  header="Detalle"
+  [modal]="true"
+  styleClass="p-fluid"
+>
+  <ng-template pTemplate="content">
+    <ng-container
+      *ngTemplateOutlet="abmDetailForm; context: { $implicit: detailDialogElement }"
+    ></ng-container>
+  </ng-template>
+
+  <ng-template pTemplate="footer">
+    <button
+      pButton
+      pRipple
+      label="Cancelar"
+      icon="pi pi-times"
+      class="p-button-text"
+      (click)="closeDialog()"
+    ></button>
+    <button
+      pButton
+      pRipple
+      label="Guardar"
+      icon="pi pi-check"
+      class="p-button"
+      (click)="saveElement()"
+    ></button>
+  </ng-template>
+</p-dialog>

@@ -20,6 +20,7 @@ import { DividerModule } from 'primeng/divider';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ConfirmDialogComponent } from './confirm-dialog/confirm-dialog.component';
 import { ToastModule } from 'primeng/toast';
+import { DialogModule } from 'primeng/dialog';
 
 const PrimeNgModules = [
   MenubarModule,
@@ -32,7 +33,8 @@ const PrimeNgModules = [
   TableModule,
   DividerModule,
   ConfirmDialogModule,
-  ToastModule
+  ToastModule,
+  DialogModule
 ];
 
 const PrimeNgServices = [
