@@ -34,14 +34,14 @@ export class UsersComponent implements OnInit {
   }
 
   createUser(user: User) {
-    console.log('createUser', { user });
-    // this.sqlService.addElementToTable<User>(User.name, user)
-    //   .pipe(
-    //     first(),
-    //   ).subscribe({
-    //     next: () => this.messagesService.success('Usuario creado'),
-    //     error: () => this.messagesService.error('No se pudo crear el usuario')
-    //   })
+    this.dbService.addElementToTable$(UserTableName, user)
+      .pipe(
+        first(),
+        tap(() => {
+          this.requestTableDataFromDatabase(UserTableName);
+          this.messagesService.success('Agregado correctamente');
+        })
+      ).subscribe();
   }
 
   deleteUsers(ids: string[] = []) {

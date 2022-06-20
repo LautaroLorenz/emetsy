@@ -25,8 +25,11 @@ export class DatabaseService<T> {
       map(({ rows }) => (rows)),
     )
   );
-  private deleteElementsFromDatabaseTable = (tableName: string, ids: any[]): Promise<number> => {
+  private deleteRowFromDatabaseTable = (tableName: string, ids: any[]): Promise<number> => {
     return this.ipcService.invoke('delete-from-table', { tableName, ids });
+  }
+  private addRowToTable = (tableName: string, element: T): Promise<number[]> => {
+    return this.ipcService.invoke('add-to-table', { tableName, element });
   }
 
   constructor(
@@ -45,6 +48,10 @@ export class DatabaseService<T> {
   }
 
   deleteTableElements$(tableName: string, ids: any[]): Observable<number> {
-    return from(this.deleteElementsFromDatabaseTable(tableName, ids));
+    return from(this.deleteRowFromDatabaseTable(tableName, ids));
+  }
+
+  addElementToTable$(tableName: string, element: T): Observable<number> {
+    return from(this.addRowToTable(tableName, element)).pipe(map(([newElementId]) => newElementId));
   }
 }
