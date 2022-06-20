@@ -1,3 +1,4 @@
+const path = require('path');
 // Update with your config settings.
 
 /**
@@ -7,7 +8,7 @@ module.exports = {
 
   development: {
     client: 'sqlite3',
-      connection: `./src/assets/database.db`,
+      connection: `${__dirname}/../../../src/assets/database.db`,
       useNullAsDefault: true,
       migrations: {
         // Will create your migrations in the data folder automatically
