@@ -1,0 +1,66 @@
+<ng-container *ngIf="(users$ | async) as users">
+  <app-abm
+    [dataset]="users"
+    [title]="title"
+    [headerIcon]="haderIcon"
+    [columns]="cols"
+    [detailFormValid]="form.valid"
+    (deleteEvent)="deleteUsers($event)"
+    (openDetailEvent)="setFormValues($event)"
+    (saveDetailEvent)="saveUser()"
+  >
+    <ng-template #abmDetailForm>
+      <form
+        novalidate
+        [formGroup]="form"
+      >
+        <input
+          type="hidden"
+          formControlName="id"
+        >
+        <div class="field">
+          <label
+            for="name"
+            class="mb-2"
+          >Nombre</label>
+          <input
+            type="text"
+            pInputText
+            id="name"
+            formControlName="name"
+            autofocus
+          />
+        </div>
+        <div class="field">
+          <label for="surname">Apellido</label>
+          <input
+            type="text"
+            pInputText
+            id="surname"
+            formControlName="surname"
+          />
+        </div>
+        <div class="field">
+          <label for="identification">Identificación<span
+              class="ml-1 text-red-300">*</span>
+          </label>
+          <input
+            type="text"
+            pInputText
+            id="identification"
+            formControlName="identification"
+            required
+          />
+          <ng-container
+            *ngIf="form.get('identification') as identificationField"
+          >
+            <small
+              class="text-red-500"
+              *ngIf="identificationField.invalid && identificationField.dirty"
+            >Requerido</small>
+          </ng-container>
+        </div>
+      </form>
+    </ng-template>
+  </app-abm>
+</ng-container>
