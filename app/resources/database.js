@@ -3,14 +3,15 @@ const { ipcMain } = require('electron');
 
 let knex;
 
+ipcMain.on('get-table', async (event, { tableName }) => {
+  const queryBuilder = knex(tableName);
+  const rows = await queryBuilder;
+  event.reply('get-table-reply', { tableNameReply: tableName, rows });
+});
+
 module.exports = {
   connect: ({ isProduction }) => {
     const environment = isProduction ? 'production' : 'development';
     knex = require('knex')(config[environment]);
-
-    let result = knex('users');
-    result.then((rows) => {
-      console.log(rows);
-    });
   }
 }

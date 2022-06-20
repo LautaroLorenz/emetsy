@@ -1,23 +1,32 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { PrimeIcons } from 'primeng/api';
-import { first } from 'rxjs';
 import { AbmColum, User } from 'src/app/models';
 import { MessagesService } from 'src/app/services/messages.service';
 import { DatabaseService } from 'src/app/services/database.service';
+import { Observable } from 'rxjs';
 
 @Component({
   templateUrl: './users.component.html',
   styleUrls: ['./users.component.scss']
 })
-export class UsersComponent implements OnInit {
+export class UsersComponent implements OnInit, OnDestroy {
 
   readonly title: string = 'Administración de usuarios';
   readonly haderIcon = PrimeIcons.USERS;
-  users: User[] = [];
+  readonly tableName = 'users';
+  users$ = new Observable<User[]>();
   cols: AbmColum[] = [];
 
+  private readonly refreshDataWhenChange = (tableName: string) => {
+    this.users$ = this.dbService.getTableReply$(tableName);
+  }
+
+  private readonly initDataFromDatabase = (tableName: string) => {
+    this.dbService.getTable(tableName);
+  }
+
   constructor(
-    private databaseService: DatabaseService,
+    private dbService: DatabaseService<User>,
     private messagesService: MessagesService
   ) { }
 
@@ -36,6 +45,9 @@ export class UsersComponent implements OnInit {
         header: 'Identificación'
       }
     ];
+
+    this.refreshDataWhenChange(this.tableName);
+    this.initDataFromDatabase(this.tableName);
   }
 
   createUser(user: User) {
@@ -52,6 +64,11 @@ export class UsersComponent implements OnInit {
   deleteUsers(ids: string[] = []) {
     console.log(ids);
     // this.messagesService.success('Elementos eliminados');
+  }
+
+  ngOnDestroy() {
+    // TODO:
+    console.warn('On destroy is empty');
   }
 
 }

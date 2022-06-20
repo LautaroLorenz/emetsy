@@ -1,5 +1,5 @@
 const { app, BrowserWindow, ipcMain } = require('electron');
-const { connect } = require('./resources/database');
+const { connect: databaseConnect } = require('./resources/database');
 require('./resources/ping');
 
 // Keep a global reference of the window object, if you don't, the window will
@@ -29,8 +29,7 @@ function createWindow() {
     win.webContents.openDevTools();
   }
 
-  // database connection
-  connect(config);
+  databaseConnect(config);
 
   // Emitted when the window is closed.
   win.on('closed', () => {
