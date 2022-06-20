@@ -1,53 +1,36 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { PrimeIcons } from 'primeng/api';
-import { AbmColum, User } from 'src/app/models';
+import { User, UserTableColums, UserTableName } from 'src/app/models';
 import { MessagesService } from 'src/app/services/messages.service';
 import { DatabaseService } from 'src/app/services/database.service';
-import { Observable } from 'rxjs';
+import { Observable, tap } from 'rxjs';
 
 @Component({
   templateUrl: './users.component.html',
-  styleUrls: ['./users.component.scss']
+  styleUrls: ['./users.component.scss'],
 })
-export class UsersComponent implements OnInit, OnDestroy {
+export class UsersComponent implements OnInit {
 
   readonly title: string = 'Administración de usuarios';
   readonly haderIcon = PrimeIcons.USERS;
-  readonly tableName = 'users';
-  users$ = new Observable<User[]>();
-  cols: AbmColum[] = [];
-
+  readonly cols = UserTableColums;
+  users$: Observable<User[]> = new Observable<User[]>();
   private readonly refreshDataWhenChange = (tableName: string) => {
-    this.users$ = this.dbService.getTableReply$(tableName);
+    this.users$ = this.dbService.getTableReply$(tableName).pipe(tap(console.log)); // TODO:
   }
-
   private readonly initDataFromDatabase = (tableName: string) => {
     this.dbService.getTable(tableName);
   }
+  @Output() dataUpdated = new EventEmitter();
 
   constructor(
     private dbService: DatabaseService<User>,
-    private messagesService: MessagesService
+    private messagesService: MessagesService,
   ) { }
 
   ngOnInit(): void {
-    this.cols = [
-      {
-        field: 'name',
-        header: 'Nombre'
-      },
-      {
-        field: 'surname',
-        header: 'Apellido'
-      },
-      {
-        field: 'identification',
-        header: 'Identificación'
-      }
-    ];
-
-    this.refreshDataWhenChange(this.tableName);
-    this.initDataFromDatabase(this.tableName);
+    this.refreshDataWhenChange(UserTableName);
+    this.initDataFromDatabase(UserTableName);
   }
 
   createUser(user: User) {
@@ -64,11 +47,6 @@ export class UsersComponent implements OnInit, OnDestroy {
   deleteUsers(ids: string[] = []) {
     console.log(ids);
     // this.messagesService.success('Elementos eliminados');
-  }
-
-  ngOnDestroy() {
-    // TODO:
-    console.warn('On destroy is empty');
   }
 
 }

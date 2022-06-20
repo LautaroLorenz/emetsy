@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { Subject, filter, map, Observable } from "rxjs";
+import { filter, map, Observable, Subject } from "rxjs";
 import { RequestTableResponse } from "../models";
 import { IpcService } from "./ipc.service";
 
@@ -22,7 +22,7 @@ export class DatabaseService<T> {
   private readonly getTableDataAsObservable = (tableName: string): Observable<T[]> => (
     this._getTableReply$.pipe(
       filter(({ tableNameReply }) => tableNameReply === tableName),
-      map(({ rows }) => (rows))
+      map(({ rows }) => (rows)),
     )
   );
 

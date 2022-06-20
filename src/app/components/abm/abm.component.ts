@@ -40,9 +40,9 @@ export class AbmComponent implements OnInit, OnChanges {
 
   ngOnChanges(changes: SimpleChanges): void {
     console.log(changes);
-    // TODO:
-    // console.log(changes);
-    // if(changes['dataset'].currentValue !== changes['dataset'].previousValue) {
+    // //   // TODO:
+    // //   // console.log(changes);
+    // if (changes['dataset'].currentValue !== changes['dataset'].previousValue) {
     //   this.clearSelected();
     // }
   }
@@ -52,7 +52,7 @@ export class AbmComponent implements OnInit, OnChanges {
   }
 
   filterDataset(event: Event) {
-    if(!this.primeNgTable) {
+    if (!this.primeNgTable) {
       return;
     }
 
@@ -61,7 +61,7 @@ export class AbmComponent implements OnInit, OnChanges {
   }
 
   deleteSelected() {
-    if(this.deleteDisabled) {
+    if (this.deleteDisabled) {
       this.messagesService.info('Seleccione elementos para borrar');
       return;
     }
@@ -80,7 +80,7 @@ export class AbmComponent implements OnInit, OnChanges {
       }
     });
   }
-  
+
   deleteElement(element: any) {
     // TODO:
     this.deleteEvent.emit([element.id]);
@@ -105,9 +105,9 @@ export class AbmComponent implements OnInit, OnChanges {
   createRandomString(): string {
     let id = '';
     var chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    for ( var i = 0; i < 15; i++ ) {
-        id += chars.charAt(Math.floor(Math.random() * chars.length));
+    for (var i = 0; i < 15; i++) {
+      id += chars.charAt(Math.floor(Math.random() * chars.length));
     }
     return id;
-}
+  }
 }
