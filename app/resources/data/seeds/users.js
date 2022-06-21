@@ -17,7 +17,7 @@ exports.seed = async function(knex) {
 
   // generate in batches so as not to overload the query
   for(let i = 0; i < 100; i++) {
-    // generate faker rows data
+    // generate faker rows data based on {{schema}}
     const fakeData = fakerBySchema(schema, 99, 100);
     // insert fake data into table
     await knex('users').insert(fakeData);

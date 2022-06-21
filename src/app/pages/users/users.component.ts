@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { PrimeIcons } from 'primeng/api';
-import { User, UserTableColums, UserTableName } from 'src/app/models';
+import { AbmPage, User, UserTableColums, UserTableName } from 'src/app/models';
 import { MessagesService } from 'src/app/services/messages.service';
 import { DatabaseService } from 'src/app/services/database.service';
 import { filter, first, Observable, tap } from 'rxjs';
@@ -10,25 +10,20 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
   templateUrl: './users.component.html',
   styleUrls: ['./users.component.scss'],
 })
-export class UsersComponent implements OnInit {
+export class UsersComponent extends AbmPage<User> implements OnInit {
 
   readonly title: string = 'Administración de usuarios';
   readonly haderIcon = PrimeIcons.USERS;
   readonly cols = UserTableColums;
   readonly form: FormGroup;
-  users$: Observable<User[]> = new Observable<User[]>();
-
-  private readonly refreshDataWhenDatabaseReply = (tableName: string) => {
-    this.users$ = this.dbService.getTableReply$(tableName);
-  }
-  private readonly requestTableDataFromDatabase = (tableName: string) => {
-    this.dbService.getTable(tableName);
-  }
+  readonly users$: Observable<User[]>;
 
   constructor(
     private readonly dbService: DatabaseService<User>,
     private readonly messagesService: MessagesService,
   ) {
+    super(dbService);
+    this.users$ = this.refreshDataWhenDatabaseReply$(UserTableName);
     this.form = new FormGroup({
       id: new FormControl(),
       name: new FormControl(),
@@ -38,7 +33,6 @@ export class UsersComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.refreshDataWhenDatabaseReply(UserTableName);
     this.requestTableDataFromDatabase(UserTableName);
   }
 
