@@ -59,7 +59,7 @@ export const MeterTableColumns: AbmColum[] = [
 	},
 	{
 		field: 'voltage',
-		header: 'Voltaje (V)',
+		header: 'Tensión (V)',
 		sortable: false,
 		styleClass: 'text-center',
 	},

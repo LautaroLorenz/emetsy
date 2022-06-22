@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { PrimeIcons } from 'primeng/api';
-import { filter, first, Observable, tap } from 'rxjs';
+import { filter, first, Observable, ReplaySubject, takeUntil, tap } from 'rxjs';
 import { AbmPage, Brand, BrandDbTableContext } from 'src/app/models';
 import { ConstantUnit, ConstantUnitDbTableContext } from 'src/app/models/constant-unit.model';
 import { Meter, MeterDbTableContext, MeterTableColumns } from 'src/app/models/meter.model';
@@ -12,7 +12,7 @@ import { MessagesService } from 'src/app/services/messages.service';
   templateUrl: './meters.component.html',
   styleUrls: ['./meters.component.scss']
 })
-export class MetersComponent extends AbmPage<Meter> implements OnInit {
+export class MetersComponent extends AbmPage<Meter> implements OnInit, OnDestroy {
 
   readonly title: string = 'Administración de medidores';
   readonly haderIcon = PrimeIcons.BOX;
@@ -20,30 +20,44 @@ export class MetersComponent extends AbmPage<Meter> implements OnInit {
   readonly form: FormGroup;
   readonly meters$: Observable<Meter[]>;
 
-  get dropdownConstantUnitOptions(): ConstantUnit[] {
-    return this._relations[ConstantUnitDbTableContext.tableName];
+  dropdownConstantUnitOptions: ConstantUnit[] = [];
+  dropdownBrandOptions: Brand[] = [];
+
+  private readonly updateDropdownOptions = (): void => {
+    this.dropdownConstantUnitOptions = this._relations[ConstantUnitDbTableContext.tableName].sort(
+      (a, b) => a.name.localeCompare(b.name)
+    );
+    this.dropdownBrandOptions = this._relations[BrandDbTableContext.tableName].map(
+      brand => ({
+        ...brand,
+        name: `${brand.name} - ${brand.model}`,
+      })
+    ).sort(
+      (a, b) => a.name.localeCompare(b.name)
+    );
   }
 
-  get dropdownBrandOptions(): Brand[] {
-    return this._relations[BrandDbTableContext.tableName];
-  }
+  private readonly destroyed$: ReplaySubject<boolean> = new ReplaySubject(1);
 
   constructor(
     private readonly dbService: DatabaseService<Meter>,
     private readonly messagesService: MessagesService,
   ) {
     super(dbService, MeterDbTableContext);
-    this.meters$ = this.refreshDataWhenDatabaseReply$(MeterDbTableContext.tableName);
+    this.meters$ = this.refreshDataWhenDatabaseReply$(MeterDbTableContext.tableName).pipe(
+      tap(() => this.updateDropdownOptions())
+    );
     this.form = new FormGroup({
       id: new FormControl(),
       current: new FormControl(undefined, Validators.required),
       voltage: new FormControl(undefined, Validators.required),
       activeConstantValue: new FormControl(undefined, Validators.required),
       activeConstantUnit_id: new FormControl(undefined, Validators.required),
-      reactveConstantValue: new FormControl(undefined, Validators.required),
+      reactiveConstantValue: new FormControl(undefined, Validators.required),
       reactiveConstantUnit_id: new FormControl(undefined, Validators.required),
       brand_id: new FormControl(undefined, Validators.required),
     });
+    this.initFormValueVhangeListeners();
   }
 
   ngOnInit(): void {
@@ -53,30 +67,51 @@ export class MetersComponent extends AbmPage<Meter> implements OnInit {
     );
   }
 
+  private initFormValueVhangeListeners(): void {
+    this.form.get('activeConstantUnit_id')?.valueChanges.pipe(
+      takeUntil(this.destroyed$),
+      tap((activeConstantUnit_id) => {
+        if(!this.form.get('reactiveConstantUnit_id')?.value) {
+          this.form.get('reactiveConstantUnit_id')?.setValue(activeConstantUnit_id)
+        }
+      }),
+    ).subscribe();
+    this.form.get('reactiveConstantUnit_id')?.valueChanges.pipe(
+      takeUntil(this.destroyed$),
+      tap((reactiveConstantUnit_id) => {
+        if(!this.form.get('activeConstantUnit_id')?.value) {
+          this.form.get('activeConstantUnit_id')?.setValue(reactiveConstantUnit_id)
+        }
+
+        return reactiveConstantUnit_id;
+      }),
+    ).subscribe();
+  }
+
   private createMeter(meter: Meter) {
-    // this.dbService.addElementToTable$(MeterDbTableContext.tableName, brand)
-    //   .pipe(
-    //     first(),
-    //     tap(() => {
-    //       this.requestTableDataFromDatabase(MeterDbTableContext.tableName);
-    //       this.messagesService.success('Agregado correctamente');
-    //     }),
-    //   ).subscribe({
-    //     error: () => this.messagesService.error('No se pudo crear el elemento')
-    //   });
+    this.dbService.addElementToTable$(MeterDbTableContext.tableName, meter)
+      .pipe(
+        first(),
+        tap(() => {
+          this.requestTableDataFromDatabase(MeterDbTableContext.tableName);
+          this.messagesService.success('Agregado correctamente');
+        }),
+      ).subscribe({
+        error: () => this.messagesService.error('No se pudo crear el elemento')
+      });
   }
 
   private editMeter(meter: Meter) {
-  // this.dbService.editElementFromTable$(MeterDbTableContext.tableName, brand)
-  //   .pipe(
-  //     first(),
-  //     tap(() => {
-  //       this.requestTableDataFromDatabase(MeterDbTableContext.tableName);
-  //       this.messagesService.success('Editado correctamente');
-  //     }),
-  //   ).subscribe({
-  //     error: () => this.messagesService.error('No se pudo editar el elemento')
-  //   });
+    this.dbService.editElementFromTable$(MeterDbTableContext.tableName, meter)
+      .pipe(
+        first(),
+        tap(() => {
+          this.requestTableDataFromDatabase(MeterDbTableContext.tableName);
+          this.messagesService.success('Editado correctamente');
+        }),
+      ).subscribe({
+        error: () => this.messagesService.error('No se pudo editar el elemento')
+      });
   }
 
   deleteMeters(ids: string[] = []) {
@@ -99,15 +134,20 @@ export class MetersComponent extends AbmPage<Meter> implements OnInit {
   }
 
   saveMeter() {
-    // if (!this.form.valid) {
-    //   return;
-    // }
+    if (!this.form.valid) {
+      return;
+    }
 
-    // const brand: Brand = this.form.getRawValue()
-    // if (this.form.get('id')?.value) {
-    //   this.editBrand(brand);
-    // } else {
-    //   this.createBrand(brand);
-    // }
+    const meter: Meter = this.form.getRawValue()
+    if (this.form.get('id')?.value) {
+      this.editMeter(meter);
+    } else {
+      this.createMeter(meter);
+    }
+  }
+
+  ngOnDestroy() {
+    this.destroyed$.next(true);
+    this.destroyed$.complete();
   }
 }

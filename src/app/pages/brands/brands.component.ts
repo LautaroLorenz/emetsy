@@ -18,8 +18,12 @@ export class BrandsComponent extends AbmPage<Brand> implements OnInit {
   readonly form: FormGroup;
   readonly brands$: Observable<Brand[]>;
 
-  get dropdownConnectionOptions(): Connection[] {
-    return this._relations[ConnectionDbTableContext.tableName];
+  dropdownConnectionOptions: Connection[] = [];
+
+  private readonly updateDropdownOptions = (): void => {
+    this.dropdownConnectionOptions = this._relations[ConnectionDbTableContext.tableName].sort(
+      (a, b) => a.name.localeCompare(b.name)
+    );
   }
 
   constructor(
@@ -27,7 +31,9 @@ export class BrandsComponent extends AbmPage<Brand> implements OnInit {
     private readonly messagesService: MessagesService,
   ) {
     super(dbService, BrandDbTableContext);
-    this.brands$ = this.refreshDataWhenDatabaseReply$(BrandDbTableContext.tableName);
+    this.brands$ = this.refreshDataWhenDatabaseReply$(BrandDbTableContext.tableName).pipe(
+      tap(() => this.updateDropdownOptions())
+    );
     this.form = new FormGroup({
       id: new FormControl(),
       name: new FormControl(undefined, Validators.required),
