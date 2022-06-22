@@ -1,8 +1,10 @@
+<app-page-title
+  [title]="title"
+  [headerIcon]="haderIcon"
+></app-page-title>
 <ng-container *ngIf="(brands$ | async) as brands">
   <app-abm
     [dataset]="brands"
-    [title]="title"
-    [headerIcon]="haderIcon"
     [columns]="cols"
     [detailFormValid]="form.valid"
     (deleteEvent)="deleteBrands($event)"

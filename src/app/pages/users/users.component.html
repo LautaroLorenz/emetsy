@@ -1,8 +1,10 @@
+<app-page-title
+  [title]="title"
+  [headerIcon]="haderIcon"
+></app-page-title>
 <ng-container *ngIf="(users$ | async) as users">
   <app-abm
     [dataset]="users"
-    [title]="title"
-    [headerIcon]="haderIcon"
     [columns]="cols"
     [detailFormValid]="form.valid"
     (deleteEvent)="deleteUsers($event)"
@@ -42,7 +44,8 @@
         </div>
         <div class="field">
           <label for="identification">Identificación<span
-              class="ml-1 text-red-300">*</span>
+              class="ml-1 text-red-300"
+            >*</span>
           </label>
           <input
             type="text"

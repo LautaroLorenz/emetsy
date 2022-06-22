@@ -12,8 +12,6 @@ import { MessagesService } from 'src/app/services/messages.service';
 })
 export class AbmComponent implements OnInit, AfterContentInit, OnChanges {
 
-  @Input() title: string = '';
-  @Input() headerIcon: PrimeIcons = '';
   @Input() dataset: any[] = [];
   @Input() columns: AbmColum[] = [];
   @Input() detailFormValid = false;

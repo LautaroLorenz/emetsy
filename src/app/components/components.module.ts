@@ -23,6 +23,7 @@ import { ToastModule } from 'primeng/toast';
 import { DialogModule } from 'primeng/dialog';
 import { PipesModule } from '../pipes/pipes.module';
 import { DropdownModule } from 'primeng/dropdown';
+import { PageTitleComponent } from './page-title/page-title.component';
 
 const PrimeNgModules = [
   MenubarModule,
@@ -48,7 +49,8 @@ const PrimeNgServices = [
 const EmetsyComponents = [
   MenuComponent,
   AbmComponent,
-  ConfirmDialogComponent
+  ConfirmDialogComponent,
+  PageTitleComponent
 ]
 
 @NgModule({
