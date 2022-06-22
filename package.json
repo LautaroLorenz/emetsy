@@ -1,11 +1,12 @@
 {
   "name": "emetsy",
   "version": "0.0.0",
-  "main": "index.js",
+  "main": "dist/emetsy/index.js",
   "author": {
     "name": "Lautaro Lorenz",
     "email": "lautaro.lorenz@gmail.com"
   },
+  "description": "Proyecto EMeTSy, software que realiza el control en un banco de ensayo de medidores",
   "build": {
     "appId": "com.emetsy.EMeTSy",
     "productName": "EMeTSy",
