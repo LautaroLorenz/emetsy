@@ -16,14 +16,17 @@ export const UserDbTableContext: DbTableContext = {
 export const UserTableColumns: AbmColum[] = [
 	{
 		field: 'name',
-		header: 'Nombre'
+		header: 'Nombre',
+		sortable: true,
 	},
 	{
 		field: 'surname',
-		header: 'Apellido'
+		header: 'Apellido',
+		sortable: true,
 	},
 	{
 		field: 'identification',
-		header: 'Identificación'
+		header: 'Identificación',
+		sortable: true,
 	}
 ];

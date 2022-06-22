@@ -47,9 +47,10 @@
       <th
         *ngFor="let col of columns"
         [pSortableColumn]="col.field"
+        [pSortableColumnDisabled]="!col.sortable"
       >
         {{col.header}}
-        <p-sortIcon [field]="col.field"></p-sortIcon>
+        <p-sortIcon *ngIf="col.sortable" [field]="col.field"></p-sortIcon>
       </th>
       <th aria-label="Acciones"></th>
     </tr>
@@ -63,10 +64,10 @@
       <td>
         <p-tableCheckbox [value]="rowData"></p-tableCheckbox>
       </td>
-      <td *ngFor="let col of columns">
+      <td *ngFor="let col of columns" class="{{col.styleClass}}">
         {{rowData | dotStringAsObject: col.field}}
       </td>
-      <td class="w-10rem text-center">
+      <td class="w-8rem text-center">
         <button
           pButton
           pRipple
