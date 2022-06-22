@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { PrimeIcons } from 'primeng/api';
-import { Observable } from 'rxjs';
-import { AbmPage, Brand, BrandTableColums, BrandTableName } from 'src/app/models';
+import { filter, first, Observable, tap } from 'rxjs';
+import { AbmPage, Brand, BrandTableColumns, BrandDbTableContext, Connection, ConnectionDbTableContext } from 'src/app/models';
 import { DatabaseService } from 'src/app/services/database.service';
 import { MessagesService } from 'src/app/services/messages.service';
 
@@ -14,16 +14,20 @@ export class BrandsComponent extends AbmPage<Brand> implements OnInit {
 
   readonly title: string = 'Administración de marcas';
   readonly haderIcon = PrimeIcons.BOOKMARK;
-  readonly cols = BrandTableColums;
+  readonly cols = BrandTableColumns;
   readonly form: FormGroup;
   readonly brands$: Observable<Brand[]>;
+
+  get dropdownConnectionOptions(): Connection[] {
+    return this._relations[ConnectionDbTableContext.tableName];
+  }
 
   constructor(
     private readonly dbService: DatabaseService<Brand>,
     private readonly messagesService: MessagesService,
   ) {
-    super(dbService);
-    this.brands$ = this.refreshDataWhenDatabaseReply$(BrandTableName);
+    super(dbService, BrandDbTableContext);
+    this.brands$ = this.refreshDataWhenDatabaseReply$(BrandDbTableContext.tableName);
     this.form = new FormGroup({
       id: new FormControl(),
       name: new FormControl(undefined, Validators.required),
@@ -33,47 +37,50 @@ export class BrandsComponent extends AbmPage<Brand> implements OnInit {
   }
 
   ngOnInit(): void {
-    this.requestTableDataFromDatabase(BrandTableName);
+    this.requestTableDataFromDatabase(
+      BrandDbTableContext.tableName,
+      BrandDbTableContext.foreignTables.map(ft => ft.tableName)
+    );
   }
 
-  // private createUser(user: User) {
-  //   this.dbService.addElementToTable$(UserTableName, user)
-  //     .pipe(
-  //       first(),
-  //       tap(() => {
-  //         this.requestTableDataFromDatabase(UserTableName);
-  //         this.messagesService.success('Agregado correctamente');
-  //       }),
-  //     ).subscribe({
-  //       error: () => this.messagesService.error('No se pudo crear el elemento')
-  //     });
-  // }
+  private createBrand(brand: Brand) {
+    this.dbService.addElementToTable$(BrandDbTableContext.tableName, brand)
+      .pipe(
+        first(),
+        tap(() => {
+          this.requestTableDataFromDatabase(BrandDbTableContext.tableName);
+          this.messagesService.success('Agregado correctamente');
+        }),
+      ).subscribe({
+        error: () => this.messagesService.error('No se pudo crear el elemento')
+      });
+  }
 
-  // private editUser(user: User) {
-    // this.dbService.editElementFromTable$(UserTableName, user)
-    //   .pipe(
-    //     first(),
-    //     tap(() => {
-    //       this.requestTableDataFromDatabase(UserTableName);
-    //       this.messagesService.success('Editado correctamente');
-    //     }),
-    //   ).subscribe({
-    //     error: () => this.messagesService.error('No se pudo editar el elemento')
-    //   });
-  // }
+  private editBrand(brand: Brand) {
+  this.dbService.editElementFromTable$(BrandDbTableContext.tableName, brand)
+    .pipe(
+      first(),
+      tap(() => {
+        this.requestTableDataFromDatabase(BrandDbTableContext.tableName);
+        this.messagesService.success('Editado correctamente');
+      }),
+    ).subscribe({
+      error: () => this.messagesService.error('No se pudo editar el elemento')
+    });
+  }
 
   deleteBrands(ids: string[] = []) {
-    // this.dbService.deleteTableElements$(UserTableName, ids)
-    //   .pipe(
-    //     first(),
-    //     filter((numberOfElementsDeleted) => numberOfElementsDeleted === ids.length),
-    //     tap(() => {
-    //       this.requestTableDataFromDatabase(UserTableName);
-    //       this.messagesService.success('Eliminado correctamente');
-    //     })
-    //   ).subscribe({
-    //     error: () => this.messagesService.error('No se pudo borrar')
-    //   });
+    this.dbService.deleteTableElements$(BrandDbTableContext.tableName, ids)
+      .pipe(
+        first(),
+        filter((numberOfElementsDeleted) => numberOfElementsDeleted === ids.length),
+        tap(() => {
+          this.requestTableDataFromDatabase(BrandDbTableContext.tableName);
+          this.messagesService.success('Eliminado correctamente');
+        })
+      ).subscribe({
+        error: () => this.messagesService.error('No se pudo borrar')
+      });
   }
 
   setFormValues(brand: Brand) {
@@ -82,16 +89,16 @@ export class BrandsComponent extends AbmPage<Brand> implements OnInit {
   }
 
   saveBrand() {
-    // if (!this.form.valid) {
-    //   return;
-    // }
+    if (!this.form.valid) {
+      return;
+    }
 
-    // const user: User = this.form.getRawValue()
-    // if (this.form.get('id')?.value) {
-    //   this.editUser(user);
-    // } else {
-    //   this.createUser(user);
-    // }
+    const brand: Brand = this.form.getRawValue()
+    if (this.form.get('id')?.value) {
+      this.editBrand(brand);
+    } else {
+      this.createBrand(brand);
+    }
   }
 
 }

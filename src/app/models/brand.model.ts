@@ -1,6 +1,6 @@
 import { AbmColum } from "./abm.model";
-import { Connection } from "./connection.model";
-import { DbForeignKey } from "./database.model";
+import { DbForeignKey, DbTableContext } from "./database.model";
+import { Connection, ConnectionDbTableContext } from "./connection.model";
 
 export interface Brand extends DbForeignKey {
 	id: number;
@@ -12,7 +12,18 @@ export interface Brand extends DbForeignKey {
 	}
 }
 
-export const BrandTableColums: AbmColum[] = [
+export const BrandDbTableContext: DbTableContext = {
+	tableName: 'brands',
+	foreignTables: [
+		{
+			tableName: ConnectionDbTableContext.tableName,
+			foreignKey: 'connection_id',
+			properyName: 'connection',
+		}
+	]
+};
+
+export const BrandTableColumns: AbmColum[] = [
 	{
 		field: 'name',
 		header: 'Nombre'
@@ -22,9 +33,7 @@ export const BrandTableColums: AbmColum[] = [
 		header: 'Modelo'
 	},
 	{
-		field: 'connection_id',
+		field: 'foreign.connection.name',
 		header: 'Conexión',
 	}
 ];
-
-export const BrandTableName = 'brands';

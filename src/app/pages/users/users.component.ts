@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { PrimeIcons } from 'primeng/api';
-import { AbmPage, User, UserTableColums, UserTableName } from 'src/app/models';
+import { AbmPage, User, UserTableColumns, UserDbTableContext } from 'src/app/models';
 import { MessagesService } from 'src/app/services/messages.service';
 import { DatabaseService } from 'src/app/services/database.service';
 import { filter, first, Observable, tap } from 'rxjs';
@@ -14,7 +14,7 @@ export class UsersComponent extends AbmPage<User> implements OnInit {
 
   readonly title: string = 'Administración de usuarios';
   readonly haderIcon = PrimeIcons.USERS;
-  readonly cols = UserTableColums;
+  readonly cols = UserTableColumns;
   readonly form: FormGroup;
   readonly users$: Observable<User[]>;
 
@@ -22,8 +22,8 @@ export class UsersComponent extends AbmPage<User> implements OnInit {
     private readonly dbService: DatabaseService<User>,
     private readonly messagesService: MessagesService,
   ) {
-    super(dbService);
-    this.users$ = this.refreshDataWhenDatabaseReply$(UserTableName);
+    super(dbService, UserDbTableContext);
+    this.users$ = this.refreshDataWhenDatabaseReply$(UserDbTableContext.tableName);
     this.form = new FormGroup({
       id: new FormControl(),
       name: new FormControl(),
@@ -33,15 +33,15 @@ export class UsersComponent extends AbmPage<User> implements OnInit {
   }
 
   ngOnInit(): void {
-    this.requestTableDataFromDatabase(UserTableName);
+    this.requestTableDataFromDatabase(UserDbTableContext.tableName);
   }
 
   private createUser(user: User) {
-    this.dbService.addElementToTable$(UserTableName, user)
+    this.dbService.addElementToTable$(UserDbTableContext.tableName, user)
       .pipe(
         first(),
         tap(() => {
-          this.requestTableDataFromDatabase(UserTableName);
+          this.requestTableDataFromDatabase(UserDbTableContext.tableName);
           this.messagesService.success('Agregado correctamente');
         }),
       ).subscribe({
@@ -50,11 +50,11 @@ export class UsersComponent extends AbmPage<User> implements OnInit {
   }
 
   private editUser(user: User) {
-    this.dbService.editElementFromTable$(UserTableName, user)
+    this.dbService.editElementFromTable$(UserDbTableContext.tableName, user)
       .pipe(
         first(),
         tap(() => {
-          this.requestTableDataFromDatabase(UserTableName);
+          this.requestTableDataFromDatabase(UserDbTableContext.tableName);
           this.messagesService.success('Editado correctamente');
         }),
       ).subscribe({
@@ -63,12 +63,12 @@ export class UsersComponent extends AbmPage<User> implements OnInit {
   }
 
   deleteUsers(ids: string[] = []) {
-    this.dbService.deleteTableElements$(UserTableName, ids)
+    this.dbService.deleteTableElements$(UserDbTableContext.tableName, ids)
       .pipe(
         first(),
         filter((numberOfElementsDeleted) => numberOfElementsDeleted === ids.length),
         tap(() => {
-          this.requestTableDataFromDatabase(UserTableName);
+          this.requestTableDataFromDatabase(UserDbTableContext.tableName);
           this.messagesService.success('Eliminado correctamente');
         })
       ).subscribe({

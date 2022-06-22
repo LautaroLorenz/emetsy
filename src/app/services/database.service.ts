@@ -1,6 +1,6 @@
 import { Injectable, NgZone } from "@angular/core";
 import { filter, from, map, Observable, Subject } from "rxjs";
-import { RequestTableResponse } from "../models";
+import { RequestTableResponse, TableName } from "../models";
 import { IpcService } from "./ipc.service";
 
 @Injectable({
@@ -8,21 +8,20 @@ import { IpcService } from "./ipc.service";
 })
 export class DatabaseService<T> {
   private readonly _getTableReply$ = new Subject<RequestTableResponse<T>>();
-  private readonly _updateLocalTableData = (response: RequestTableResponse<T>) => {
-    this._getTableReply$.next(response);
-  };
-  private readonly _getDatabaseTable = (tableName: string): void => {
-    this.ipcService.send('get-table', { tableName });
-  };
   private readonly _listenGetDatabaseTableReply = (ipcService: IpcService): void => {
     ipcService.on('get-table-reply', (_: any, args: any) => {
       this.ngZone.run(() => this._updateLocalTableData(args));
     });
   }
-  private readonly _getTableDataAsObservable = (tableName: string): Observable<T[]> => (
+  private readonly _updateLocalTableData = (response: RequestTableResponse<T>) => {
+    this._getTableReply$.next(response);
+  };
+  private readonly _getDatabaseTable = (tableName: TableName, relations: TableName[]): void => {
+    this.ipcService.send('get-table', { tableName, relations });
+  };
+  private readonly _getTableDataAsObservable = (tableName: string): Observable<RequestTableResponse<T>> => (
     this._getTableReply$.pipe(
-      filter(({ tableNameReply }) => tableNameReply === tableName),
-      map(({ rows }) => (rows)),
+      filter(({ tableNameReply }) => tableNameReply === tableName)
     )
   );
   private _deleteRowFromDatabaseTable = (tableName: string, ids: any[]): Promise<number> => {
@@ -42,11 +41,11 @@ export class DatabaseService<T> {
     this._listenGetDatabaseTableReply(ipcService);
   }
 
-  getTable(tableName: string): void {
-    this._getDatabaseTable(tableName);
+  getTable(tableName: TableName, relations: TableName[]): void {
+    this._getDatabaseTable(tableName, relations);
   }
 
-  getTableReply$(tableName: string): Observable<T[]> {
+  getTableReply$(tableName: string): Observable<RequestTableResponse<T>> {
     return this._getTableDataAsObservable(tableName);
   }
 

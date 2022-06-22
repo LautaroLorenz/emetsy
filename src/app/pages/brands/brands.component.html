@@ -10,7 +10,7 @@
     (saveDetailEvent)="saveBrand()"
   >
     <ng-template #abmDetailForm>
-    <!--   <form
+      <form
         novalidate
         [formGroup]="form"
       >
@@ -22,45 +22,61 @@
           <label
             for="name"
             class="mb-2"
-          >Nombre</label>
+          >Marca<span class="ml-1 text-red-300">*</span></label>
           <input
             type="text"
             pInputText
             id="name"
             formControlName="name"
             autofocus
-          />
-        </div>
-        <div class="field">
-          <label for="surname">Apellido</label>
-          <input
-            type="text"
-            pInputText
-            id="surname"
-            formControlName="surname"
-          />
-        </div>
-        <div class="field">
-          <label for="identification">Identificación<span
-              class="ml-1 text-red-300">*</span>
-          </label>
-          <input
-            type="text"
-            pInputText
-            id="identification"
-            formControlName="identification"
             required
           />
-          <ng-container
-            *ngIf="form.get('identification') as identificationField"
-          >
+          <ng-container *ngIf="form.get('name') as nameField">
             <small
               class="text-red-500"
-              *ngIf="identificationField.invalid && identificationField.dirty"
+              *ngIf="nameField.invalid && nameField.dirty"
             >Requerido</small>
           </ng-container>
         </div>
-      </form> -->
+        <div class="field">
+          <label for="model">Modelo<span
+              class="ml-1 text-red-300">*</span></label>
+          <input
+            type="text"
+            pInputText
+            id="model"
+            formControlName="model"
+            required
+          />
+          <ng-container *ngIf="form.get('model') as modelField">
+            <small
+              class="text-red-500"
+              *ngIf="modelField.invalid && modelField.dirty"
+            >Requerido</small>
+          </ng-container>
+        </div>
+        <div class="field">
+          <label for="identification">Conexión<span
+              class="ml-1 text-red-300">*</span>
+          </label>
+          <p-dropdown
+            id="connection_id"
+            [options]="dropdownConnectionOptions"
+            formControlName="connection_id"
+            optionValue="id"
+            optionLabel="name"
+            appendTo="body"
+            [required]="true"
+            [autoDisplayFirst]="false"
+          ></p-dropdown>
+          <ng-container *ngIf="form.get('connection_id') as connectionIdField">
+            <small
+              class="text-red-500"
+              *ngIf="connectionIdField.invalid && connectionIdField.dirty"
+            >Requerido</small>
+          </ng-container>
+        </div>
+      </form>
     </ng-template>
   </app-abm>
 </ng-container>
