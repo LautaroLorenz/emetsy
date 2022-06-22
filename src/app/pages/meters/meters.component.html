@@ -1,1 +1,84 @@
-<p>meters works!</p>
+<app-page-title
+  [title]="title"
+  [headerIcon]="haderIcon"
+></app-page-title>
+<ng-container *ngIf="(meters$ | async) as meters">
+  <app-abm
+    [dataset]="meters"
+    [columns]="cols"
+    [detailFormValid]="form.valid"
+    (deleteEvent)="deleteMeters($event)"
+    (openDetailEvent)="setFormValues($event)"
+    (saveDetailEvent)="saveMeter()"
+  >
+    <ng-template #abmDetailForm>
+      <!-- <form
+        novalidate
+        [formGroup]="form"
+      >
+        <input
+          type="hidden"
+          formControlName="id"
+        >
+        <div class="field">
+          <label
+            for="name"
+            class="mb-2"
+          >Marca<span class="ml-1 text-red-300">*</span></label>
+          <input
+            type="text"
+            pInputText
+            id="name"
+            formControlName="name"
+            autofocus
+            required
+          />
+          <ng-container *ngIf="form.get('name') as nameField">
+            <small
+              class="text-red-500"
+              *ngIf="nameField.invalid && nameField.dirty"
+            >Requerido</small>
+          </ng-container>
+        </div>
+        <div class="field">
+          <label for="model">Modelo<span
+              class="ml-1 text-red-300">*</span></label>
+          <input
+            type="text"
+            pInputText
+            id="model"
+            formControlName="model"
+            required
+          />
+          <ng-container *ngIf="form.get('model') as modelField">
+            <small
+              class="text-red-500"
+              *ngIf="modelField.invalid && modelField.dirty"
+            >Requerido</small>
+          </ng-container>
+        </div>
+        <div class="field">
+          <label for="identification">Conexión<span
+              class="ml-1 text-red-300">*</span>
+          </label>
+          <p-dropdown
+            id="connection_id"
+            [options]="dropdownConnectionOptions"
+            formControlName="connection_id"
+            optionValue="id"
+            optionLabel="name"
+            appendTo="body"
+            [required]="true"
+            [autoDisplayFirst]="false"
+          ></p-dropdown>
+          <ng-container *ngIf="form.get('connection_id') as connectionIdField">
+            <small
+              class="text-red-500"
+              *ngIf="connectionIdField.invalid && connectionIdField.dirty"
+            >Requerido</small>
+          </ng-container>
+        </div>
+      </form> -->
+    </ng-template>
+  </app-abm>
+</ng-container>

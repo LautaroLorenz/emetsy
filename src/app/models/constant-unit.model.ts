@@ -1,17 +1,17 @@
 import { AbmColum } from "./abm.model";
 import { DbTableContext } from "./database.model";
 
-export interface Connection {
+export interface ConstantUnit {
 	id: number;
 	name: string;
 };
 
-export const ConnectionDbTableContext: DbTableContext = {
-	tableName: 'connections',
+export const ConstantUnitDbTableContext: DbTableContext = {
+	tableName: 'constant_unit',
 	foreignTables: []
 };
 
-export const ConnectionTableColumns: AbmColum[] = [
+export const ConstantUnitTableColumns: AbmColum[] = [
 	{
 		field: 'name',
 		header: 'Nombre',

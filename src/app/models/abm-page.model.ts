@@ -20,18 +20,21 @@ export class AbmPage<T> {
     if (Object.keys(relations).length === 0) {
       return rows;
     }
-    if(foreignTables.length === 0) {
+    if (foreignTables.length === 0) {
       return rows;
     }
-    return rows.flatMap((row: { [key: string]: any }) => foreignTables.map(ft => {
-      if(row[ft.foreignKey] !== undefined) {
-        if(row['foreign'] === undefined) {
-          row['foreign'] = {};
+    return rows.map((row: { [key: string]: any }) => {
+      foreignTables.forEach(ft => {
+        if (row[ft.foreignKey] !== undefined) {
+          if (row['foreign'] === undefined) {
+            row['foreign'] = {};
+          }
+          row['foreign'][ft.properyName] = relations[ft.tableName].find(value => value.id === row[ft.foreignKey]);
         }
-        row['foreign'][ft.properyName] = relations[ft.tableName].find(value => value.id === row[ft.foreignKey]);
-      }
+      });
+
       return row;
-    })) as T[];
+    }) as T[];
   }
 
   protected requestTableDataFromDatabase(tableName: string, relations: TableName[] = []): void {
@@ -41,7 +44,7 @@ export class AbmPage<T> {
   protected refreshDataWhenDatabaseReply$(tableName: string): Observable<T[]> {
     return this._dbService.getTableReply$(tableName).pipe(
       tap(({ relations }) => this._setRelations(relations)),
-      map(({ rows }) => (this._mergeRelationsIntoRows(rows, this._relations, this._dbTableConnection.foreignTables)))
+      map(({ rows }) => (this._mergeRelationsIntoRows(rows, this._relations, this._dbTableConnection.foreignTables))),
     );
   }
 }
