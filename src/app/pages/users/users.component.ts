@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { PrimeIcons } from 'primeng/api';
-import { User, UserTableColums, UserTableName } from 'src/app/models';
+import { AbmPage, User, UserTableColumns, UserDbTableContext } from 'src/app/models';
 import { MessagesService } from 'src/app/services/messages.service';
 import { DatabaseService } from 'src/app/services/database.service';
 import { filter, first, Observable, tap } from 'rxjs';
@@ -10,25 +10,20 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
   templateUrl: './users.component.html',
   styleUrls: ['./users.component.scss'],
 })
-export class UsersComponent implements OnInit {
+export class UsersComponent extends AbmPage<User> implements OnInit {
 
   readonly title: string = 'Administración de usuarios';
   readonly haderIcon = PrimeIcons.USERS;
-  readonly cols = UserTableColums;
+  readonly cols = UserTableColumns;
   readonly form: FormGroup;
-  users$: Observable<User[]> = new Observable<User[]>();
-
-  private readonly refreshDataWhenDatabaseReply = (tableName: string) => {
-    this.users$ = this.dbService.getTableReply$(tableName);
-  }
-  private readonly requestTableDataFromDatabase = (tableName: string) => {
-    this.dbService.getTable(tableName);
-  }
+  readonly users$: Observable<User[]>;
 
   constructor(
     private readonly dbService: DatabaseService<User>,
     private readonly messagesService: MessagesService,
   ) {
+    super(dbService, UserDbTableContext);
+    this.users$ = this.refreshDataWhenDatabaseReply$(UserDbTableContext.tableName);
     this.form = new FormGroup({
       id: new FormControl(),
       name: new FormControl(),
@@ -38,16 +33,15 @@ export class UsersComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.refreshDataWhenDatabaseReply(UserTableName);
-    this.requestTableDataFromDatabase(UserTableName);
+    this.requestTableDataFromDatabase(UserDbTableContext.tableName);
   }
 
   private createUser(user: User) {
-    this.dbService.addElementToTable$(UserTableName, user)
+    this.dbService.addElementToTable$(UserDbTableContext.tableName, user)
       .pipe(
         first(),
         tap(() => {
-          this.requestTableDataFromDatabase(UserTableName);
+          this.requestTableDataFromDatabase(UserDbTableContext.tableName);
           this.messagesService.success('Agregado correctamente');
         }),
       ).subscribe({
@@ -56,11 +50,11 @@ export class UsersComponent implements OnInit {
   }
 
   private editUser(user: User) {
-    this.dbService.editElementFromTable$(UserTableName, user)
+    this.dbService.editElementFromTable$(UserDbTableContext.tableName, user)
       .pipe(
         first(),
         tap(() => {
-          this.requestTableDataFromDatabase(UserTableName);
+          this.requestTableDataFromDatabase(UserDbTableContext.tableName);
           this.messagesService.success('Editado correctamente');
         }),
       ).subscribe({
@@ -69,12 +63,12 @@ export class UsersComponent implements OnInit {
   }
 
   deleteUsers(ids: string[] = []) {
-    this.dbService.deleteTableElements$(UserTableName, ids)
+    this.dbService.deleteTableElements$(UserDbTableContext.tableName, ids)
       .pipe(
         first(),
         filter((numberOfElementsDeleted) => numberOfElementsDeleted === ids.length),
         tap(() => {
-          this.requestTableDataFromDatabase(UserTableName);
+          this.requestTableDataFromDatabase(UserDbTableContext.tableName);
           this.messagesService.success('Eliminado correctamente');
         })
       ).subscribe({

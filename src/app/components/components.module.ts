@@ -21,6 +21,8 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ConfirmDialogComponent } from './confirm-dialog/confirm-dialog.component';
 import { ToastModule } from 'primeng/toast';
 import { DialogModule } from 'primeng/dialog';
+import { PipesModule } from '../pipes/pipes.module';
+import { DropdownModule } from 'primeng/dropdown';
 
 const PrimeNgModules = [
   MenubarModule,
@@ -34,7 +36,8 @@ const PrimeNgModules = [
   DividerModule,
   ConfirmDialogModule,
   ToastModule,
-  DialogModule
+  DialogModule,
+  DropdownModule
 ];
 
 const PrimeNgServices = [
@@ -50,7 +53,7 @@ const EmetsyComponents = [
 
 @NgModule({
   declarations: [EmetsyComponents],
-  imports: [CommonModule, PrimeNgModules],
+  imports: [CommonModule, PrimeNgModules, PipesModule],
   exports: [EmetsyComponents, PrimeNgModules],
   providers: [PrimeNgServices]
 })

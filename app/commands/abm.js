@@ -2,14 +2,15 @@ const { ipcMain } = require('electron');
 
 let knex;
 
-const sendGetTableReply = async (reply, tableNameReply) => {
-  const queryBuilder = knex(tableNameReply);
+ipcMain.on('get-table', async ({ reply }, dbTableConnection) => {
+  const { tableName, relations } = dbTableConnection;
+  const queryBuilder = knex(tableName);
+  const relationsMap = {};  
   const rows = await queryBuilder;
-  reply('get-table-reply', { tableNameReply, rows });
-};
-
-ipcMain.on('get-table', ({ reply }, { tableName }) => {
-  sendGetTableReply(reply, tableName);
+  for await (const relation of relations) {
+    relationsMap[relation] = await knex(relation);
+  }
+  reply('get-table-reply', { tableNameReply: tableName, rows, relations: relationsMap });
 });
 
 ipcMain.handle('delete-from-table', async (_, { tableName, ids }) => {
@@ -29,5 +30,5 @@ ipcMain.handle('edit-from-table', async (_, { tableName, element }) => {
 });
 
 module.exports = {
-    setKnex: (args) => knex = args,
+  setKnex: (args) => knex = args,
 }

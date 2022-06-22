@@ -1,4 +1,5 @@
 import { AbmColum } from "./abm.model";
+import { DbTableContext } from "./database.model";
 
 export interface User {
 	id: number;
@@ -7,7 +8,12 @@ export interface User {
 	identification: string;
 }
 
-export const UserTableColums: AbmColum[] = [
+export const UserDbTableContext: DbTableContext = {
+	tableName: 'users',
+	foreignTables: [],
+};
+
+export const UserTableColumns: AbmColum[] = [
 	{
 		field: 'name',
 		header: 'Nombre'
@@ -21,5 +27,3 @@ export const UserTableColums: AbmColum[] = [
 		header: 'Identificación'
 	}
 ];
-
-export const UserTableName = 'users';
