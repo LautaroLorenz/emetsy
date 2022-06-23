@@ -12,8 +12,8 @@
     table.integer('activeConstantValue').notNullable();
     table.integer('reactiveConstantValue').notNullable();
     table.integer('brand_id').notNullable().references('id').inTable('brands').onDelete('RESTRICT');
-    table.integer('activeConstantUnit_id').notNullable().references('id').inTable('constant_unit').onDelete('CASCADE');
-    table.integer('reactiveConstantUnit_id').notNullable().references('id').inTable('constant_unit').onDelete('CASCADE');
+    table.integer('activeConstantUnit_id').notNullable().references('id').inTable('active_constant_unit').onDelete('CASCADE');
+    table.integer('reactiveConstantUnit_id').notNullable().references('id').inTable('reactive_constant_unit').onDelete('CASCADE');
   });
 };
 

@@ -3,7 +3,8 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { PrimeIcons } from 'primeng/api';
 import { filter, first, Observable, ReplaySubject, takeUntil, tap } from 'rxjs';
 import { AbmPage, Brand, BrandDbTableContext } from 'src/app/models';
-import { ConstantUnit, ConstantUnitDbTableContext } from 'src/app/models/constant-unit.model';
+import { ActiveConstantUnit, ActiveConstantUnitDbTableContext } from 'src/app/models/active-constant-unit.model';
+import { ReactiveConstantUnit, ReactiveConstantUnitDbTableContext } from 'src/app/models/reactive-constant-unit.model';
 import { Meter, MeterDbTableContext, MeterTableColumns } from 'src/app/models/meter.model';
 import { DatabaseService } from 'src/app/services/database.service';
 import { MessagesService } from 'src/app/services/messages.service';
@@ -20,11 +21,15 @@ export class MetersComponent extends AbmPage<Meter> implements OnInit, OnDestroy
   readonly form: FormGroup;
   readonly meters$: Observable<Meter[]>;
 
-  dropdownConstantUnitOptions: ConstantUnit[] = [];
+  dropdownActiveConstantUnitOptions: ActiveConstantUnit[] = [];
+  dropdownReactiveConstantUnitOptions: ReactiveConstantUnit[] = [];
   dropdownBrandOptions: Brand[] = [];
 
   private readonly updateDropdownOptions = (): void => {
-    this.dropdownConstantUnitOptions = this._relations[ConstantUnitDbTableContext.tableName].sort(
+    this.dropdownActiveConstantUnitOptions = this._relations[ActiveConstantUnitDbTableContext.tableName].sort(
+      (a, b) => a.name.localeCompare(b.name)
+    );
+    this.dropdownReactiveConstantUnitOptions = this._relations[ReactiveConstantUnitDbTableContext.tableName].sort(
       (a, b) => a.name.localeCompare(b.name)
     );
     this.dropdownBrandOptions = this._relations[BrandDbTableContext.tableName].map(

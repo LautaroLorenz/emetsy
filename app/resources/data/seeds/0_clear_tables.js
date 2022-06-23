@@ -6,7 +6,8 @@ exports.seed = async function (knex) {
   // Deletes ALL existing entries in foreign keys order
   await knex('meters').del();
   await knex('brands').del();
-  await knex('constant_unit').del();
-  await knex('connections').del();
   await knex('users').del();
+  await knex('reactive_constant_unit').del();
+  await knex('active_constant_unit').del();
+  await knex('connections').del();
 };

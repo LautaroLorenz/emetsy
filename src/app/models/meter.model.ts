@@ -1,7 +1,8 @@
 import { AbmColum } from "./abm.model";
 import { DbForeignKey, DbTableContext } from "./database.model";
 import { Brand, BrandDbTableContext } from "./brand.model";
-import { ConstantUnit, ConstantUnitDbTableContext } from "./constant-unit.model";
+import { ActiveConstantUnit, ActiveConstantUnitDbTableContext } from "./active-constant-unit.model";
+import { ReactiveConstantUnit, ReactiveConstantUnitDbTableContext } from "./reactive-constant-unit.model";
 
 export interface Meter extends DbForeignKey {
 	id: number;
@@ -15,8 +16,8 @@ export interface Meter extends DbForeignKey {
 	brand_id: number;
 	foreign: {
 		brand: Brand,
-		activeConstantUnit: ConstantUnit,
-		reactiveConstantUnit: ConstantUnit,
+		activeConstantUnit: ActiveConstantUnit,
+		reactiveConstantUnit: ReactiveConstantUnit,
 	}
 }
 
@@ -29,12 +30,12 @@ export const MeterDbTableContext: DbTableContext = {
 			properyName: 'brand',
 		},
 		{
-			tableName: ConstantUnitDbTableContext.tableName,
+			tableName: ActiveConstantUnitDbTableContext.tableName,
 			foreignKey: 'activeConstantUnit_id',
 			properyName: 'activeConstantUnit',
 		},
 		{
-			tableName: ConstantUnitDbTableContext.tableName,
+			tableName: ReactiveConstantUnitDbTableContext.tableName,
 			foreignKey: 'reactiveConstantUnit_id',
 			properyName: 'reactiveConstantUnit',
 		},
@@ -82,7 +83,7 @@ export const MeterTableColumns: AbmColum[] = [
 	},
 	{
 		field: 'foreign.activeConstantUnit.name',
-		header: '[Activa]',
+		header: '',
 		sortable: false,
 		headerTooltip: 'Unidad energía activa'
 	},
@@ -95,7 +96,7 @@ export const MeterTableColumns: AbmColum[] = [
 	},
 	{
 		field: 'foreign.reactiveConstantUnit.name',
-		header: '[Reactiva]',
+		header: '',
 		sortable: false,
 		headerTooltip: 'Unidad energía reactiva'
 	},
