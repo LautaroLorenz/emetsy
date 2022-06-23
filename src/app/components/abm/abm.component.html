@@ -57,6 +57,7 @@
         [pSortableColumnDisabled]="!col.sortable"
         [pTooltip]="col.headerTooltip"
         tooltipPosition="top"
+        [colSpan]="col.colSpan"
       >
         {{col.header}}
         <p-sortIcon
@@ -79,12 +80,16 @@
       <td>
         <p-tableCheckbox [value]="rowData"></p-tableCheckbox>
       </td>
-      <td
-        *ngFor="let col of columns"
-        class="{{col.styleClass}}"
-      >
-        {{rowData | dotStringAsObject: col.field}}
-      </td>
+      <ng-container *ngFor="let col of columns">
+        <td class="{{col.styleClass}}">
+          {{rowData | dotStringAsObject: col.field}}
+        </td>
+        <ng-container *ngFor="let field of col.colSpanFields">
+          <td>
+            {{rowData | dotStringAsObject: field}}
+          </td>
+        </ng-container>
+      </ng-container>
       <td class="p-2 text-center">
         <ng-container *ngIf="hasDetailForm">
           <button

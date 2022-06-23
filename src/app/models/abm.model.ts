@@ -4,4 +4,6 @@ export interface AbmColum {
   sortable: boolean;
   styleClass?: string;
   headerTooltip?: string;
+  colSpan?: number;
+  colSpanFields?: string[];
 }

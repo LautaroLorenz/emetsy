@@ -18,15 +18,18 @@ export const UserTableColumns: AbmColum[] = [
 		field: 'name',
 		header: 'Nombre',
 		sortable: true,
+		styleClass: 'w-3'
 	},
 	{
 		field: 'surname',
 		header: 'Apellido',
 		sortable: true,
+		styleClass: 'w-3'
 	},
 	{
 		field: 'identification',
 		header: 'Identificación',
 		sortable: true,
+		styleClass: 'w-3'
 	}
 ];

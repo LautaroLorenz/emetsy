@@ -76,28 +76,18 @@ export const MeterTableColumns: AbmColum[] = [
 	},
 	{
 		field: 'activeConstantValue',
-		header: 'Cte Activa',
+		header: 'Cte. Energía Activa',
 		sortable: false,
 		styleClass: 'text-center',
-		headerTooltip: 'Constante energía activa'
-	},
-	{
-		field: 'foreign.activeConstantUnit.name',
-		header: '',
-		sortable: false,
-		headerTooltip: 'Unidad energía activa'
+		colSpan: 2,
+		colSpanFields: ['foreign.activeConstantUnit.name']
 	},
 	{
 		field: 'reactiveConstantValue',
-		header: 'Cte Reactiva',
+		header: 'Cte. Energía Reactiva',
 		sortable: false,
 		styleClass: 'text-center',
-		headerTooltip: 'Constante energía reactiva'
-	},
-	{
-		field: 'foreign.reactiveConstantUnit.name',
-		header: '',
-		sortable: false,
-		headerTooltip: 'Unidad energía reactiva'
+		colSpan: 2,
+		colSpanFields: ['foreign.reactiveConstantUnit.name']
 	},
 ];
