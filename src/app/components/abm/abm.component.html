@@ -82,11 +82,12 @@
       </td>
       <ng-container *ngFor="let col of columns">
         <td class="{{col.styleClass}}">
-          {{rowData | dotStringAsObject: col.field}}
+          {{col.prefix}}{{rowData | dotStringAsObject: col.field}}{{col.suffix}}
         </td>
-        <ng-container *ngFor="let field of col.colSpanFields">
-          <td>
-            {{rowData | dotStringAsObject: field}}
+        <ng-container *ngFor="let colSpanColumn of col.colSpanColumns">
+          <td class="{{colSpanColumn.styleClass}}">
+            {{colSpanColumn.prefix}}{{rowData | dotStringAsObject:
+            colSpanColumn.field}}{{colSpanColumn.suffix}}
           </td>
         </ng-container>
       </ng-container>

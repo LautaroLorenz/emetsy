@@ -57,37 +57,51 @@ export const MeterTableColumns: AbmColum[] = [
 		field: 'maximumCurrent',
 		header: 'Imax [A]',
 		sortable: false,
-		styleClass: 'text-center',
+		styleClass: 'text-right',
 		headerTooltip: 'Corriente máxima'
 	},
 	{
 		field: 'ratedCurrent',
 		header: 'In [A]',
 		sortable: false,
-		styleClass: 'text-center',
-		headerTooltip: 'Corriente nominal'
+		styleClass: 'text-right',
+		headerTooltip: 'Corriente nominal',
 	},
 	{
 		field: 'ratedVoltage',
 		header: 'Un [V]',
 		sortable: false,
-		styleClass: 'text-center',
-		headerTooltip: 'Tensión nominal'
+		styleClass: 'text-right',
+		headerTooltip: 'Tensión nominal',
 	},
 	{
 		field: 'activeConstantValue',
-		header: 'Cte. Energía Activa',
+		header: 'Cte. energía activa',
 		sortable: false,
-		styleClass: 'text-center',
+		styleClass: 'text-right pr-1 border-right-none',
 		colSpan: 2,
-		colSpanFields: ['foreign.activeConstantUnit.name']
+		colSpanColumns: [
+			{
+				field: 'foreign.activeConstantUnit.name',
+				styleClass: 'pl-1 text-left border-left-none',
+				prefix: '[',
+				suffix: ']',
+			},
+		],
 	},
 	{
 		field: 'reactiveConstantValue',
-		header: 'Cte. Energía Reactiva',
+		header: 'Cte. energía reactiva',
 		sortable: false,
-		styleClass: 'text-center',
+		styleClass: 'text-right pr-1 border-right-none',
 		colSpan: 2,
-		colSpanFields: ['foreign.reactiveConstantUnit.name']
+		colSpanColumns: [
+			{
+				field: 'foreign.reactiveConstantUnit.name',
+				styleClass: 'pl-1 text-left border-left-none',
+				prefix: '[',
+				suffix: ']',
+			},
+		],
 	},
 ];
