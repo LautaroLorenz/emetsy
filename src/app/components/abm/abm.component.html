@@ -37,7 +37,7 @@
     let-columns
   >
     <tr>
-      <th class="w-3rem p-0">
+      <th class="w-3rem p-0 m-0 text-center">
         <p-menu
           #menu
           appendTo="body"
@@ -47,7 +47,7 @@
         <button
           pButton
           icon="pi pi-list"
-          class="p-button-text"
+          class="p-button-text w-full"
           (click)="menu.toggle($event)"
         ></button>
       </th>
@@ -77,7 +77,7 @@
     let-columns="columns"
   >
     <tr>
-      <td>
+      <td class="text-center">
         <p-tableCheckbox [value]="rowData"></p-tableCheckbox>
       </td>
       <ng-container *ngFor="let col of columns">

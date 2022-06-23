@@ -127,7 +127,7 @@ export class MetersComponent extends AbmPage<Meter> implements OnInit, OnDestroy
           this.messagesService.success('Eliminado correctamente');
         })
       ).subscribe({
-        error: () => this.messagesService.error('No se pudo eliminar, asegurese que este elemento no está siendo utilizado')
+        error: () => this.messagesService.error('Verifique que ningun elemento este en uso antes de eliminar')
       });
   }
 

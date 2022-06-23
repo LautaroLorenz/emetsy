@@ -72,7 +72,7 @@ export class UsersComponent extends AbmPage<User> implements OnInit {
           this.messagesService.success('Eliminado correctamente');
         })
       ).subscribe({
-        error: () => this.messagesService.error('No se pudo eliminar, asegurese que este elemento no está siendo utilizado')
+        error: () => this.messagesService.error('Verifique que ningun elemento este en uso antes de eliminar')
       });
   }
 
