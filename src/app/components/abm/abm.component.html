@@ -22,7 +22,7 @@
     <p-button
       label="Nuevo"
       icon="pi pi-plus"
-      styleClass="ml-2"
+      styleClass="ml-2 p-button-outlined"
       (click)="createElement()"
     ></p-button>
   </div>
@@ -50,7 +50,10 @@
         [pSortableColumnDisabled]="!col.sortable"
       >
         {{col.header}}
-        <p-sortIcon *ngIf="col.sortable" [field]="col.field"></p-sortIcon>
+        <p-sortIcon
+          *ngIf="col.sortable"
+          [field]="col.field"
+        ></p-sortIcon>
       </th>
       <th aria-label="Acciones"></th>
     </tr>
@@ -64,7 +67,10 @@
       <td>
         <p-tableCheckbox [value]="rowData"></p-tableCheckbox>
       </td>
-      <td *ngFor="let col of columns" class="{{col.styleClass}}">
+      <td
+        *ngFor="let col of columns"
+        class="{{col.styleClass}}"
+      >
         {{rowData | dotStringAsObject: col.field}}
       </td>
       <td class="w-8rem text-center">
@@ -72,14 +78,14 @@
           pButton
           pRipple
           icon="pi pi-pencil"
-          class="p-button-rounded p-button-text p-button-info mr-2"
+          class="p-button-outlined p-button-rounded p-button-text p-button-primary mr-2"
           (click)="editElement(rowData)"
         ></button>
         <button
           pButton
           pRipple
           icon="pi pi-trash"
-          class="p-button-rounded p-button-text p-button-danger"
+          class="p-button-outlined p-button-rounded p-button-text p-button-danger"
           (click)="deleteElement(rowData)"
         ></button>
       </td>
@@ -95,9 +101,7 @@
   styleClass="p-fluid"
 >
   <ng-template pTemplate="content">
-    <ng-container
-      *ngTemplateOutlet="abmDetailForm"
-    ></ng-container>
+    <ng-container *ngTemplateOutlet="abmDetailForm"></ng-container>
   </ng-template>
 
   <ng-template pTemplate="footer">

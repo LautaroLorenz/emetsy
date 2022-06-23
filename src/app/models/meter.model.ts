@@ -7,15 +7,15 @@ export interface Meter extends DbForeignKey {
 	id: number;
 	current: number;
 	voltage: number;
-  activeConstantValue: number;
-  activeConstantUnit_id: number;
-  reactveConstantValue: number;
-  reactveConstantUnit_id: number;
+	activeConstantValue: number;
+	activeConstantUnit_id: number;
+	reactveConstantValue: number;
+	reactveConstantUnit_id: number;
 	brand_id: number;
 	foreign: {
 		brand: Brand,
-    activeConstantUnit: ConstantUnit,
-    reactiveConstantUnit: ConstantUnit,
+		activeConstantUnit: ConstantUnit,
+		reactiveConstantUnit: ConstantUnit,
 	}
 }
 
@@ -27,12 +27,12 @@ export const MeterDbTableContext: DbTableContext = {
 			foreignKey: 'brand_id',
 			properyName: 'brand',
 		},
-    {
+		{
 			tableName: ConstantUnitDbTableContext.tableName,
 			foreignKey: 'activeConstantUnit_id',
 			properyName: 'activeConstantUnit',
 		},
-    {
+		{
 			tableName: ConstantUnitDbTableContext.tableName,
 			foreignKey: 'reactiveConstantUnit_id',
 			properyName: 'reactiveConstantUnit',
@@ -53,13 +53,13 @@ export const MeterTableColumns: AbmColum[] = [
 	},
 	{
 		field: 'current',
-		header: 'Corriente (A)',
+		header: 'Corriente [A]',
 		sortable: false,
 		styleClass: 'text-center',
 	},
 	{
 		field: 'voltage',
-		header: 'Tensión (V)',
+		header: 'Tensión [V]',
 		sortable: false,
 		styleClass: 'text-center',
 	},
