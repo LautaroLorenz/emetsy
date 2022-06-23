@@ -2,9 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { PrimeIcons } from 'primeng/api';
 import { filter, first, Observable, ReplaySubject, takeUntil, tap } from 'rxjs';
-import { AbmPage, Brand, BrandDbTableContext } from 'src/app/models';
-import { ConstantUnit, ConstantUnitDbTableContext } from 'src/app/models/constant-unit.model';
-import { Meter, MeterDbTableContext, MeterTableColumns } from 'src/app/models/meter.model';
+import { AbmPage, ActiveConstantUnit, ActiveConstantUnitDbTableContext, Brand, BrandDbTableContext, Meter, MeterDbTableContext, MeterTableColumns, ReactiveConstantUnit, ReactiveConstantUnitDbTableContext } from 'src/app/models';
 import { DatabaseService } from 'src/app/services/database.service';
 import { MessagesService } from 'src/app/services/messages.service';
 
@@ -20,11 +18,15 @@ export class MetersComponent extends AbmPage<Meter> implements OnInit, OnDestroy
   readonly form: FormGroup;
   readonly meters$: Observable<Meter[]>;
 
-  dropdownConstantUnitOptions: ConstantUnit[] = [];
+  dropdownActiveConstantUnitOptions: ActiveConstantUnit[] = [];
+  dropdownReactiveConstantUnitOptions: ReactiveConstantUnit[] = [];
   dropdownBrandOptions: Brand[] = [];
 
   private readonly updateDropdownOptions = (): void => {
-    this.dropdownConstantUnitOptions = this._relations[ConstantUnitDbTableContext.tableName].sort(
+    this.dropdownActiveConstantUnitOptions = this._relations[ActiveConstantUnitDbTableContext.tableName].sort(
+      (a, b) => a.name.localeCompare(b.name)
+    );
+    this.dropdownReactiveConstantUnitOptions = this._relations[ReactiveConstantUnitDbTableContext.tableName].sort(
       (a, b) => a.name.localeCompare(b.name)
     );
     this.dropdownBrandOptions = this._relations[BrandDbTableContext.tableName].map(
@@ -49,8 +51,9 @@ export class MetersComponent extends AbmPage<Meter> implements OnInit, OnDestroy
     );
     this.form = new FormGroup({
       id: new FormControl(),
-      current: new FormControl(undefined, Validators.required),
-      voltage: new FormControl(undefined, Validators.required),
+      maximumCurrent: new FormControl(undefined, Validators.required),
+      ratedCurrent: new FormControl(undefined, Validators.required),
+      ratedVoltage: new FormControl(undefined, Validators.required),
       activeConstantValue: new FormControl(undefined, Validators.required),
       activeConstantUnit_id: new FormControl(undefined, Validators.required),
       reactiveConstantValue: new FormControl(undefined, Validators.required),
@@ -124,7 +127,7 @@ export class MetersComponent extends AbmPage<Meter> implements OnInit, OnDestroy
           this.messagesService.success('Eliminado correctamente');
         })
       ).subscribe({
-        error: () => this.messagesService.error('No se pudo borrar')
+        error: () => this.messagesService.error('Verifique que ningun elemento este en uso antes de eliminar')
       });
   }
 

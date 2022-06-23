@@ -26,17 +26,20 @@ export const BrandDbTableContext: DbTableContext = {
 export const BrandTableColumns: AbmColum[] = [
 	{
 		field: 'name',
-		header: 'Nombre',
+		header: 'Marca',
 		sortable: true,
+		styleClass: 'w-3'
 	},
 	{
 		field: 'model',
 		header: 'Modelo',
 		sortable: true,
+		styleClass: 'w-3'
 	},
 	{
 		field: 'foreign.connection.name',
 		header: 'Conexión',
 		sortable: true,
+		styleClass: 'w-3'
 	}
 ];

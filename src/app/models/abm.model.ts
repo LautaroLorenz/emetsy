@@ -1,6 +1,14 @@
-export interface AbmColum {
+export interface BasicColumn {
   field: string;
+  prefix?: string;
+  suffix?: string;
+  styleClass?: string;
+}
+
+export interface AbmColum extends BasicColumn {
   header: string;
   sortable: boolean;
-  styleClass?: string;
+  headerTooltip?: string;
+  colSpan?: number;
+  colSpanColumns?: BasicColumn[];
 }

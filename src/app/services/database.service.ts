@@ -1,5 +1,5 @@
 import { Injectable, NgZone } from "@angular/core";
-import { filter, from, map, Observable, Subject } from "rxjs";
+import { catchError, filter, from, map, Observable, Subject, throwError } from "rxjs";
 import { RequestTableResponse, TableName } from "../models";
 import { IpcService } from "./ipc.service";
 
@@ -50,7 +50,11 @@ export class DatabaseService<T> {
   }
 
   deleteTableElements$(tableName: string, ids: any[]): Observable<number> {
-    return from(this._deleteRowFromDatabaseTable(tableName, ids));
+    return from(this._deleteRowFromDatabaseTable(tableName, ids)).pipe(
+      catchError((e) => {
+        console.error(e.message); // TODO: almacenar en un log
+        return throwError(() => new Error(e));
+    }));
   }
 
   addElementToTable$(tableName: string, element: T): Observable<number> {

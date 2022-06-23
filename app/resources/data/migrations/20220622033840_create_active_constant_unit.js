@@ -4,8 +4,8 @@
  */
  exports.up = function(knex) {
   return knex.schema
-  .createTable('constant_unit', (table) => {
-    table.increments('id').primary();
+  .createTable('active_constant_unit', (table) => {
+    table.increments('id').notNullable().primary();
     table.string('name').notNullable();
   });
 };
@@ -16,5 +16,5 @@
  */
 exports.down = function(knex) {
   return knex.schema
-    .dropTable("constant_unit");
+    .dropTable("active_constant_unit");
 };

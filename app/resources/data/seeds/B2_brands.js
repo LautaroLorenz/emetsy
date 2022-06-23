@@ -3,8 +3,6 @@
  * @returns { Promise<void> } 
  */
 exports.seed = async function (knex) {
-  // Deletes ALL existing entries
-  await knex('brands').del()
   await knex('brands').insert([
     { id: 1, name: 'Landis', model: 'Gyr E330', connection_id: 1 },
     { id: 2, name: 'ABB', model: 'T8S1', connection_id: 1 },
