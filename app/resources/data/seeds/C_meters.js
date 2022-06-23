@@ -3,8 +3,6 @@
  * @returns { Promise<void> } 
  */
 exports.seed = async function (knex) {
-  // Deletes ALL existing entries
-  await knex('meters').del()
   await knex('meters').insert([
     { id: 1, current: 10, voltage: 50, activeConstantValue: 5, reactiveConstantValue: 53, brand_id: 4, activeConstantUnit_id: 1, reactiveConstantUnit_id: 1 },
     { id: 2, current: 11, voltage: 60, activeConstantValue: 1, reactiveConstantValue: 21, brand_id: 1, activeConstantUnit_id: 1, reactiveConstantUnit_id: 1 },

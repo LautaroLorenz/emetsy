@@ -12,10 +12,7 @@ const schema = {
  * @returns { Promise<void> } 
  */
 exports.seed = async function(knex) {
-  // Deletes ALL existing entries
-  await knex('users').del();
-
-  // generate in batches so as not to overload the query
+    // generate in batches so as not to overload the query
   for(let i = 0; i < 100; i++) {
     // generate faker rows data based on {{schema}}
     const fakeData = fakerBySchema(schema, 99, 100);
