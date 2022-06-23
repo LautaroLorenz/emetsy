@@ -28,6 +28,8 @@ export class AbmComponent implements OnInit, AfterContentInit, OnChanges {
   readonly checkboxColumnMenuItems: MenuItem[] = [];
   readonly paginator = true;
   readonly rows = 5;
+
+  hasDetailForm: boolean = false;
   selected: any[] = [];
   detailDialogVisible = false;
 
@@ -69,9 +71,7 @@ export class AbmComponent implements OnInit, AfterContentInit, OnChanges {
   ngOnInit() { }
 
   ngAfterContentInit() {
-    if (!this.abmDetailForm) {
-      throw new Error("@Input abmDetailForm is required");
-    }
+    this.hasDetailForm = !!this.abmDetailForm;
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -123,9 +123,6 @@ export class AbmComponent implements OnInit, AfterContentInit, OnChanges {
       acceptButtonStyleClass: "p-button-danger",
       accept: () => {
         this.deleteEvent.emit(this.selected.map(s => s.id));
-      },
-      reject: () => {
-        this.messagesService.warn('Borrado cancelado');
       }
     });
   }
@@ -139,9 +136,6 @@ export class AbmComponent implements OnInit, AfterContentInit, OnChanges {
       acceptButtonStyleClass: "p-button-danger",
       accept: () => {
         this.deleteEvent.emit([element.id]);
-      },
-      reject: () => {
-        this.messagesService.warn('Borrado cancelado');
       }
     });
   }
