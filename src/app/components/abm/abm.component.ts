@@ -42,12 +42,6 @@ export class AbmComponent implements OnInit, AfterContentInit, OnChanges {
     this.checkboxColumnMenuItems = [{
       label: 'Seleccionados',
       items: [
-        // TODO: necesario cuando se pueda exportar la tabla.
-        // {
-        //   label: 'Seleccionar todos',
-        //   icon: PrimeIcons.CHECK_SQUARE,
-        //   command: () => this.selectAll()
-        // },
         {
           label: 'Seleccionar página',
           icon: PrimeIcons.CHECK_SQUARE,
