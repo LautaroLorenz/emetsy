@@ -6,10 +6,11 @@
   return knex.schema
   .createTable('meters', (table) => {
     table.increments('id').primary();
-    table.string('current').notNullable();
-    table.string('voltage').notNullable();
-    table.string('activeConstantValue').notNullable();
-    table.string('reactiveConstantValue').notNullable();
+    table.integer('maximumCurrent').notNullable();
+    table.integer('ratedCurrent').notNullable();
+    table.integer('ratedVoltage').notNullable();
+    table.integer('activeConstantValue').notNullable();
+    table.integer('reactiveConstantValue').notNullable();
     table.integer('brand_id').notNullable().references('id').inTable('brands').onDelete('RESTRICT');
     table.integer('activeConstantUnit_id').notNullable().references('id').inTable('constant_unit').onDelete('CASCADE');
     table.integer('reactiveConstantUnit_id').notNullable().references('id').inTable('constant_unit').onDelete('CASCADE');

@@ -3,4 +3,5 @@ export interface AbmColum {
   header: string;
   sortable: boolean;
   styleClass?: string;
+  headerTooltip?: string;
 }

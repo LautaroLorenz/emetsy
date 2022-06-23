@@ -49,8 +49,9 @@ export class MetersComponent extends AbmPage<Meter> implements OnInit, OnDestroy
     );
     this.form = new FormGroup({
       id: new FormControl(),
-      current: new FormControl(undefined, Validators.required),
-      voltage: new FormControl(undefined, Validators.required),
+      maximumCurrent: new FormControl(undefined, Validators.required),
+      ratedCurrent: new FormControl(undefined, Validators.required),
+      ratedVoltage: new FormControl(undefined, Validators.required),
       activeConstantValue: new FormControl(undefined, Validators.required),
       activeConstantUnit_id: new FormControl(undefined, Validators.required),
       reactiveConstantValue: new FormControl(undefined, Validators.required),

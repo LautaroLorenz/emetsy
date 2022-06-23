@@ -55,6 +55,8 @@
         *ngFor="let col of columns"
         [pSortableColumn]="col.field"
         [pSortableColumnDisabled]="!col.sortable"
+        [pTooltip]="col.headerTooltip"
+        tooltipPosition="top"
       >
         {{col.header}}
         <p-sortIcon
@@ -108,7 +110,7 @@
 <ng-container *ngIf="hasDetailForm">
   <p-dialog
     [(visible)]="detailDialogVisible"
-    [style]="{width: '450px'}"
+    [style]="{minWidth: '450px'}"
     header="Detalle"
     [modal]="true"
     styleClass="p-fluid"

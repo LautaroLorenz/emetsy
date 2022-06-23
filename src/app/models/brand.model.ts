@@ -26,7 +26,7 @@ export const BrandDbTableContext: DbTableContext = {
 export const BrandTableColumns: AbmColum[] = [
 	{
 		field: 'name',
-		header: 'Nombre',
+		header: 'Marca',
 		sortable: true,
 	},
 	{

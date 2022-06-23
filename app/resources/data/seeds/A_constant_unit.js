@@ -5,7 +5,7 @@
  */
  exports.seed = async function (knex) {
   await knex('constant_unit').insert([
-    { id: 1, name: 'Imp/KWhr' }, 
-    { id: 2, name: 'Whr/Imp' },
+    { id: 1, name: 'imp/Kvarh' }, 
+    { id: 2, name: 'varh/imp' },
   ]);
 };

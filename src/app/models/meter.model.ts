@@ -5,8 +5,9 @@ import { ConstantUnit, ConstantUnitDbTableContext } from "./constant-unit.model"
 
 export interface Meter extends DbForeignKey {
 	id: number;
-	current: number;
-	voltage: number;
+	maximumCurrent: number;
+	ratedCurrent: number;
+	ratedVoltage: number;
 	activeConstantValue: number;
 	activeConstantUnit_id: number;
 	reactveConstantValue: number;
@@ -52,37 +53,50 @@ export const MeterTableColumns: AbmColum[] = [
 		sortable: true,
 	},
 	{
-		field: 'current',
-		header: 'Corriente [A]',
+		field: 'maximumCurrent',
+		header: 'Imax[A]',
 		sortable: false,
 		styleClass: 'text-center',
+		headerTooltip: 'Corriente máxima'
 	},
 	{
-		field: 'voltage',
-		header: 'Tensión [V]',
+		field: 'ratedCurrent',
+		header: 'In[A]',
 		sortable: false,
 		styleClass: 'text-center',
+		headerTooltip: 'Corriente nominal'
+	},
+	{
+		field: 'ratedVoltage',
+		header: 'Un[V]',
+		sortable: false,
+		styleClass: 'text-center',
+		headerTooltip: 'Tensión nominal'
 	},
 	{
 		field: 'activeConstantValue',
-		header: 'Activa',
+		header: 'Cte Activa',
 		sortable: false,
 		styleClass: 'text-center',
+		headerTooltip: 'Constante energía activa'
 	},
 	{
 		field: 'foreign.activeConstantUnit.name',
-		header: 'Act. Uni.',
+		header: '[Activa]',
 		sortable: false,
+		headerTooltip: 'Unidad energía activa'
 	},
 	{
 		field: 'reactiveConstantValue',
-		header: 'Reactiva',
+		header: 'Cte Reactiva',
 		sortable: false,
 		styleClass: 'text-center',
+		headerTooltip: 'Constante energía reactiva'
 	},
 	{
 		field: 'foreign.reactiveConstantUnit.name',
-		header: 'React. Uni.',
+		header: '[Reactiva]',
 		sortable: false,
+		headerTooltip: 'Unidad energía reactiva'
 	},
 ];
