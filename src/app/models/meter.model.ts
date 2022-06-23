@@ -55,21 +55,21 @@ export const MeterTableColumns: AbmColum[] = [
 	},
 	{
 		field: 'maximumCurrent',
-		header: 'Imax[A]',
+		header: 'Imax [A]',
 		sortable: false,
 		styleClass: 'text-center',
 		headerTooltip: 'Corriente máxima'
 	},
 	{
 		field: 'ratedCurrent',
-		header: 'In[A]',
+		header: 'In [A]',
 		sortable: false,
 		styleClass: 'text-center',
 		headerTooltip: 'Corriente nominal'
 	},
 	{
 		field: 'ratedVoltage',
-		header: 'Un[V]',
+		header: 'Un [V]',
 		sortable: false,
 		styleClass: 'text-center',
 		headerTooltip: 'Tensión nominal'
