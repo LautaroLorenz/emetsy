@@ -10,9 +10,9 @@
     table.string('voltage').notNullable();
     table.string('activeConstantValue').notNullable();
     table.string('reactiveConstantValue').notNullable();
-    table.integer('brand_id').notNullable().references('id').inTable('brands');
-    table.integer('activeConstantUnit_id').notNullable().references('id').inTable('constant_unit');
-    table.integer('reactiveConstantUnit_id').notNullable().references('id').inTable('constant_unit');
+    table.integer('brand_id').notNullable().references('id').inTable('brands').onDelete('RESTRICT');
+    table.integer('activeConstantUnit_id').notNullable().references('id').inTable('constant_unit').onDelete('CASCADE');
+    table.integer('reactiveConstantUnit_id').notNullable().references('id').inTable('constant_unit').onDelete('CASCADE');
   });
 };
 

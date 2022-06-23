@@ -91,11 +91,11 @@ export class AbmComponent implements OnInit, AfterContentInit, OnChanges {
   }
 
   selectPage() {
-    this.selected = [...this.selected, ...this.primeNgTable?.dataToRender as any[]];
+    this.selected = [...this.primeNgTable?.dataToRender as any[]];
   }
 
   selectAll() {
-    this.selected = [...this.selected, ...this.dataset];
+    this.selected = [...this.dataset];
   }
 
   clearSelected() {

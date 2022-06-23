@@ -41,7 +41,8 @@ export class MessagesService {
     this.messageService.add({
       severity: 'error',
       summary: 'Error',
-      detail: message
+      detail: message,
+      sticky: true
     });
   }
 }

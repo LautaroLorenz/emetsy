@@ -85,7 +85,7 @@ export class BrandsComponent extends AbmPage<Brand> implements OnInit {
           this.messagesService.success('Eliminado correctamente');
         })
       ).subscribe({
-        error: () => this.messagesService.error('No se pudo borrar')
+        error: () => this.messagesService.error('No se pudo eliminar, asegurese que este elemento no está siendo utilizado')
       });
   }
 

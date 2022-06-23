@@ -5,7 +5,7 @@
  exports.up = function(knex) {
   return knex.schema
   .createTable('connections', (table) => {
-    table.increments('id').primary();
+    table.increments('id').notNullable().primary();
     table.string('name').notNullable();
   });
 };

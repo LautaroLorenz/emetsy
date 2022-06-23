@@ -33,7 +33,8 @@
     "postinstall": "electron-builder install-app-deps",
     "migrate": "knex migrate:latest --knexfile app/resources/data/knexfile.js",
     "migrate:rollback": "knex migrate:rollback --knexfile app/resources/data/knexfile.js",
-    "seed": "knex seed:run --knexfile app/resources/data/knexfile.js"
+    "seed": "knex seed:run --knexfile app/resources/data/knexfile.js",
+    "seed:database": "npm run migrate:rollback && npm run migrate && npm run seed"
   },
   "private": true,
   "dependencies": {
