@@ -25,6 +25,10 @@ import { PipesModule } from '../pipes/pipes.module';
 import { DropdownModule } from 'primeng/dropdown';
 import { PageTitleComponent } from './page-title/page-title.component';
 import { InputNumberModule } from 'primeng/inputnumber';
+import { TooltipModule } from 'primeng/tooltip';
+import { RippleModule } from 'primeng/ripple';
+import { CheckboxModule } from 'primeng/checkbox';
+import { MenuModule } from 'primeng/menu';
 
 const PrimeNgModules = [
   MenubarModule,
@@ -40,7 +44,11 @@ const PrimeNgModules = [
   ToastModule,
   DialogModule,
   DropdownModule,
-  InputNumberModule
+  InputNumberModule,
+  TooltipModule,
+  RippleModule,
+  CheckboxModule,
+  MenuModule
 ];
 
 const PrimeNgServices = [
