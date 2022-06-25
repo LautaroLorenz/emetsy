@@ -42,6 +42,7 @@ export class DatabaseService<T> {
   }
 
   getTable(tableName: TableName, relations: TableName[]): void {
+    console.log(tableName, relations);
     this._getDatabaseTable(tableName, relations);
   }
 

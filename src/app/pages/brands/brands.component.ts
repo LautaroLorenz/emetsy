@@ -4,6 +4,7 @@ import { PrimeIcons } from 'primeng/api';
 import { filter, first, Observable, tap } from 'rxjs';
 import { AbmPage, Brand, BrandTableColumns, BrandDbTableContext, Connection, ConnectionDbTableContext } from 'src/app/models';
 import { DatabaseService } from 'src/app/services/database.service';
+import { IpcService } from 'src/app/services/ipc.service';
 import { MessagesService } from 'src/app/services/messages.service';
 
 @Component({
@@ -29,6 +30,7 @@ export class BrandsComponent extends AbmPage<Brand> implements OnInit {
   constructor(
     private readonly dbService: DatabaseService<Brand>,
     private readonly messagesService: MessagesService,
+    private readonly ipcService: IpcService,
   ) {
     super(dbService, BrandDbTableContext);
     this.brands$ = this.refreshDataWhenDatabaseReply$(BrandDbTableContext.tableName).pipe(
@@ -47,6 +49,16 @@ export class BrandsComponent extends AbmPage<Brand> implements OnInit {
       BrandDbTableContext.tableName,
       BrandDbTableContext.foreignTables.map(ft => ft.tableName)
     );
+
+    this.ipcService.on('poc-get-table-reply', (event: any, args: any) => {
+      console.log('esta es la info de la tabla', args);
+    });
+    this.ipcService.send('poc-quiero-la-tabla', { table: "table-name" });
+
+    this.ipcService.invoke('poc-borro-el-dato', { id: "1" }).then((respuesta) => {
+      console.log('me responde: ', respuesta);
+      this.ipcService.send('poc-quiero-la-tabla', { table: "table-name" });
+    });
   }
 
   private createBrand(brand: Brand) {
@@ -63,21 +75,22 @@ export class BrandsComponent extends AbmPage<Brand> implements OnInit {
   }
 
   private editBrand(brand: Brand) {
-  this.dbService.editElementFromTable$(BrandDbTableContext.tableName, brand)
-    .pipe(
-      first(),
-      tap(() => {
-        this.requestTableDataFromDatabase(BrandDbTableContext.tableName);
-        this.messagesService.success('Editado correctamente');
-      }),
-    ).subscribe({
-      error: () => this.messagesService.error('No se pudo editar el elemento')
-    });
+    this.dbService.editElementFromTable$(BrandDbTableContext.tableName, brand)
+      .pipe(
+        first(),
+        tap(() => {
+          this.requestTableDataFromDatabase(BrandDbTableContext.tableName);
+          this.messagesService.success('Editado correctamente');
+        }),
+      ).subscribe({
+        error: () => this.messagesService.error('No se pudo editar el elemento')
+      });
   }
 
   deleteBrands(ids: string[] = []) {
     this.dbService.deleteTableElements$(BrandDbTableContext.tableName, ids)
       .pipe(
+        tap(() => console.log('eliminados', ids)),
         first(),
         filter((numberOfElementsDeleted) => numberOfElementsDeleted === ids.length),
         tap(() => {

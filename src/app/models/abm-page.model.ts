@@ -43,6 +43,7 @@ export class AbmPage<T> {
 
   protected refreshDataWhenDatabaseReply$(tableName: string): Observable<T[]> {
     return this._dbService.getTableReply$(tableName).pipe(
+      tap((response) => console.log({ response })),
       tap(({ relations }) => this._setRelations(relations)),
       map(({ rows }) => (this._mergeRelationsIntoRows(rows, this._relations, this._dbTableConnection.foreignTables))),
     );
