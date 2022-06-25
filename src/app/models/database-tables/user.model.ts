@@ -1,5 +1,5 @@
-import { AbmColum } from "./abm.model";
-import { DbTableContext } from "./database.model";
+import { AbmColum } from "../abm.model";
+import { DbTableContext } from "../database.model";
 
 export interface User {
 	id: number;
@@ -31,5 +31,5 @@ export const UserTableColumns: AbmColum[] = [
 		header: 'Identificación',
 		sortable: true,
 		styleClass: 'w-3'
-	}
+	},
 ];

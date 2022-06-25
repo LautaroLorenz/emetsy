@@ -3,3 +3,10 @@
   [headerIcon]="haderIcon"
 ></app-page-title>
 <app-tab-menu-test></app-tab-menu-test>
+<ng-container *ngIf="(essayTemplates$ | async) as essayTemplates">
+  <app-abm
+    [dataset]="essayTemplates"
+    [columns]="cols"
+    (deleteEvent)="deleteEssayTemplates($event)"
+  ></app-abm>
+</ng-container>

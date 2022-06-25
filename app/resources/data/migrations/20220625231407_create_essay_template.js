@@ -4,7 +4,7 @@
  */
 exports.up = function (knex) {
   return knex.schema
-    .createTable('connections', (table) => {
+    .createTable('essay_templates', (table) => {
       table.increments('id').notNullable().primary();
       table.string('name').notNullable();
     });
@@ -16,5 +16,5 @@ exports.up = function (knex) {
  */
 exports.down = function (knex) {
   return knex.schema
-    .dropTable("connections");
+    .dropTable("essay_templates");
 };

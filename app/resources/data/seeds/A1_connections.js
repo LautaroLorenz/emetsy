@@ -5,7 +5,7 @@
  */
 exports.seed = async function (knex) {
   await knex('connections').insert([
-    { id: 1, name: 'Trifásico' }, 
+    { id: 1, name: 'Trifásico' },
     { id: 2, name: 'Monofásico' },
   ]);
 };

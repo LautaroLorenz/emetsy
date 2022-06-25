@@ -1,5 +1,5 @@
-import { AbmColum } from "./abm.model";
-import { DbForeignKey, DbTableContext } from "./database.model";
+import { AbmColum } from "../abm.model";
+import { DbForeignKey, DbTableContext } from "../database.model";
 import { Connection, ConnectionDbTableContext } from "./connection.model";
 
 export interface Brand extends DbForeignKey {
@@ -9,7 +9,7 @@ export interface Brand extends DbForeignKey {
 	connection_id: number;
 	foreign: {
 		connection: Connection,
-	}
+	};
 }
 
 export const BrandDbTableContext: DbTableContext = {
@@ -20,7 +20,7 @@ export const BrandDbTableContext: DbTableContext = {
 			foreignKey: 'connection_id',
 			properyName: 'connection',
 		}
-	]
+	],
 };
 
 export const BrandTableColumns: AbmColum[] = [
@@ -41,5 +41,5 @@ export const BrandTableColumns: AbmColum[] = [
 		header: 'Conexión',
 		sortable: true,
 		styleClass: 'w-3'
-	}
+	},
 ];
