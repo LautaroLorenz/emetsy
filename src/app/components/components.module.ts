@@ -29,6 +29,9 @@ import { TooltipModule } from 'primeng/tooltip';
 import { RippleModule } from 'primeng/ripple';
 import { CheckboxModule } from 'primeng/checkbox';
 import { MenuModule } from 'primeng/menu';
+import { TabMenuTestComponent } from './tab-menu-test/tab-menu-test.component';
+import { TabMenuModule } from 'primeng/tabmenu';
+
 
 const PrimeNgModules = [
   MenubarModule,
@@ -48,7 +51,8 @@ const PrimeNgModules = [
   TooltipModule,
   RippleModule,
   CheckboxModule,
-  MenuModule
+  MenuModule,
+  TabMenuModule,
 ];
 
 const PrimeNgServices = [
@@ -60,7 +64,8 @@ const EmetsyComponents = [
   MenuComponent,
   AbmComponent,
   ConfirmDialogComponent,
-  PageTitleComponent
+  PageTitleComponent,
+  TabMenuTestComponent,
 ]
 
 @NgModule({

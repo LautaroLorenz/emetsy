@@ -7,7 +7,7 @@ import { PrimeIcons } from 'primeng/api';
 })
 export class AvailableTestComponent implements OnInit {
 
-  readonly title: string = 'Administración de ensayos';
+  readonly title: string = 'Administración de ensayos disponibles';
   readonly haderIcon = PrimeIcons.BRIEFCASE;
 
   constructor() { }
