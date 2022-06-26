@@ -15,14 +15,18 @@ export class NavigationService {
   ) { }
 
   public go(page: PageUrlName, options: {
-    forceReload: boolean
+    forceReload?: boolean,
+    queryParams?: { [key: string]: any },
   } = {
-    forceReload: false
-  }) {
+      forceReload: false,
+      queryParams: {}
+    }) {
     if (options.forceReload) {
-      this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => this.router.navigate(['/'.concat(page)]));
+      this.router.navigateByUrl('/', { skipLocationChange: true }).then(() =>
+        this.router.navigate(['/'.concat(page)], { queryParams: options.queryParams })
+      );
     } else {
-      this.router.navigate(['/'.concat(page)]);
+      this.router.navigate(['/'.concat(page)], { queryParams: options.queryParams });
     }
   }
 

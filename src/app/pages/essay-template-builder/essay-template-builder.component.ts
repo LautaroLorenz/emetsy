@@ -78,7 +78,7 @@ export class EssayTemplateBuilderComponent implements OnInit, OnDestroy {
     tap(() => this.navigationService.go(PageUrlName.newEssayTemplate, { forceReload: true }))
   ).subscribe();
   private readonly saveAndExecute = () => this.save$().pipe(
-    tap(() => this.navigationService.go(PageUrlName.executeEssay))
+    tap(({ id }) => this.navigationService.go(PageUrlName.executeEssay, { queryParams: { id } }))
   ).subscribe();
 
   private readonly destroyed$: ReplaySubject<boolean> = new ReplaySubject(1);
