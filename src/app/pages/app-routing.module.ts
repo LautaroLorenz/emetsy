@@ -8,6 +8,7 @@ import { UsersComponent } from './users/users.component';
 import { HistoryAndReportsComponent } from './history-and-reports/history-and-reports.component';
 import { MetersComponent } from './meters/meters.component';
 import { BrandsComponent } from './brands/brands.component';
+import { EssayTemplateBuilderComponent } from './essay-template-builder/essay-template-builder.component';
 
 const routes: Routes = [
   {
@@ -42,6 +43,14 @@ const routes: Routes = [
   {
     path: 'exportar',
     component: ExportComponent
+  },
+  {
+    path: 'nuevo-template-ensayo',
+    component: EssayTemplateBuilderComponent
+  },
+  {
+    path: 'editar-template-ensayo/:id',
+    component: EssayTemplateBuilderComponent
   }
 ];
 

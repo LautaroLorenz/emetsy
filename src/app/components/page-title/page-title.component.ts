@@ -1,3 +1,4 @@
+import { Location } from '@angular/common';
 import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
 import { PrimeIcons } from 'primeng/api';
 
@@ -8,12 +9,20 @@ import { PrimeIcons } from 'primeng/api';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class PageTitleComponent implements OnInit {
-  @Input() title: string = '';
-  @Input() headerIcon: PrimeIcons = '';
 
-  constructor() { }
+  @Input() title: string = '';
+  @Input() headerIcon: PrimeIcons | null = null;
+  @Input() showBack: boolean = false;
+
+  constructor(
+    private readonly location: Location,
+  ) { }
 
   ngOnInit(): void {
+  }
+
+  back() {
+    this.location.back();
   }
 
 }

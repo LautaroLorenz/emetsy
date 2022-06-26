@@ -1,6 +1,19 @@
 <p-toolbar styleClass="bg-bluegray-50 py-2">
-  <p>
-    <span [class]="headerIcon" style="font-size: 1.2rem"></span>
-    <span class="ml-4 text-xl">{{title}}</span>
-  </p>
+  <div class="flex align-items-center">
+    <p-button
+      *ngIf="showBack"
+      icon="pi pi-arrow-left"
+      styleClass="p-button-rounded p-button-text"
+      (click)="back()"
+      pTooltip="Volver a la página anterior"
+    ></p-button>
+    <p>
+      <span
+        *ngIf="headerIcon"
+        [class]="headerIcon"
+        style="font-size: 1.2rem"
+      ></span>
+      <span class="ml-4 text-xl">{{title}}</span>
+    </p>
+  </div>
 </p-toolbar>

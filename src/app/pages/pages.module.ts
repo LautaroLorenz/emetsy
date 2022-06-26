@@ -10,6 +10,7 @@ import { HistoryAndReportsComponent } from './history-and-reports/history-and-re
 import { MetersComponent } from './meters/meters.component';
 import { BrandsComponent } from './brands/brands.component';
 import { ReactiveFormsModule } from '@angular/forms';
+import { EssayTemplateBuilderComponent } from './essay-template-builder/essay-template-builder.component';
 
 
 @NgModule({
@@ -21,6 +22,7 @@ import { ReactiveFormsModule } from '@angular/forms';
     HistoryAndReportsComponent,
     MetersComponent,
     BrandsComponent,
+    EssayTemplateBuilderComponent,
   ],
   imports: [
     CommonModule,
