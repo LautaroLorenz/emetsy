@@ -1,4 +1,4 @@
-import { AfterContentInit, ChangeDetectionStrategy, Component, ContentChild, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges, TemplateRef, ViewChild } from '@angular/core';
+import { AfterContentInit, ChangeDetectionStrategy, Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges, TemplateRef, ViewChild } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { ConfirmationService, MenuItem, PrimeIcons } from 'primeng/api';
 import { Table } from 'primeng/table';
@@ -18,6 +18,8 @@ export class AbmComponent implements OnInit, AfterContentInit, OnChanges, OnDest
   @Input() columns: AbmColum[] = [];
   @Input() detailFormValid = false;
   @Input() actionColumnStyleClass: string = 'w-8rem';
+  @Input() abmDetailTemplate: TemplateRef<any> | null = null;
+  @Input() tableColumnButtonsTemplate: TemplateRef<any> | null = null;
 
   @Output() deleteEvent = new EventEmitter<string[]>();
   @Output() saveDetailEvent = new EventEmitter<any>();
@@ -25,14 +27,11 @@ export class AbmComponent implements OnInit, AfterContentInit, OnChanges, OnDest
 
   @ViewChild('primeNgTable', { static: true }) primeNgTable: Table | undefined;
 
-  @ContentChild(TemplateRef) abmDetailForm: any;
-
   readonly checkboxColumnMenuItems: MenuItem[] = [];
   readonly paginator = true;
   readonly rows = 5;
   readonly search: FormControl;
 
-  hasDetailForm: boolean = false;
   selected: any[] = [];
   detailDialogVisible = false;
 
@@ -84,9 +83,7 @@ export class AbmComponent implements OnInit, AfterContentInit, OnChanges, OnDest
 
   ngOnInit() { }
 
-  ngAfterContentInit() {
-    this.hasDetailForm = !!this.abmDetailForm;
-  }
+  ngAfterContentInit() { }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['dataset']) {
@@ -162,6 +159,10 @@ export class AbmComponent implements OnInit, AfterContentInit, OnChanges, OnDest
   }
 
   openDialog(element: any): void {
+    if(!this.abmDetailTemplate) {
+      throw new Error("@Input() abmDetailTemplate is undefined");
+    }
+
     this.detailDialogVisible = true;
     this.openDetailEvent.emit(element);
   }

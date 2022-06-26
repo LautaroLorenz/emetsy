@@ -23,7 +23,7 @@
     </span>
   </div>
   <div class="p-toolbar-group-right">
-    <ng-container *ngIf="hasDetailForm">
+    <ng-container *ngIf="abmDetailTemplate">
       <p-button
         label="Nuevo"
         icon="pi pi-plus"
@@ -31,6 +31,7 @@
         (click)="createElement()"
       ></p-button>
     </ng-container>
+    <ng-content select="[toolbar-group-right]"></ng-content>
   </div>
 </p-toolbar>
 
@@ -103,7 +104,11 @@
         </ng-container>
       </ng-container>
       <td class="p-2 text-center">
-        <ng-container *ngIf="hasDetailForm">
+        <ng-container
+          [ngTemplateOutlet]="tableColumnButtonsTemplate"
+          [ngTemplateOutletContext]="{ element: rowData }"
+        ></ng-container>
+        <ng-container *ngIf="abmDetailTemplate">
           <button
             pButton
             pRipple
@@ -124,7 +129,7 @@
   </ng-template>
 </p-table>
 
-<ng-container *ngIf="hasDetailForm">
+<ng-container *ngIf="abmDetailTemplate">
   <p-dialog
     [(visible)]="detailDialogVisible"
     [style]="{minWidth: '450px'}"
@@ -133,7 +138,7 @@
     styleClass="p-fluid"
   >
     <ng-template pTemplate="content">
-      <ng-container *ngTemplateOutlet="abmDetailForm"></ng-container>
+      <ng-container *ngTemplateOutlet="abmDetailTemplate"></ng-container>
     </ng-template>
 
     <ng-template pTemplate="footer">

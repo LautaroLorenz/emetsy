@@ -7,6 +7,14 @@
   <app-abm
     [dataset]="essayTemplates"
     [columns]="cols"
+    [tableColumnButtonsTemplate]="tableColumnButtonsTemplate"
     (deleteEvent)="deleteEssayTemplates($event)"
-  ></app-abm>
+  >
+    <ng-container toolbar-group-right>
+      Nuevo
+    </ng-container>
+    <ng-template #tableColumnButtonsTemplate let-element="element">
+      EjecutarBtn
+    </ng-template>
+  </app-abm>
 </ng-container>
