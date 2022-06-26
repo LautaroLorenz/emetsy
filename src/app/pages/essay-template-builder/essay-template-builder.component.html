@@ -5,6 +5,7 @@
   <app-page-title
     [title]="title"
     [showBack]="true"
+    [backPage]="availableTestPageName"
     [confirmBeforeBack]="form.dirty"
     [confirmBeforeBackHeader]="confirmBeforeBackHeader"
     [confirmBeforeBackText]="confirmBeforeBackText"
@@ -30,26 +31,20 @@
     </ng-container>
     <ng-container toolbar-right>
       <div>
-        <button
-          pButton
-          pRipple
-          label="Cancelar"
-          icon="pi pi-times"
-          class="p-button-text p-button-outlined mr-2"
-          (click)="back()"
-        ></button>
-        <button
-          pButton
-          pRipple
+        <p-splitButton
           label="Guardar"
-          icon="pi pi-check"
-          class="p-button p-button-success ml-2"
+          styleClass="p-button-success"
           [disabled]="!form.valid || form.pristine"
-        ></button>
+          [model]="saveButtonMenuItems"
+          appendTo="body"
+          (onClick)="save()"
+        ></p-splitButton>
       </div>
     </ng-container>
   </app-page-title>
+
   <div class="flex justify-content-evenly">
+
     <div class="flex flex-1">
       <p-panel
         class="w-full"
@@ -70,9 +65,15 @@
       </p-panel> -->
       </p-panel>
     </div>
+
     <p-divider layout="vertical"></p-divider>
+
     <div class="flex flex-1 bg-purple-200">Content 2</div>
+
     <p-divider layout="vertical"></p-divider>
+
     <div class="flex flex-1 bg-red-200">Content 3</div>
+
   </div>
+
 </form>

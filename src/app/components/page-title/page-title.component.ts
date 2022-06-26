@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
 import { PrimeIcons } from 'primeng/api';
+import { PageUrlName } from 'src/app/models';
 import { NavigationService } from 'src/app/services/navigation.service';
 
 @Component({
@@ -14,10 +15,12 @@ export class PageTitleComponent implements OnInit {
   @Input() headerIcon: PrimeIcons | null = null;
   @Input() showBack: boolean = false;
   @Input() confirmBeforeBack: boolean = false;
+  @Input() backPage: PageUrlName = PageUrlName.root;
   @Input() confirmBeforeBackHeader: string;
   @Input() confirmBeforeBackText: string;
 
   readonly back = () => this.navigationService.back({
+    targetPage: this.backPage,
     withConfirmation: this.confirmBeforeBack,
     confirmBeforeBackText: this.confirmBeforeBackText,
     confirmBeforeBackHeader: this.confirmBeforeBackHeader

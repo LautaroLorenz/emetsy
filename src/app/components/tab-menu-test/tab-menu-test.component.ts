@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { MenuItem, PrimeIcons } from 'primeng/api';
+import { PageUrlName } from 'src/app/models';
 
 @Component({
   selector: 'app-tab-menu-test',
@@ -16,12 +17,12 @@ export class TabMenuTestComponent implements OnInit {
       {
         label: 'Ensayos disponibles',
         icon: PrimeIcons.BRIEFCASE,
-        routerLink: '/ensayos-disponibles',
+        routerLink: '/'.concat(PageUrlName.availableTest),
       },
       {
         label: 'Historial y reportes',
         icon: PrimeIcons.BOOK,
-        routerLink: '/historial-y-reportes',
+        routerLink: '/'.concat(PageUrlName.historyAndReports),
       },
     ];
   }

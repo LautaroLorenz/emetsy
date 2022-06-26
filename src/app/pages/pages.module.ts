@@ -12,6 +12,7 @@ import { MetersComponent } from './meters/meters.component';
 import { BrandsComponent } from './brands/brands.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { EssayTemplateBuilderComponent } from './essay-template-builder/essay-template-builder.component';
+import { ExecuteEssayComponent } from './execute-essay/execute-essay.component';
 
 
 @NgModule({
@@ -24,6 +25,7 @@ import { EssayTemplateBuilderComponent } from './essay-template-builder/essay-te
     MetersComponent,
     BrandsComponent,
     EssayTemplateBuilderComponent,
+    ExecuteEssayComponent,
   ],
   imports: [
     CommonModule,

@@ -8,3 +8,4 @@ export * from "./database-tables/user.model";
 export * from "./abm-page.model";
 export * from "./abm.model";
 export * from "./database.model";
+export * from "./page-name.model";

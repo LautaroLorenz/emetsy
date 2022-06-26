@@ -4,7 +4,7 @@ let knex;
 
 ipcMain.on('get-table', async ({ reply }, dbTableConnection) => {
   const { tableName, relations } = dbTableConnection;
-  const queryBuilder = knex(tableName);
+  const queryBuilder = knex(tableName).orderBy('id', 'desc');
   const relationsMap = {};  
   const rows = await queryBuilder;
   for await (const relation of relations) {

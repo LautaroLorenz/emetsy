@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { MenuItem, PrimeIcons } from 'primeng/api';
+import { PageUrlName } from 'src/app/models';
 
 @Component({
   selector: 'app-menu',
@@ -21,12 +22,12 @@ export class MenuComponent implements OnInit {
           {
             label: 'Ensayos disponibles',
             icon: PrimeIcons.BRIEFCASE,
-            routerLink: '/ensayos-disponibles'
+            routerLink: '/'.concat(PageUrlName.availableTest),
           },
           {
             label: 'Historial y reportes',
             icon: PrimeIcons.BOOK,
-            routerLink: '/historial-y-reportes'
+            routerLink: '/'.concat(PageUrlName.historyAndReports),
           }
         ]
       },
@@ -37,17 +38,17 @@ export class MenuComponent implements OnInit {
           {
             label: 'Medidores',
             icon: PrimeIcons.BOX,
-            routerLink: '/medidores'
+            routerLink: '/'.concat(PageUrlName.meters),
           },
           {
             label: 'Marcas',
             icon: PrimeIcons.BOOKMARK,
-            routerLink: '/marcas'
+            routerLink: '/'.concat(PageUrlName.brands),
           },
           {
             label: 'Usuarios',
             icon: PrimeIcons.USERS,
-            routerLink: '/usuarios'
+            routerLink: '/'.concat(PageUrlName.users),
           }
         ]
       },
@@ -58,12 +59,12 @@ export class MenuComponent implements OnInit {
           {
             label: 'Importar',
             icon: PrimeIcons.UPLOAD,
-            routerLink: '/importar'
+            routerLink: '/'.concat(PageUrlName.import),
           },
           {
             label: 'Exportar',
             icon: PrimeIcons.DOWNLOAD,
-            routerLink: '/exportar'
+            routerLink: '/'.concat(PageUrlName.export),
           }
         ]
       }

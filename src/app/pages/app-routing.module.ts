@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
+import { PageUrlName } from '../models';
 import { AvailableTestComponent } from './available-test/available-test.component';
 import { ImportComponent } from './import/import.component';
 import { ExportComponent } from './export/export.component';
@@ -9,48 +10,53 @@ import { HistoryAndReportsComponent } from './history-and-reports/history-and-re
 import { MetersComponent } from './meters/meters.component';
 import { BrandsComponent } from './brands/brands.component';
 import { EssayTemplateBuilderComponent } from './essay-template-builder/essay-template-builder.component';
+import { ExecuteEssayComponent } from './execute-essay/execute-essay.component';
 
 const routes: Routes = [
   {
     path: '',
-    redirectTo: 'ensayos-disponibles',
+    redirectTo: PageUrlName.availableTest,
     pathMatch: 'full'
   },
   {
-    path: 'ensayos-disponibles',
+    path: PageUrlName.availableTest,
     component: AvailableTestComponent
   },
   {
-    path: 'historial-y-reportes',
+    path: PageUrlName.historyAndReports,
     component: HistoryAndReportsComponent
   },
   {
-    path: 'medidores',
+    path: PageUrlName.meters,
     component: MetersComponent
   },
   {
-    path: 'marcas',
+    path: PageUrlName.brands,
     component: BrandsComponent
   },
   {
-    path: 'usuarios',
+    path: PageUrlName.users,
     component: UsersComponent
   },
   {
-    path: 'importar',
+    path: PageUrlName.import,
     component: ImportComponent
   },
   {
-    path: 'exportar',
+    path: PageUrlName.export,
     component: ExportComponent
   },
   {
-    path: 'nuevo-template-ensayo',
+    path: PageUrlName.newEssayTemplate,
     component: EssayTemplateBuilderComponent
   },
   {
-    path: 'editar-template-ensayo',
+    path: PageUrlName.editEssayTemplate,
     component: EssayTemplateBuilderComponent
+  },
+  {
+    path: PageUrlName.executeEssay,
+    component: ExecuteEssayComponent
   },
 ];
 
