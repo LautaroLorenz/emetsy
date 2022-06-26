@@ -60,7 +60,7 @@ export class MetersComponent extends AbmPage<Meter> implements OnInit, OnDestroy
       reactiveConstantUnit_id: new FormControl(undefined, Validators.required),
       brand_id: new FormControl(undefined, Validators.required),
     });
-    this.initFormValueVhangeListeners();
+    this.initFormValueChangeListeners();
   }
 
   ngOnInit(): void {
@@ -70,7 +70,7 @@ export class MetersComponent extends AbmPage<Meter> implements OnInit, OnDestroy
     );
   }
 
-  private initFormValueVhangeListeners(): void {
+  private initFormValueChangeListeners(): void {
     this.form.get('activeConstantUnit_id')?.valueChanges.pipe(
       takeUntil(this.destroyed$),
       tap((activeConstantUnit_id) => {

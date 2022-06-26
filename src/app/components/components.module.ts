@@ -31,6 +31,7 @@ import { CheckboxModule } from 'primeng/checkbox';
 import { MenuModule } from 'primeng/menu';
 import { TabMenuTestComponent } from './tab-menu-test/tab-menu-test.component';
 import { TabMenuModule } from 'primeng/tabmenu';
+import { ReactiveFormsModule } from '@angular/forms';
 
 
 const PrimeNgModules = [
@@ -70,7 +71,7 @@ const EmetsyComponents = [
 
 @NgModule({
   declarations: [EmetsyComponents],
-  imports: [CommonModule, PrimeNgModules, PipesModule],
+  imports: [CommonModule, PrimeNgModules, PipesModule, ReactiveFormsModule],
   exports: [EmetsyComponents, PrimeNgModules],
   providers: [PrimeNgServices]
 })

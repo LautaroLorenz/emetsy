@@ -1,6 +1,8 @@
-import { AfterContentInit, ChangeDetectionStrategy, Component, ContentChild, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, TemplateRef, ViewChild } from '@angular/core';
+import { AfterContentInit, ChangeDetectionStrategy, Component, ContentChild, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges, TemplateRef, ViewChild } from '@angular/core';
+import { FormControl } from '@angular/forms';
 import { ConfirmationService, MenuItem, PrimeIcons } from 'primeng/api';
 import { Table } from 'primeng/table';
+import { ReplaySubject, takeUntil, tap } from 'rxjs';
 import { AbmColum } from 'src/app/models';
 import { MessagesService } from 'src/app/services/messages.service';
 
@@ -10,7 +12,7 @@ import { MessagesService } from 'src/app/services/messages.service';
   styleUrls: ['./abm.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class AbmComponent implements OnInit, AfterContentInit, OnChanges {
+export class AbmComponent implements OnInit, AfterContentInit, OnChanges, OnDestroy {
 
   @Input() dataset: any[] = [];
   @Input() columns: AbmColum[] = [];
@@ -28,6 +30,7 @@ export class AbmComponent implements OnInit, AfterContentInit, OnChanges {
   readonly checkboxColumnMenuItems: MenuItem[] = [];
   readonly paginator = true;
   readonly rows = 5;
+  readonly search: FormControl;
 
   hasDetailForm: boolean = false;
   selected: any[] = [];
@@ -37,10 +40,13 @@ export class AbmComponent implements OnInit, AfterContentInit, OnChanges {
     return this.selected.length === 0;
   }
 
+  private readonly destroyed$: ReplaySubject<boolean> = new ReplaySubject(1);
+
   constructor(
     private confirmationService: ConfirmationService,
     private messagesService: MessagesService,
   ) {
+    this.search = new FormControl('');
     this.checkboxColumnMenuItems = [{
       label: 'Seleccionados',
       items: [
@@ -66,6 +72,14 @@ export class AbmComponent implements OnInit, AfterContentInit, OnChanges {
         },
       ]
     }];
+    this.initFormValueChangeListeners();
+  }
+
+  private initFormValueChangeListeners(): void {
+    this.search.valueChanges.pipe(
+      takeUntil(this.destroyed$),
+      tap((value) => this.filterByText(value)),
+    ).subscribe();
   }
 
   ngOnInit() { }
@@ -83,7 +97,7 @@ export class AbmComponent implements OnInit, AfterContentInit, OnChanges {
       }
     }
   }
-
+  
   selectPage() {
     this.selected = [...this.primeNgTable?.dataToRender as any[]];
   }
@@ -96,13 +110,12 @@ export class AbmComponent implements OnInit, AfterContentInit, OnChanges {
     this.selected = [];
   }
 
-  filterDataset(event: Event) {
-    if (!this.primeNgTable) {
-      return;
-    }
+  clearSearch(): void {
+    this.search.setValue('');
+  }
 
-    const { value } = event.target as HTMLInputElement;
-    this.primeNgTable.filterGlobal(value, 'contains')
+  filterByText(value: string): void {
+    this.primeNgTable?.filterGlobal(value, 'contains')
   }
 
   deleteSelected() {
@@ -159,5 +172,10 @@ export class AbmComponent implements OnInit, AfterContentInit, OnChanges {
 
   closeDialog() {
     this.detailDialogVisible = false;
+  }
+
+  ngOnDestroy() {
+    this.destroyed$.next(true);
+    this.destroyed$.complete();
   }
 }
