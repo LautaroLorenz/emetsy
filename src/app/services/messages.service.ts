@@ -8,7 +8,9 @@ import { MessageService } from "primeng/api";
 export class MessagesService {
   private messageLifeMs = 5000;
 
-  constructor(private messageService: MessageService) { }
+  constructor(
+    private readonly messageService: MessageService
+  ) { }
 
   public info(message: string): void {
     this.messageService.add({

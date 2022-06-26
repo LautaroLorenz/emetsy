@@ -42,8 +42,8 @@ export class AbmComponent implements OnInit, AfterContentInit, OnChanges, OnDest
   private readonly destroyed$: ReplaySubject<boolean> = new ReplaySubject(1);
 
   constructor(
-    private confirmationService: ConfirmationService,
-    private messagesService: MessagesService,
+    private readonly confirmationService: ConfirmationService,
+    private readonly messagesService: MessagesService,
   ) {
     this.search = new FormControl('');
     this.checkboxColumnMenuItems = [{

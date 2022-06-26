@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
+import { DirectivesModule } from '../directives/directives.module';
 import { ComponentsModule } from '../components/components.module';
 import { AvailableTestComponent } from './available-test/available-test.component';
 import { ImportComponent } from './import/import.component';
@@ -28,6 +29,7 @@ import { EssayTemplateBuilderComponent } from './essay-template-builder/essay-te
     CommonModule,
     ComponentsModule,
     ReactiveFormsModule,
+    DirectivesModule,
   ],
   exports: []
 })

@@ -1,19 +1,66 @@
-<app-page-title
-  [title]="title"
-  [showBack]="true"
-></app-page-title>
-<div class="flex justify-content-evenly">
-  <div class="flex flex-1">
-    <p-panel
-      class="w-full"
-      styleClass="shadow-none"
-    >
-      <ng-template pTemplate="header">
-        <span class="text-lg">Herramientas</span>
-      </ng-template>
-      {{id$ | async}}
-      {{form.getRawValue() | json}}
-      <!-- <p-panel
+<form
+  novalidate
+  [formGroup]="form"
+>
+  <app-page-title
+    [title]="title"
+    [showBack]="true"
+    [confirmBeforeBack]="form.dirty"
+    [confirmBeforeBackHeader]="confirmBeforeBackHeader"
+    [confirmBeforeBackText]="confirmBeforeBackText"
+  >
+    <ng-container toolbar-left>
+      <div class="ml-3">
+        <input
+          #nameInput
+          placeholder="Nombre"
+          type="text"
+          pInputText
+          id="name"
+          formControlName="name"
+          class="name-input w-15rem"
+          [appSelectOnFocus]="true"
+          [(appFocused)]="nameInputFocused"
+          [ngClass]="{
+            'cursor-pointer': !nameInputFocused,
+            'border-none': !nameInputFocused && nameInput.value
+          }"
+        />
+      </div>
+    </ng-container>
+    <ng-container toolbar-right>
+      <div>
+        <button
+          pButton
+          pRipple
+          label="Cancelar"
+          icon="pi pi-times"
+          class="p-button-text p-button-outlined mr-2"
+          (click)="back()"
+        ></button>
+        <button
+          pButton
+          pRipple
+          label="Guardar"
+          icon="pi pi-check"
+          class="p-button p-button-success ml-2"
+          [disabled]="!form.valid || form.pristine"
+        ></button>
+      </div>
+    </ng-container>
+  </app-page-title>
+  <div class="flex justify-content-evenly">
+    <div class="flex flex-1">
+      <p-panel
+        class="w-full"
+        styleClass="shadow-none"
+      >
+        <ng-template pTemplate="header">
+          <span class="text-lg">Herramientas</span>
+        </ng-template>
+        {{id$ | async}}
+        {{form.getRawValue() | json}}
+        <!-- <p-panel
         class="w-full"
         styleClass="shadow-none"
       >
@@ -21,10 +68,11 @@
           Selector de pasos
         </ng-template>
       </p-panel> -->
-    </p-panel>
+      </p-panel>
+    </div>
+    <p-divider layout="vertical"></p-divider>
+    <div class="flex flex-1 bg-purple-200">Content 2</div>
+    <p-divider layout="vertical"></p-divider>
+    <div class="flex flex-1 bg-red-200">Content 3</div>
   </div>
-  <p-divider layout="vertical"></p-divider>
-  <div class="flex flex-1 bg-purple-200">Content 2</div>
-  <p-divider layout="vertical"></p-divider>
-  <div class="flex flex-1 bg-red-200">Content 3</div>
-</div>
+</form>

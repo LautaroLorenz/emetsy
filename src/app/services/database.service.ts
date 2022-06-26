@@ -38,8 +38,8 @@ export class DatabaseService<T> {
   }
 
   constructor(
-    private ipcService: IpcService,
-    private ngZone: NgZone,
+    private readonly ipcService: IpcService,
+    private readonly ngZone: NgZone,
   ) {
     this._listenGetDatabaseTableReply(ipcService);
   }

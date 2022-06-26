@@ -5,7 +5,7 @@ import { IpcRenderer } from "electron";
   providedIn: "root"
 })
 export class IpcService {
-  private ipc: IpcRenderer;
+  private readonly ipc: IpcRenderer;
 
   constructor() {
     if (!window.require) {
