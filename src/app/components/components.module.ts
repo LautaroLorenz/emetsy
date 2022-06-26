@@ -32,7 +32,7 @@ import { MenuModule } from 'primeng/menu';
 import { TabMenuTestComponent } from './tab-menu-test/tab-menu-test.component';
 import { TabMenuModule } from 'primeng/tabmenu';
 import { ReactiveFormsModule } from '@angular/forms';
-
+import { SplitterModule } from 'primeng/splitter';
 
 const PrimeNgModules = [
   MenubarModule,
@@ -54,6 +54,7 @@ const PrimeNgModules = [
   CheckboxModule,
   MenuModule,
   TabMenuModule,
+  SplitterModule,
 ];
 
 const PrimeNgServices = [

@@ -13,6 +13,11 @@ ipcMain.on('get-table', async ({ reply }, dbTableConnection) => {
   reply('get-table-reply', { tableNameReply: tableName, rows, relations: relationsMap });
 });
 
+ipcMain.handle('get-table-row', async (_, { tableName, id }) => {
+  const row = await knex(tableName).select().where('id', id);
+  return row[0];
+});
+
 ipcMain.handle('delete-from-table', async (_, { tableName, ids }) => {
   const numberOfElementsDeleted = await knex(tableName).delete().whereIn('id', ids);
   return numberOfElementsDeleted;

@@ -33,6 +33,9 @@ export class DatabaseService<T> {
   private _editTableRow = (tableName: string, element: T): Promise<number> => {
     return this.ipcService.invoke('edit-from-table', { tableName, element });
   }
+  private _getTableRow = (tableName: string, id: number): Promise<T> => {
+    return this.ipcService.invoke('get-table-row', { tableName, id });
+  }
 
   constructor(
     private ipcService: IpcService,
@@ -47,6 +50,10 @@ export class DatabaseService<T> {
 
   getTableReply$(tableName: string): Observable<RequestTableResponse<T>> {
     return this._getTableDataAsObservable(tableName);
+  }
+
+  getTableElement$(tableName: string, id: number): Observable<T> {
+    return from(this._getTableRow(tableName, id));
   }
 
   deleteTableElements$(tableName: string, ids: any[]): Observable<number> {

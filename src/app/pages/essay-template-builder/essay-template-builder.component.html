@@ -2,3 +2,29 @@
   [title]="title"
   [showBack]="true"
 ></app-page-title>
+<div class="flex justify-content-evenly">
+  <div class="flex flex-1">
+    <p-panel
+      class="w-full"
+      styleClass="shadow-none"
+    >
+      <ng-template pTemplate="header">
+        <span class="text-lg">Herramientas</span>
+      </ng-template>
+      {{id$ | async}}
+      {{form.getRawValue() | json}}
+      <!-- <p-panel
+        class="w-full"
+        styleClass="shadow-none"
+      >
+        <ng-template pTemplate="header">
+          Selector de pasos
+        </ng-template>
+      </p-panel> -->
+    </p-panel>
+  </div>
+  <p-divider layout="vertical"></p-divider>
+  <div class="flex flex-1 bg-purple-200">Content 2</div>
+  <p-divider layout="vertical"></p-divider>
+  <div class="flex flex-1 bg-red-200">Content 3</div>
+</div>

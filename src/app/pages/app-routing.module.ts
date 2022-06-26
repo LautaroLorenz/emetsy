@@ -49,9 +49,9 @@ const routes: Routes = [
     component: EssayTemplateBuilderComponent
   },
   {
-    path: 'editar-template-ensayo/:id',
+    path: 'editar-template-ensayo',
     component: EssayTemplateBuilderComponent
-  }
+  },
 ];
 
 @NgModule({
