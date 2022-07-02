@@ -4,6 +4,7 @@ import { PrimeIcons } from 'primeng/api';
 import { filter, first, Observable, tap } from 'rxjs';
 import { AbmPage, Brand, BrandTableColumns, BrandDbTableContext, Connection, ConnectionDbTableContext } from 'src/app/models';
 import { DatabaseService } from 'src/app/services/database.service';
+import { LogService } from 'src/app/services/log.service';
 import { MessagesService } from 'src/app/services/messages.service';
 
 @Component({
@@ -29,6 +30,7 @@ export class BrandsComponent extends AbmPage<Brand> implements OnInit {
   constructor(
     private readonly dbService: DatabaseService<Brand>,
     private readonly messagesService: MessagesService,
+    private readonly logService: LogService,
   ) {
     super(dbService, BrandDbTableContext);
     this.brands$ = this.refreshDataWhenDatabaseReply$(BrandDbTableContext.tableName).pipe(
@@ -47,6 +49,11 @@ export class BrandsComponent extends AbmPage<Brand> implements OnInit {
       BrandDbTableContext.tableName,
       BrandDbTableContext.foreignTables.map(ft => ft.tableName)
     );
+
+    this.logService.addLog('error', { error: { code: 302 } });
+    this.logService.addLog('warn', 'esto es un warning');
+    this.logService.addLog('info', 'logeame esto');
+    this.logService.addLog('debug', 'holas');
   }
 
   private createBrand(brand: Brand) {

@@ -48,6 +48,7 @@
     "@angular/platform-browser-dynamic": "^14.0.0",
     "@angular/router": "^14.0.0",
     "dot-object": "^2.1.4",
+    "electron-log": "^4.4.8",
     "knex": "^2.1.0",
     "primeflex": "^3.2.1",
     "primeicons": "^5.0.0",
