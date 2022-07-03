@@ -3,7 +3,8 @@ import { FormControl, FormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { MenuItem, PrimeIcons } from 'primeng/api';
 import { catchError, filter, first, map, Observable, of, ReplaySubject, switchMap, takeUntil, tap, throwError } from 'rxjs';
-import { EssayTemplate, EssayTemplateDbTableContext, PageUrlName, RelationsManager, Step, StepDbTableContext } from 'src/app/models';
+import { EssayTemplate, EssayTemplateDbTableContext, PageUrlName, RelationsManager, Step, StepDbTableContext, WhereKind, WhereOperator } from 'src/app/models';
+import { EssayTemplateStep, EssayTemplateStepDbTableContext } from 'src/app/models/database/tables/essay-template-step.model';
 import { DatabaseService } from 'src/app/services/database.service';
 import { MessagesService } from 'src/app/services/messages.service';
 import { NavigationService } from 'src/app/services/navigation.service';
@@ -22,6 +23,7 @@ export class EssayTemplateBuilderComponent implements OnInit, OnDestroy {
   readonly saveButtonMenuItems: MenuItem[] = [];
   readonly availableTestPageName = PageUrlName.availableTest;
   readonly steps$: Observable<Step[]>;
+  readonly essayTemplateSteps$: Observable<EssayTemplateStep[]>;
 
   nameInputFocused: boolean = false;
 
@@ -79,12 +81,25 @@ export class EssayTemplateBuilderComponent implements OnInit, OnDestroy {
   constructor(
     private readonly route: ActivatedRoute,
     private readonly dbService: DatabaseService<EssayTemplate>,
+    private readonly dbServiceEssayTemplateStep: DatabaseService<EssayTemplateStep>,
     private readonly dbServiceSteps: DatabaseService<Step>,
     private readonly navigationService: NavigationService,
     private readonly messagesService: MessagesService,
   ) {
     this.id$ = this.route.queryParams.pipe(
       filter(({ id }) => id),
+      tap(({ id }) => this.dbServiceEssayTemplateStep.getTable(
+        EssayTemplateStepDbTableContext.tableName,
+        {
+          relations: EssayTemplateStepDbTableContext.foreignTables.filter(ft => ft.tableName !== EssayTemplateDbTableContext.tableName).map(ft => ft.tableName),
+          conditions: [{
+            kind: WhereKind.where,
+            columnName: 'essay_template_id',
+            operator: WhereOperator.equal,
+            value: id
+          }]
+        },
+      )),
       map(({ id }) => id)
     );
     this.steps$ = this.dbServiceSteps.getTableReply$(StepDbTableContext.tableName).pipe(
@@ -92,6 +107,13 @@ export class EssayTemplateBuilderComponent implements OnInit, OnDestroy {
         response.rows,
         response.relations,
         StepDbTableContext.foreignTables
+      ))
+    );
+    this.essayTemplateSteps$ = this.dbServiceEssayTemplateStep.getTableReply$(EssayTemplateStepDbTableContext.tableName).pipe(
+      map((response) => RelationsManager.mergeRelationsIntoRows<EssayTemplateStep>(
+        response.rows,
+        response.relations,
+        EssayTemplateStepDbTableContext.foreignTables
       ))
     );
     this.form = new FormGroup({
@@ -133,10 +155,10 @@ export class EssayTemplateBuilderComponent implements OnInit, OnDestroy {
       switchMap((id) => this.dbService.getTableElement$(EssayTemplateDbTableContext.tableName, id)),
       tap((essayTemplate) => this.form.patchValue(essayTemplate))
     ).subscribe();
-    
+
     this.dbServiceSteps.getTable(
       StepDbTableContext.tableName,
-      StepDbTableContext.foreignTables.map(ft => ft.tableName)
+      { relations: StepDbTableContext.foreignTables.map(ft => ft.tableName) }
     );
   }
 

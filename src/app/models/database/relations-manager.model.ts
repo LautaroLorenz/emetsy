@@ -14,7 +14,7 @@ export class RelationsManager {
           if (row['foreign'] === undefined) {
             row['foreign'] = {};
           }
-          row['foreign'][ft.properyName] = relations[ft.tableName].find(value => value.id === row[ft.foreignKey]);
+          row['foreign'][ft.properyName] = relations[ft.tableName]?.find(value => value.id === row[ft.foreignKey]);
         }
       });
 

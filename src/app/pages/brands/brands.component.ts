@@ -45,7 +45,7 @@ export class BrandsComponent extends AbmPage<Brand> implements OnInit {
   ngOnInit(): void {
     this.dbService.getTable(
       BrandDbTableContext.tableName,
-      BrandDbTableContext.foreignTables.map(ft => ft.tableName)
+      { relations: BrandDbTableContext.foreignTables.map(ft => ft.tableName) }
     );
   }
 
@@ -63,16 +63,16 @@ export class BrandsComponent extends AbmPage<Brand> implements OnInit {
   }
 
   private editBrand(brand: Brand) {
-  this.dbService.editElementFromTable$(BrandDbTableContext.tableName, brand)
-    .pipe(
-      first(),
-      tap(() => {
-        this.dbService.getTable(BrandDbTableContext.tableName);
-        this.messagesService.success('Editado correctamente');
-      }),
-    ).subscribe({
-      error: () => this.messagesService.error('No se pudo editar el elemento')
-    });
+    this.dbService.editElementFromTable$(BrandDbTableContext.tableName, brand)
+      .pipe(
+        first(),
+        tap(() => {
+          this.dbService.getTable(BrandDbTableContext.tableName);
+          this.messagesService.success('Editado correctamente');
+        }),
+      ).subscribe({
+        error: () => this.messagesService.error('No se pudo editar el elemento')
+      });
   }
 
   deleteBrands(ids: string[] = []) {

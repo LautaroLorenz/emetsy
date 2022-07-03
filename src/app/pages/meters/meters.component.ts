@@ -66,7 +66,7 @@ export class MetersComponent extends AbmPage<Meter> implements OnInit, OnDestroy
   ngOnInit(): void {
     this.dbService.getTable(
       MeterDbTableContext.tableName,
-      MeterDbTableContext.foreignTables.map(ft => ft.tableName)
+      { relations: MeterDbTableContext.foreignTables.map(ft => ft.tableName) }
     );
   }
 
@@ -74,7 +74,7 @@ export class MetersComponent extends AbmPage<Meter> implements OnInit, OnDestroy
     this.form.get('activeConstantUnit_id')?.valueChanges.pipe(
       takeUntil(this.destroyed$),
       tap((activeConstantUnit_id) => {
-        if(!this.form.get('reactiveConstantUnit_id')?.value) {
+        if (!this.form.get('reactiveConstantUnit_id')?.value) {
           this.form.get('reactiveConstantUnit_id')?.setValue(activeConstantUnit_id)
         }
         return activeConstantUnit_id;
@@ -83,7 +83,7 @@ export class MetersComponent extends AbmPage<Meter> implements OnInit, OnDestroy
     this.form.get('reactiveConstantUnit_id')?.valueChanges.pipe(
       takeUntil(this.destroyed$),
       tap((reactiveConstantUnit_id) => {
-        if(!this.form.get('activeConstantUnit_id')?.value) {
+        if (!this.form.get('activeConstantUnit_id')?.value) {
           this.form.get('activeConstantUnit_id')?.setValue(reactiveConstantUnit_id)
         }
         return reactiveConstantUnit_id;

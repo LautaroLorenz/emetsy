@@ -77,10 +77,38 @@
 
   <p-divider layout="vertical"></p-divider>
 
-  <div class="flex flex-1 bg-purple-200">Content 2</div>
+  <div class="flex flex-1 flex-column">
+    <p class="panel-header text-lg">
+      Pasos del ensayo
+    </p>
+    <ng-container *ngIf="(essayTemplateSteps$ | async) as essayTemplateSteps">
+      <p-panel
+        *ngFor="let essayTemplateStep of essayTemplateSteps"
+        class="w-full"
+        styleClass=""
+      >
+        <ng-template pTemplate="header">
+          {{essayTemplateStep.foreign.step.name}}
+        </ng-template>
+      </p-panel>
+    </ng-container>
+  </div>
 
   <p-divider layout="vertical"></p-divider>
 
-  <div class="flex flex-1 bg-red-200">Content 3</div>
+  <div class="flex flex-1 flex-column">
+    <p class="panel-header text-lg">
+      Administración del paso selccionado
+    </p>
+    <p-panel
+      class="w-full"
+      styleClass=""
+    >
+      <ng-template pTemplate="header">
+        Pasos del ensayo
+      </ng-template>
+      <!-- TODO: -->
+    </p-panel>
+  </div>
 
 </div>

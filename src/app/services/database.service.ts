@@ -1,6 +1,6 @@
 import { Injectable, NgZone } from "@angular/core";
 import { catchError, filter, from, map, Observable, Subject, throwError } from "rxjs";
-import { RequestTableResponse, TableName } from "../models";
+import { RequestTableResponse, TableName, Where } from "../models";
 import { IpcService } from "./ipc.service";
 
 @Injectable({
@@ -16,8 +16,12 @@ export class DatabaseService<T> {
   private readonly _updateLocalTableData = (response: RequestTableResponse<T>) => {
     this._getTableReply$.next(response);
   };
-  private readonly _getDatabaseTable = (tableName: TableName, relations: TableName[]): void => {
-    this.ipcService.send('get-table', { tableName, relations });
+  private readonly _getDatabaseTable = (
+    tableName: TableName,
+    relations: TableName[] = [],
+    conditions: Where[] = []
+  ): void => {
+    this.ipcService.send('get-table', { tableName, relations, conditions });
   };
   private readonly _getTableDataAsObservable = (tableName: string): Observable<RequestTableResponse<T>> => (
     this._getTableReply$.pipe(
@@ -44,8 +48,17 @@ export class DatabaseService<T> {
     this._listenGetDatabaseTableReply(ipcService);
   }
 
-  getTable(tableName: TableName, relations: TableName[] = []): void {
-    this._getDatabaseTable(tableName, relations);
+  getTable(
+    tableName: TableName,
+    options: {
+      relations?: TableName[],
+      conditions?: Where[]
+    } = {
+        relations: [],
+        conditions: []
+      }
+  ): void {
+    this._getDatabaseTable(tableName, options.relations, options.conditions);
   }
 
   getTableReply$(tableName: string): Observable<RequestTableResponse<T>> {
@@ -61,7 +74,7 @@ export class DatabaseService<T> {
       catchError((e) => {
         console.error(e.message); // TODO: almacenar en un log
         return throwError(() => new Error(e));
-    }));
+      }));
   }
 
   addElementToTable$(tableName: string, element: T): Observable<number> {

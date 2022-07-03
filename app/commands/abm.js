@@ -3,9 +3,23 @@ const { ipcMain } = require('electron');
 let knex;
 
 ipcMain.on('get-table', async ({ reply }, dbTableConnection) => {
-  const { tableName, relations } = dbTableConnection;
+  const { tableName, relations, conditions } = dbTableConnection;
+  const relationsMap = {};
   const queryBuilder = knex(tableName).orderBy('id', 'desc');
-  const relationsMap = {};  
+
+  for (const condition of conditions) {
+    const { kind, columnName, operator, value } = condition;
+    if (kind === "where") {
+      queryBuilder.where(columnName, operator, value);
+    }
+    if (kind === "andWhere") {
+      queryBuilder.andWhere(columnName, operator, value);
+    }
+    if (kind === "orWhere") {
+      queryBuilder.orWhere(columnName, operator, value);
+    }
+  }
+
   const rows = await queryBuilder;
   for await (const relation of relations) {
     relationsMap[relation] = await knex(relation);
