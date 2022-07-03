@@ -77,6 +77,7 @@ export class MetersComponent extends AbmPage<Meter> implements OnInit, OnDestroy
         if(!this.form.get('reactiveConstantUnit_id')?.value) {
           this.form.get('reactiveConstantUnit_id')?.setValue(activeConstantUnit_id)
         }
+        return activeConstantUnit_id;
       }),
     ).subscribe();
     this.form.get('reactiveConstantUnit_id')?.valueChanges.pipe(
@@ -85,7 +86,6 @@ export class MetersComponent extends AbmPage<Meter> implements OnInit, OnDestroy
         if(!this.form.get('activeConstantUnit_id')?.value) {
           this.form.get('activeConstantUnit_id')?.setValue(reactiveConstantUnit_id)
         }
-
         return reactiveConstantUnit_id;
       }),
     ).subscribe();
