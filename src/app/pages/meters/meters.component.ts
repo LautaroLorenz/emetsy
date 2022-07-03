@@ -64,7 +64,7 @@ export class MetersComponent extends AbmPage<Meter> implements OnInit, OnDestroy
   }
 
   ngOnInit(): void {
-    this.requestTableDataFromDatabase(
+    this.dbService.getTable(
       MeterDbTableContext.tableName,
       MeterDbTableContext.foreignTables.map(ft => ft.tableName)
     );
@@ -96,7 +96,7 @@ export class MetersComponent extends AbmPage<Meter> implements OnInit, OnDestroy
       .pipe(
         first(),
         tap(() => {
-          this.requestTableDataFromDatabase(MeterDbTableContext.tableName);
+          this.dbService.getTable(MeterDbTableContext.tableName);
           this.messagesService.success('Agregado correctamente');
         }),
       ).subscribe({
@@ -109,7 +109,7 @@ export class MetersComponent extends AbmPage<Meter> implements OnInit, OnDestroy
       .pipe(
         first(),
         tap(() => {
-          this.requestTableDataFromDatabase(MeterDbTableContext.tableName);
+          this.dbService.getTable(MeterDbTableContext.tableName);
           this.messagesService.success('Editado correctamente');
         }),
       ).subscribe({
@@ -123,7 +123,7 @@ export class MetersComponent extends AbmPage<Meter> implements OnInit, OnDestroy
         first(),
         filter((numberOfElementsDeleted) => numberOfElementsDeleted === ids.length),
         tap(() => {
-          this.requestTableDataFromDatabase(MeterDbTableContext.tableName);
+          this.dbService.getTable(MeterDbTableContext.tableName);
           this.messagesService.success('Eliminado correctamente');
         })
       ).subscribe({

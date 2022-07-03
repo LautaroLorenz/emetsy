@@ -1,4 +1,4 @@
-import { AbmColum } from "../abm.model";
+import { AbmColum } from "../../abm.model";
 import { DbForeignKey, DbTableContext } from "../database.model";
 import { Brand, BrandDbTableContext } from "./brand.model";
 import { ActiveConstantUnit, ActiveConstantUnitDbTableContext } from "./active-constant-unit.model";

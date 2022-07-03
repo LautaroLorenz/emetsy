@@ -1,4 +1,4 @@
-import { AbmColum } from "../abm.model";
+import { AbmColum } from "../../abm.model";
 import { DbForeignKey, DbTableContext } from "../database.model";
 import { Connection, ConnectionDbTableContext } from "./connection.model";
 

@@ -44,7 +44,7 @@ export class DatabaseService<T> {
     this._listenGetDatabaseTableReply(ipcService);
   }
 
-  getTable(tableName: TableName, relations: TableName[]): void {
+  getTable(tableName: TableName, relations: TableName[] = []): void {
     this._getDatabaseTable(tableName, relations);
   }
 

@@ -33,7 +33,7 @@ export class UsersComponent extends AbmPage<User> implements OnInit {
   }
 
   ngOnInit(): void {
-    this.requestTableDataFromDatabase(UserDbTableContext.tableName);
+    this.dbService.getTable(UserDbTableContext.tableName);
   }
 
   private createUser(user: User) {
@@ -41,7 +41,7 @@ export class UsersComponent extends AbmPage<User> implements OnInit {
       .pipe(
         first(),
         tap(() => {
-          this.requestTableDataFromDatabase(UserDbTableContext.tableName);
+          this.dbService.getTable(UserDbTableContext.tableName);
           this.messagesService.success('Agregado correctamente');
         }),
       ).subscribe({
@@ -54,7 +54,7 @@ export class UsersComponent extends AbmPage<User> implements OnInit {
       .pipe(
         first(),
         tap(() => {
-          this.requestTableDataFromDatabase(UserDbTableContext.tableName);
+          this.dbService.getTable(UserDbTableContext.tableName);
           this.messagesService.success('Editado correctamente');
         }),
       ).subscribe({
@@ -68,7 +68,7 @@ export class UsersComponent extends AbmPage<User> implements OnInit {
         first(),
         filter((numberOfElementsDeleted) => numberOfElementsDeleted === ids.length),
         tap(() => {
-          this.requestTableDataFromDatabase(UserDbTableContext.tableName);
+          this.dbService.getTable(UserDbTableContext.tableName);
           this.messagesService.success('Eliminado correctamente');
         })
       ).subscribe({

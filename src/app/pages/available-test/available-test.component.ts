@@ -25,7 +25,7 @@ export class AvailableTestComponent extends AbmPage<EssayTemplate> implements On
   }
 
   ngOnInit(): void {
-    this.requestTableDataFromDatabase(EssayTemplateDbTableContext.tableName);
+    this.dbService.getTable(EssayTemplateDbTableContext.tableName);
   }
 
   deleteEssayTemplates(ids: string[] = []) {
@@ -34,7 +34,7 @@ export class AvailableTestComponent extends AbmPage<EssayTemplate> implements On
         first(),
         filter((numberOfElementsDeleted) => numberOfElementsDeleted === ids.length),
         tap(() => {
-          this.requestTableDataFromDatabase(EssayTemplateDbTableContext.tableName);
+          this.dbService.getTable(EssayTemplateDbTableContext.tableName);
           this.messagesService.success('Eliminado correctamente');
         })
       ).subscribe({
