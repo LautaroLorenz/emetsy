@@ -11,4 +11,5 @@ exports.seed = async function (knex) {
   await knex('reactive_constant_unit').del();
   await knex('active_constant_unit').del();
   await knex('connections').del();
+  await knex('steps').del();
 };

@@ -45,24 +45,18 @@
 
   <div class="flex justify-content-evenly">
 
-    <div class="flex flex-1">
+    <div class="flex flex-1 flex-column pl-3">
+      <p class="panel-header text-lg">
+        Herramientas
+      </p>
       <p-panel
         class="w-full"
-        styleClass="shadow-none"
-      >
-        <ng-template pTemplate="header">
-          <span class="text-lg">Herramientas</span>
-        </ng-template>
-        {{id$ | async}}
-        {{form.getRawValue() | json}}
-        <!-- <p-panel
-        class="w-full"
-        styleClass="shadow-none"
+        styleClass=""
       >
         <ng-template pTemplate="header">
           Selector de pasos
         </ng-template>
-      </p-panel> -->
+        
       </p-panel>
     </div>
 
