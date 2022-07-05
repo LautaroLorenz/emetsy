@@ -5,6 +5,7 @@ import { Step, StepDbTableContext } from "./step.model";
 
 export interface EssayTemplateStep extends DbForeignKey {
   id: number;
+  order: number;
   essay_template_id: number;
   step_id: number;
   foreign: {

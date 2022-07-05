@@ -39,7 +39,7 @@ export class EssayTemplateBuilderComponent implements OnInit, OnDestroy {
     return of(this.form.valid).pipe(
       first(),
       filter((valid) => valid),
-      map(() => this.form.getRawValue()),
+      map(() => this.form.get('essayTemplate')?.getRawValue()),
       map((essayTemplate) => ({
         ...essayTemplate,
         name: essayTemplate.name.toString().trim(),
@@ -63,7 +63,7 @@ export class EssayTemplateBuilderComponent implements OnInit, OnDestroy {
       }),
       tap((essayTemplate) => {
         this.messagesService.success('Guardado correctamente');
-        this.form.reset(essayTemplate);
+        this.form.get('essayTemplate')?.reset(essayTemplate);
       }),
       catchError((e) => {
         this.messagesService.error('No se pudo guardar');
@@ -137,8 +137,10 @@ export class EssayTemplateBuilderComponent implements OnInit, OnDestroy {
       ))
     );
     this.form = new FormGroup({
-      id: new FormControl(),
-      name: new FormControl(),
+      essayTemplate: new FormGroup({
+        id: new FormControl(),
+        name: new FormControl(),
+      }),
       essayTemplateSteps: new FormArray([])
     });
     this.saveButtonMenuItems = [
@@ -172,7 +174,7 @@ export class EssayTemplateBuilderComponent implements OnInit, OnDestroy {
     this.id$.pipe(
       takeUntil(this.destroyed$),
       switchMap((id) => this.dbService.getTableElement$(EssayTemplateDbTableContext.tableName, id)),
-      tap((essayTemplate) => this.form.patchValue(essayTemplate)),
+      tap((essayTemplate) => this.form.get('essayTemplate')?.patchValue(essayTemplate)),
       tap(({ id }) => this.requestTableEssayTemplateSteps(id)),
     ).subscribe();
 
@@ -183,6 +185,7 @@ export class EssayTemplateBuilderComponent implements OnInit, OnDestroy {
         const { foreignTables } = EssayTemplateStepDbTableContext;
         return RelationsManager.mergeRelationsIntoRows<EssayTemplateStep>(rows, relations, foreignTables);
       }),
+      map((essayTemplateStep) => essayTemplateStep.sort((a, b) => a.order - b.order)),
       tap((essayTemplateSteps) => {
         essayTemplateSteps.forEach((essayTemplateStep: EssayTemplateStep) => this.addEssaytemplateStepControl(essayTemplateStep));
       })

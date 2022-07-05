@@ -12,21 +12,23 @@
   >
     <ng-container toolbar-left>
       <div class="ml-3">
-        <input
-          #nameInput
-          placeholder="Nombre"
-          type="text"
-          pInputText
-          id="name"
-          formControlName="name"
-          class="name-input w-15rem"
-          [appSelectOnFocus]="true"
-          [(appFocused)]="nameInputFocused"
-          [ngClass]="{
+        <ng-container formGroupName="essayTemplate">
+          <input
+            #nameInput
+            placeholder="Nombre"
+            type="text"
+            pInputText
+            id="name"
+            formControlName="name"
+            class="name-input w-15rem"
+            [appSelectOnFocus]="true"
+            [(appFocused)]="nameInputFocused"
+            [ngClass]="{
             'cursor-pointer': !nameInputFocused,
             'border-none': !nameInputFocused && nameInput.value
           }"
-        />
+          />
+        </ng-container>
       </div>
     </ng-container>
     <ng-container toolbar-right>
@@ -99,7 +101,7 @@
 
     <p-divider layout="vertical"></p-divider>
 
-    <div class="flex flex-1 flex-column">
+    <div class="flex flex-1 flex-column pr-3">
       <p class="panel-header text-lg">
         Administración del paso selccionado
       </p>
@@ -108,7 +110,7 @@
         styleClass=""
       >
         <ng-template pTemplate="header">
-          Pasos del ensayo
+          ....
         </ng-template>
         <!-- TODO: -->
       </p-panel>
