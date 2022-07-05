@@ -1,17 +1,17 @@
-<app-page-title
-  [title]="title"
-  [showBack]="true"
-  [backPage]="availableTestPageName"
-  [confirmBeforeBack]="form.dirty"
-  [confirmBeforeBackHeader]="confirmBeforeBackHeader"
-  [confirmBeforeBackText]="confirmBeforeBackText"
+<form
+  novalidate
+  [formGroup]="form"
 >
-  <ng-container toolbar-left>
-    <div class="ml-3">
-      <form
-        novalidate
-        [formGroup]="form"
-      >
+  <app-page-title
+    [title]="title"
+    [showBack]="true"
+    [backPage]="availableTestPageName"
+    [confirmBeforeBack]="confirmBeforeBack"
+    [confirmBeforeBackHeader]="confirmBeforeBackHeader"
+    [confirmBeforeBackText]="confirmBeforeBackText"
+  >
+    <ng-container toolbar-left>
+      <div class="ml-3">
         <input
           #nameInput
           placeholder="Nombre"
@@ -27,88 +27,92 @@
             'border-none': !nameInputFocused && nameInput.value
           }"
         />
-      </form>
-    </div>
-  </ng-container>
-  <ng-container toolbar-right>
-    <div>
-      <p-splitButton
-        label="Guardar"
-        styleClass="p-button-success"
-        [disabled]="!form.valid || form.pristine"
-        [model]="saveButtonMenuItems"
-        appendTo="body"
-        (onClick)="save()"
-      ></p-splitButton>
-    </div>
-  </ng-container>
-</app-page-title>
-
-<div class="flex justify-content-evenly">
-
-  <div class="flex flex-1 flex-column pl-3">
-    <p class="panel-header text-lg">
-      Herramientas
-    </p>
-    <p-panel
-      class="w-full"
-      styleClass=""
-    >
-      <ng-template pTemplate="header">
-        Selector de pasos
-      </ng-template>
-      <div
-        *ngIf="(steps$ | async) as steps"
-        class="flex flex-column mt-2"
-      >
-        <div
-          *ngFor="let step of steps"
-          class="mb-2"
-        >
-          <p-button
-            icon="pi pi-plus"
-            styleClass="p-button-outlined w-full text-left"
-            [label]="step.name"
-          ></p-button>
-        </div>
       </div>
-    </p-panel>
-  </div>
+    </ng-container>
+    <ng-container toolbar-right>
+      <div>
+        <p-splitButton
+          label="Guardar"
+          styleClass="p-button-success"
+          [disabled]="saveButtonDisabled"
+          [model]="saveButtonMenuItems"
+          appendTo="body"
+          (onClick)="save()"
+        ></p-splitButton>
+      </div>
+    </ng-container>
+  </app-page-title>
 
-  <p-divider layout="vertical"></p-divider>
+  <div class="flex justify-content-evenly">
 
-  <div class="flex flex-1 flex-column">
-    <p class="panel-header text-lg">
-      Pasos del ensayo
-    </p>
-    <ng-container *ngIf="(essayTemplateSteps$ | async) as essayTemplateSteps">
+    <div class="flex flex-1 flex-column pl-3">
+      <p class="panel-header text-lg">
+        Herramientas
+      </p>
       <p-panel
-        *ngFor="let essayTemplateStep of essayTemplateSteps"
         class="w-full"
         styleClass=""
       >
         <ng-template pTemplate="header">
-          {{essayTemplateStep.foreign.step.name}}
+          Selector de pasos
         </ng-template>
+        <div
+          *ngIf="(steps$ | async) as steps"
+          class="flex flex-column mt-2"
+        >
+          <div
+            *ngFor="let step of steps"
+            class="mb-2"
+          >
+            <p-button
+              icon="pi pi-plus"
+              styleClass="p-button-outlined w-full text-left"
+              [label]="step.name"
+              (click)="addEssayTemplateStep(step)"
+            ></p-button>
+          </div>
+        </div>
       </p-panel>
-    </ng-container>
-  </div>
+    </div>
 
-  <p-divider layout="vertical"></p-divider>
+    <p-divider layout="vertical"></p-divider>
 
-  <div class="flex flex-1 flex-column">
-    <p class="panel-header text-lg">
-      Administración del paso selccionado
-    </p>
-    <p-panel
-      class="w-full"
-      styleClass=""
-    >
-      <ng-template pTemplate="header">
+    <div class="flex flex-1 flex-column">
+      <p class="panel-header text-lg">
         Pasos del ensayo
-      </ng-template>
-      <!-- TODO: -->
-    </p-panel>
-  </div>
+      </p>
+      <ng-container formArrayName="essayTemplateSteps">
+        <ng-container
+          *ngFor="let essayTemplateStepControl of getEssaytemplateStepControls().controls; let i = index"
+        >
+          <p-panel
+            class="w-full"
+            styleClass="mb-2"
+          >
+            <ng-template pTemplate="header">
+              {{essayTemplateStepControl.value.foreign.step.name}}
+            </ng-template>
+          </p-panel>
+        </ng-container>
+      </ng-container>
+    </div>
 
-</div>
+    <p-divider layout="vertical"></p-divider>
+
+    <div class="flex flex-1 flex-column">
+      <p class="panel-header text-lg">
+        Administración del paso selccionado
+      </p>
+      <p-panel
+        class="w-full"
+        styleClass=""
+      >
+        <ng-template pTemplate="header">
+          Pasos del ensayo
+        </ng-template>
+        <!-- TODO: -->
+      </p-panel>
+    </div>
+
+  </div>
+</form>

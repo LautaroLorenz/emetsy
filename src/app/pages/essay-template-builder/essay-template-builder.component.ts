@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { FormControl, FormGroup } from '@angular/forms';
+import { FormArray, FormControl, FormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { MenuItem, PrimeIcons } from 'primeng/api';
 import { catchError, filter, first, map, Observable, of, ReplaySubject, switchMap, takeUntil, tap, throwError } from 'rxjs';
@@ -23,10 +23,18 @@ export class EssayTemplateBuilderComponent implements OnInit, OnDestroy {
   readonly saveButtonMenuItems: MenuItem[] = [];
   readonly availableTestPageName = PageUrlName.availableTest;
   readonly steps$: Observable<Step[]>;
-  readonly essayTemplateSteps$: Observable<EssayTemplateStep[]>;
 
+  essayTemplateId: number | undefined = undefined;
   nameInputFocused: boolean = false;
 
+  get saveButtonDisabled(): boolean {
+    return !this.form.valid || this.form.pristine;
+  }
+  get confirmBeforeBack(): boolean {
+    return this.form.dirty;
+  }
+
+  private readonly destroyed$: ReplaySubject<boolean> = new ReplaySubject(1);
   private readonly save$ = (): Observable<EssayTemplate> => {
     return of(this.form.valid).pipe(
       first(),
@@ -63,20 +71,50 @@ export class EssayTemplateBuilderComponent implements OnInit, OnDestroy {
       })
     )
   }
+  private readonly requestTableEssayTemplateSteps = (essayTemplateId: number): void => {
+    const { foreignTables } = EssayTemplateStepDbTableContext;
+    const { tableName: essayTemplateTableName } = EssayTemplateDbTableContext;
+    const foreignTablesFiltered = foreignTables.filter(ft => ft.tableName !== essayTemplateTableName);
+    const foreignTableNames = foreignTablesFiltered.map(ft => ft.tableName);
+    const getTableOptions = {
+      relations: foreignTableNames,
+      conditions: [{
+        kind: WhereKind.where,
+        columnName: 'essay_template_id',
+        operator: WhereOperator.equal,
+        value: essayTemplateId
+      }]
+    };
+    this.dbServiceEssayTemplateStep.getTable(
+      EssayTemplateStepDbTableContext.tableName,
+      getTableOptions,
+    );
+  }
+  private readonly requestToolsTables = (): void => {
+    this.dbServiceSteps.getTable(
+      StepDbTableContext.tableName,
+      { relations: StepDbTableContext.foreignTables.map(ft => ft.tableName) }
+    );
+  }
   private readonly exit = () => this.navigationService.back({
     targetPage: PageUrlName.availableTest,
     withConfirmation: false,
   });
   private readonly saveAndExit = () => this.save$().pipe(
+    first(),
     tap(() => this.exit())
   ).subscribe();
   private readonly saveAndCreate = () => this.save$().pipe(
+    first(),
     tap(() => this.navigationService.go(PageUrlName.newEssayTemplate, { forceReload: true }))
   ).subscribe();
   private readonly saveAndExecute = () => this.save$().pipe(
+    first(),
     tap(({ id }) => this.navigationService.go(PageUrlName.executeEssay, { queryParams: { id } }))
   ).subscribe();
-  private readonly destroyed$: ReplaySubject<boolean> = new ReplaySubject(1);
+  private readonly addEssaytemplateStepControl = (essayTemplateStep: Partial<EssayTemplateStep>): void => {
+    this.getEssaytemplateStepControls().push(new FormControl(essayTemplateStep));
+  }
 
   constructor(
     private readonly route: ActivatedRoute,
@@ -88,19 +126,8 @@ export class EssayTemplateBuilderComponent implements OnInit, OnDestroy {
   ) {
     this.id$ = this.route.queryParams.pipe(
       filter(({ id }) => id),
-      tap(({ id }) => this.dbServiceEssayTemplateStep.getTable(
-        EssayTemplateStepDbTableContext.tableName,
-        {
-          relations: EssayTemplateStepDbTableContext.foreignTables.filter(ft => ft.tableName !== EssayTemplateDbTableContext.tableName).map(ft => ft.tableName),
-          conditions: [{
-            kind: WhereKind.where,
-            columnName: 'essay_template_id',
-            operator: WhereOperator.equal,
-            value: id
-          }]
-        },
-      )),
-      map(({ id }) => id)
+      map(({ id }) => id),
+      tap((id) => this.essayTemplateId = id)
     );
     this.steps$ = this.dbServiceSteps.getTableReply$(StepDbTableContext.tableName).pipe(
       map((response) => RelationsManager.mergeRelationsIntoRows<Step>(
@@ -109,16 +136,10 @@ export class EssayTemplateBuilderComponent implements OnInit, OnDestroy {
         StepDbTableContext.foreignTables
       ))
     );
-    this.essayTemplateSteps$ = this.dbServiceEssayTemplateStep.getTableReply$(EssayTemplateStepDbTableContext.tableName).pipe(
-      map((response) => RelationsManager.mergeRelationsIntoRows<EssayTemplateStep>(
-        response.rows,
-        response.relations,
-        EssayTemplateStepDbTableContext.foreignTables
-      ))
-    );
     this.form = new FormGroup({
       id: new FormControl(),
       name: new FormControl(),
+      essayTemplateSteps: new FormArray([])
     });
     this.saveButtonMenuItems = [
       {
@@ -145,21 +166,47 @@ export class EssayTemplateBuilderComponent implements OnInit, OnDestroy {
     ];
   }
 
-  save() {
-    this.save$().subscribe();
-  }
-
   ngOnInit(): void {
+    this.requestToolsTables();
+
     this.id$.pipe(
       takeUntil(this.destroyed$),
       switchMap((id) => this.dbService.getTableElement$(EssayTemplateDbTableContext.tableName, id)),
-      tap((essayTemplate) => this.form.patchValue(essayTemplate))
+      tap((essayTemplate) => this.form.patchValue(essayTemplate)),
+      tap(({ id }) => this.requestTableEssayTemplateSteps(id)),
     ).subscribe();
 
-    this.dbServiceSteps.getTable(
-      StepDbTableContext.tableName,
-      { relations: StepDbTableContext.foreignTables.map(ft => ft.tableName) }
-    );
+
+    this.dbServiceEssayTemplateStep.getTableReply$(EssayTemplateStepDbTableContext.tableName).pipe(
+      takeUntil(this.destroyed$),
+      map(({ rows, relations }) => {
+        const { foreignTables } = EssayTemplateStepDbTableContext;
+        return RelationsManager.mergeRelationsIntoRows<EssayTemplateStep>(rows, relations, foreignTables);
+      }),
+      tap((essayTemplateSteps) => {
+        essayTemplateSteps.forEach((essayTemplateStep: EssayTemplateStep) => this.addEssaytemplateStepControl(essayTemplateStep));
+      })
+    ).subscribe();
+  }
+
+  getEssaytemplateStepControls(): FormArray {
+    return (this.form.get('essayTemplateSteps') as FormArray);
+  }
+
+  addEssayTemplateStep(step: Step): void {
+    const newEssayTemplateStep: Partial<EssayTemplateStep> = {
+      essay_template_id: this.essayTemplateId,
+      step_id: step.id,
+      foreign: {
+        step
+      }
+    };
+    this.addEssaytemplateStepControl(newEssayTemplateStep);
+    this.form.markAsDirty();
+  }
+
+  save(): void {
+    this.save$().subscribe();
   }
 
   ngOnDestroy() {

@@ -8,8 +8,8 @@ export interface EssayTemplateStep extends DbForeignKey {
   essay_template_id: number;
   step_id: number;
   foreign: {
-    essayTemplate: EssayTemplate,
-    step: Step,
+    essayTemplate?: EssayTemplate,
+    step?: Step,
   };
 }
 
