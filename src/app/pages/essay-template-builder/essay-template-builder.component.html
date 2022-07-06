@@ -94,6 +94,9 @@
             <ng-template pTemplate="header">
               {{essayTemplateStepControl.value.foreign.step.name}}
             </ng-template>
+            <button (click)="stepUpByIndex(i)">Subir</button>
+            <button (click)="stepDownByIndex(i)">Bajar</button>
+            <button (click)="stepRemoveByIndex(i)">Eliminar</button>
           </p-panel>
         </ng-container>
       </ng-container>

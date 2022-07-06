@@ -192,6 +192,19 @@ export class EssayTemplateBuilderComponent implements OnInit, OnDestroy {
     this.save$().subscribe();
   }
 
+  stepUpByIndex(index: number) {
+    // TODO:
+  }
+
+  stepDownByIndex(index: number) {
+    // TODO:
+  }
+
+  stepRemoveByIndex(index: number) {
+    this.getEssaytemplateStepControls().removeAt(index);
+    this.form.markAsDirty();
+  }
+
   ngOnDestroy() {
     this.destroyed$.next(true);
     this.destroyed$.complete();

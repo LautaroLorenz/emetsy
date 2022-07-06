@@ -23,33 +23,26 @@ const formatEssayTemplateSteps = (essayTemplateSteps, essayTemplateId) => essayT
 const essayTemplateStepsUpdateExisting = async (essayTemplateSteps, transaction) => {
   const essayTemplateStepsToUpdate = essayTemplateSteps.filter(({ id }) => id);
   for await (const et of essayTemplateStepsToUpdate) {
-    const { id, essay_template_id, step_id, order } = et;
-    await knex('essay_templates_steps')
-      .transacting(transaction)
-      .update({ id, essay_template_id, step_id, order })
-      .where('id', id);
+    const { foreign, ...propertiesToUpdate } = et;
+    await knex('essay_templates_steps').transacting(transaction).update(propertiesToUpdate).where('id', et.id);
   }
   return essayTemplateStepsToUpdate;
 }
 const essayTemplateStepsCreateNews = async (essayTemplateSteps, transaction) => {
   const essayTemplateStepsToCreate = essayTemplateSteps.filter(({ id }) => !id);
   for await (const et of essayTemplateStepsToCreate) {
-    const { essay_template_id, step_id, order } = et;
-    const [id] = await knex('essay_templates_steps')
-      .transacting(transaction)
-      .insert({ essay_template_id, step_id, order });
+    const { foreign, ...propertiesToInsert } = et;
+    const [id] = await knex('essay_templates_steps').transacting(transaction).insert(propertiesToInsert);
     et.id = id;
   }
   return essayTemplateStepsToCreate;
 }
-const essayTemplateStepsDeleteOlds = async (essayTemplateId, essayTemplateStepsUpdated, transaction) => {
-  const querybuilder = knex('essay_templates_steps').transacting(transaction);
-  const oldEssayTemplateSteps = await querybuilder.select('id').where('essay_template_id', essayTemplateId);
-  const essayTemplateStepsToDelete = oldEssayTemplateSteps
-    .filter(({ id }) => essayTemplateStepsUpdated.includes(id))
-    .map(({ id }) => id);
-  if (essayTemplateStepsToDelete.length > 0) {
-    await querybuilder.delete().whereIn('id', essayTemplateStepsToDelete);
+const essayTemplateStepsDeleteOlds = async (essayTemplateId, essayTemplateSteps, transaction) => {
+  const oldRelations = await knex('essay_templates_steps').transacting(transaction).select('id').where('essay_template_id', essayTemplateId);
+  const keepIds = essayTemplateSteps.map(({ id }) => id);
+  const relationsToDelete = oldRelations.filter(({ id }) => !keepIds.includes(id)).map(({ id }) => id);
+  if (relationsToDelete.length > 0) {
+    await knex('essay_templates_steps').transacting(transaction).delete().whereIn('id', relationsToDelete);
   }
 }
 
@@ -60,8 +53,8 @@ ipcMain.handle('save-essay-template', async (_, { essayTemplate, essayTemplateSt
     essayTemplateSteps = formatEssayTemplateSteps(essayTemplateSteps, essayTemplate.id);
     const essayTemplateStepsUpdated = await essayTemplateStepsUpdateExisting(essayTemplateSteps, transaction);
     const essayTemplateStepsCreated = await essayTemplateStepsCreateNews(essayTemplateSteps, transaction);
-    await essayTemplateStepsDeleteOlds(essayTemplate.id, essayTemplateStepsUpdated, transaction);
     essayTemplateSteps = [...essayTemplateStepsUpdated, ...essayTemplateStepsCreated];
+    await essayTemplateStepsDeleteOlds(essayTemplate.id, essayTemplateSteps, transaction);
     return { essayTemplate, essayTemplateSteps };
   });
 });
