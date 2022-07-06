@@ -13,6 +13,7 @@ import { BrandsComponent } from './brands/brands.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { EssayTemplateBuilderComponent } from './essay-template-builder/essay-template-builder.component';
 import { ExecuteEssayComponent } from './execute-essay/execute-essay.component';
+import { PendingChangesGuard } from '../guards/pending-changes.guard';
 
 
 @NgModule({
@@ -33,6 +34,9 @@ import { ExecuteEssayComponent } from './execute-essay/execute-essay.component';
     ReactiveFormsModule,
     DirectivesModule,
   ],
-  exports: []
+  exports: [],
+  providers: [
+    PendingChangesGuard
+  ]
 })
 export class PagesModule { }

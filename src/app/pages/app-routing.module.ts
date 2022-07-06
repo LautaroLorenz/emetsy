@@ -11,6 +11,7 @@ import { MetersComponent } from './meters/meters.component';
 import { BrandsComponent } from './brands/brands.component';
 import { EssayTemplateBuilderComponent } from './essay-template-builder/essay-template-builder.component';
 import { ExecuteEssayComponent } from './execute-essay/execute-essay.component';
+import { PendingChangesGuard } from '../guards/pending-changes.guard';
 
 const routes: Routes = [
   {
@@ -48,11 +49,13 @@ const routes: Routes = [
   },
   {
     path: PageUrlName.newEssayTemplate,
-    component: EssayTemplateBuilderComponent
+    component: EssayTemplateBuilderComponent,
+    canDeactivate: [PendingChangesGuard]
   },
   {
     path: PageUrlName.editEssayTemplate,
-    component: EssayTemplateBuilderComponent
+    component: EssayTemplateBuilderComponent,
+    canDeactivate: [PendingChangesGuard]
   },
   {
     path: PageUrlName.executeEssay,

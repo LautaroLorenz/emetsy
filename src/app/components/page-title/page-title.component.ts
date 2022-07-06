@@ -1,7 +1,5 @@
-import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { PrimeIcons } from 'primeng/api';
-import { PageUrlName } from 'src/app/models';
-import { NavigationService } from 'src/app/services/navigation.service';
 
 @Component({
   selector: 'app-page-title',
@@ -14,24 +12,10 @@ export class PageTitleComponent implements OnInit {
   @Input() title: string = '';
   @Input() headerIcon: PrimeIcons | null = null;
   @Input() showBack: boolean = false;
-  @Input() confirmBeforeBack: boolean = false;
-  @Input() backPage: PageUrlName = PageUrlName.root;
-  @Input() confirmBeforeBackHeader: string;
-  @Input() confirmBeforeBackText: string;
 
-  readonly back = () => this.navigationService.back({
-    targetPage: this.backPage,
-    withConfirmation: this.confirmBeforeBack,
-    confirmBeforeBackText: this.confirmBeforeBackText,
-    confirmBeforeBackHeader: this.confirmBeforeBackHeader
-  });
+  @Output() backEvent = new EventEmitter<boolean>();
 
-  constructor(
-    private readonly navigationService: NavigationService,
-  ) {
-    this.confirmBeforeBackHeader = 'Confirmar salir de esta página';
-    this.confirmBeforeBackText = '¿Confirma qué quiere volver a la página anterior?';
-  }
+  constructor() { }
 
   ngOnInit(): void { }
 }

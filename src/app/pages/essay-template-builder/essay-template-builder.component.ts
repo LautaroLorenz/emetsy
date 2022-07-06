@@ -1,8 +1,9 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, HostListener, OnDestroy, OnInit } from '@angular/core';
 import { FormArray, FormControl, FormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { MenuItem, PrimeIcons } from 'primeng/api';
+import { ConfirmationService, MenuItem, PrimeIcons } from 'primeng/api';
 import { catchError, filter, first, map, Observable, of, ReplaySubject, switchMap, takeUntil, tap, throwError } from 'rxjs';
+import { ComponentCanDeactivate } from 'src/app/guards/pending-changes.guard';
 import { EssayTemplate, EssayTemplateDbTableContext, PageUrlName, RelationsManager, Step, StepDbTableContext, WhereKind, WhereOperator } from 'src/app/models';
 import { EssayTemplateStep, EssayTemplateStepDbTableContext } from 'src/app/models/database/tables/essay-template-step.model';
 import { DatabaseService } from 'src/app/services/database.service';
@@ -14,7 +15,7 @@ import { NavigationService } from 'src/app/services/navigation.service';
   templateUrl: './essay-template-builder.component.html',
   styleUrls: ['./essay-template-builder.component.scss']
 })
-export class EssayTemplateBuilderComponent implements OnInit, OnDestroy {
+export class EssayTemplateBuilderComponent implements OnInit, OnDestroy, ComponentCanDeactivate {
 
   readonly title: string = 'Ensayo';
   readonly id$: Observable<number>;
@@ -22,7 +23,6 @@ export class EssayTemplateBuilderComponent implements OnInit, OnDestroy {
   readonly confirmBeforeBackHeader: string = "Salir sin guardar";
   readonly confirmBeforeBackText: string = "¿Confirma qué quiere salir sin guardar?";
   readonly saveButtonMenuItems: MenuItem[] = [];
-  readonly availableTestPageName = PageUrlName.availableTest;
   readonly steps$: Observable<Step[]>;
 
   nameInputFocused: boolean = false;
@@ -82,10 +82,6 @@ export class EssayTemplateBuilderComponent implements OnInit, OnDestroy {
       { relations: StepDbTableContext.foreignTables.map(ft => ft.tableName) }
     );
   }
-  private readonly exit = () => this.navigationService.back({
-    targetPage: PageUrlName.availableTest,
-    withConfirmation: false,
-  });
   private readonly saveAndExit = () => this.save$().pipe(
     tap(() => this.exit())
   ).subscribe();
@@ -107,6 +103,7 @@ export class EssayTemplateBuilderComponent implements OnInit, OnDestroy {
     private readonly dbServiceSteps: DatabaseService<Step>,
     private readonly navigationService: NavigationService,
     private readonly messagesService: MessagesService,
+    private readonly confirmationService: ConfirmationService,
   ) {
     this.id$ = this.route.queryParams.pipe(
       filter(({ id }) => id),
@@ -141,13 +138,7 @@ export class EssayTemplateBuilderComponent implements OnInit, OnDestroy {
         label: 'Guardar y Crear otro',
         icon: PrimeIcons.PLUS,
         command: this.saveAndCreate,
-      },
-      { separator: true },
-      {
-        label: 'Salir sin guardar',
-        icon: PrimeIcons.UNDO,
-        command: this.exit,
-      },
+      }
     ];
   }
 
@@ -203,6 +194,40 @@ export class EssayTemplateBuilderComponent implements OnInit, OnDestroy {
   stepRemoveByIndex(index: number) {
     this.getEssaytemplateStepControls().removeAt(index);
     this.form.markAsDirty();
+  }
+
+  exit() {
+    this.navigationService.back({ targetPage: PageUrlName.availableTest });
+  };
+
+  @HostListener('window:beforeunload')
+  canDeactivate(): Observable<boolean> {
+    return of(this.confirmBeforeBack).pipe(
+      first(),
+      switchMap((confirm) => {
+        if (!confirm) {
+          return of(true);
+        } else {
+          return new Observable<boolean>((observer) => {
+            this.confirmationService.confirm({
+              message: this.confirmBeforeBackText,
+              header: this.confirmBeforeBackHeader,
+              icon: PrimeIcons.EXCLAMATION_TRIANGLE,
+              defaultFocus: "reject",
+              acceptButtonStyleClass: "p-button-outlined",
+              accept: () => {
+                observer.next(true);
+                observer.complete();
+              },
+              reject: () => {
+                observer.next(false);
+                observer.complete();
+              }
+            });
+          })
+        }
+      })
+    );
   }
 
   ngOnDestroy() {

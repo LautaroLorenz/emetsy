@@ -5,10 +5,7 @@
   <app-page-title
     [title]="title"
     [showBack]="true"
-    [backPage]="availableTestPageName"
-    [confirmBeforeBack]="confirmBeforeBack"
-    [confirmBeforeBackHeader]="confirmBeforeBackHeader"
-    [confirmBeforeBackText]="confirmBeforeBackText"
+    (backEvent)="exit()"
   >
     <ng-container toolbar-left>
       <div class="ml-3">
