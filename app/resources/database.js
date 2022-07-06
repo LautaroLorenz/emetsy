@@ -1,5 +1,6 @@
 const config = require('./data/knexfile');
-const { setKnex: setAbmKnex } = require('../commands/abm')
+const { setKnex: setAbmKnex } = require('../commands/abm');
+const { setKnex: setEssayKnex } = require('../commands/essay');
 
 let knex;
 
@@ -9,5 +10,6 @@ module.exports = {
     knex = require('knex')(config[environment]);
 
     setAbmKnex(knex);
+    setEssayKnex(knex);
   }
 }

@@ -6,6 +6,7 @@ import { catchError, filter, first, map, Observable, of, ReplaySubject, switchMa
 import { EssayTemplate, EssayTemplateDbTableContext, PageUrlName, RelationsManager, Step, StepDbTableContext, WhereKind, WhereOperator } from 'src/app/models';
 import { EssayTemplateStep, EssayTemplateStepDbTableContext } from 'src/app/models/database/tables/essay-template-step.model';
 import { DatabaseService } from 'src/app/services/database.service';
+import { EssayService } from 'src/app/services/essay.service';
 import { MessagesService } from 'src/app/services/messages.service';
 import { NavigationService } from 'src/app/services/navigation.service';
 
@@ -24,7 +25,6 @@ export class EssayTemplateBuilderComponent implements OnInit, OnDestroy {
   readonly availableTestPageName = PageUrlName.availableTest;
   readonly steps$: Observable<Step[]>;
 
-  essayTemplateId: number | undefined = undefined;
   nameInputFocused: boolean = false;
 
   get saveButtonDisabled(): boolean {
@@ -35,35 +35,21 @@ export class EssayTemplateBuilderComponent implements OnInit, OnDestroy {
   }
 
   private readonly destroyed$: ReplaySubject<boolean> = new ReplaySubject(1);
-  private readonly save$ = (): Observable<EssayTemplate> => {
+  private readonly save$ = (): Observable<{ essayTemplate: EssayTemplate, essayTemplateSteps: EssayTemplateStep[] }> => {
     return of(this.form.valid).pipe(
       first(),
       filter((valid) => valid),
-      map(() => this.form.get('essayTemplate')?.getRawValue()),
-      map((essayTemplate) => ({
-        ...essayTemplate,
-        name: essayTemplate.name.toString().trim(),
-      })),
-      switchMap((essayTemplate) => {
-        if (essayTemplate.id) {
-          return this.dbService.editElementFromTable$(
-            EssayTemplateDbTableContext.tableName,
-            essayTemplate
-          ).pipe(
-            map(() => essayTemplate)
-          );
-        } else {
-          return this.dbService.addElementToTable$(
-            EssayTemplateDbTableContext.tableName,
-            essayTemplate
-          ).pipe(
-            map((id) => ({ ...essayTemplate, id }))
-          );
-        }
-      }),
-      tap((essayTemplate) => {
+      map(() => this.form.getRawValue()),
+      switchMap(({
+        essayTemplate,
+        essayTemplateSteps
+      }) => this.essayService.saveEssayTemplate$(
+        essayTemplate,
+        essayTemplateSteps
+      )),
+      tap((savedFormValue) => {
         this.messagesService.success('Guardado correctamente');
-        this.form.get('essayTemplate')?.reset(essayTemplate);
+        this.form.reset(savedFormValue);
       }),
       catchError((e) => {
         this.messagesService.error('No se pudo guardar');
@@ -101,16 +87,13 @@ export class EssayTemplateBuilderComponent implements OnInit, OnDestroy {
     withConfirmation: false,
   });
   private readonly saveAndExit = () => this.save$().pipe(
-    first(),
     tap(() => this.exit())
   ).subscribe();
   private readonly saveAndCreate = () => this.save$().pipe(
-    first(),
     tap(() => this.navigationService.go(PageUrlName.newEssayTemplate, { forceReload: true }))
   ).subscribe();
   private readonly saveAndExecute = () => this.save$().pipe(
-    first(),
-    tap(({ id }) => this.navigationService.go(PageUrlName.executeEssay, { queryParams: { id } }))
+    tap(({ essayTemplate: { id } }) => this.navigationService.go(PageUrlName.executeEssay, { queryParams: { id } }))
   ).subscribe();
   private readonly addEssaytemplateStepControl = (essayTemplateStep: Partial<EssayTemplateStep>): void => {
     this.getEssaytemplateStepControls().push(new FormControl(essayTemplateStep));
@@ -118,6 +101,7 @@ export class EssayTemplateBuilderComponent implements OnInit, OnDestroy {
 
   constructor(
     private readonly route: ActivatedRoute,
+    private readonly essayService: EssayService,
     private readonly dbService: DatabaseService<EssayTemplate>,
     private readonly dbServiceEssayTemplateStep: DatabaseService<EssayTemplateStep>,
     private readonly dbServiceSteps: DatabaseService<Step>,
@@ -127,7 +111,6 @@ export class EssayTemplateBuilderComponent implements OnInit, OnDestroy {
     this.id$ = this.route.queryParams.pipe(
       filter(({ id }) => id),
       map(({ id }) => id),
-      tap((id) => this.essayTemplateId = id)
     );
     this.steps$ = this.dbServiceSteps.getTableReply$(StepDbTableContext.tableName).pipe(
       map((response) => RelationsManager.mergeRelationsIntoRows<Step>(
@@ -198,11 +181,8 @@ export class EssayTemplateBuilderComponent implements OnInit, OnDestroy {
 
   addEssayTemplateStep(step: Step): void {
     const newEssayTemplateStep: Partial<EssayTemplateStep> = {
-      essay_template_id: this.essayTemplateId,
       step_id: step.id,
-      foreign: {
-        step
-      }
+      foreign: { step }
     };
     this.addEssaytemplateStepControl(newEssayTemplateStep);
     this.form.markAsDirty();
