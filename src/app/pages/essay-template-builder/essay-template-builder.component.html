@@ -43,8 +43,13 @@
     </ng-container>
   </app-page-title>
 
-  <div class="flex justify-content-evenly">
-    
+  <div
+    class="flex justify-content-evenly"
+    [ngStyle]="{
+      'max-height': panelMaxHeight,
+      'min-height': panelMaxHeight
+    }"
+  >
     <div class="flex flex-1 flex-column pl-3">
       <p class="panel-header-title text-lg pt-1">
         Herramientas
@@ -78,7 +83,7 @@
     <p-divider layout="vertical"></p-divider>
 
     <div class="flex flex-1 flex-column">
-      <div class="flex pt-3 pb-4 align-items-center justify-content-between">
+      <div class="flex pt-3 pb-3 align-items-center justify-content-between">
         <span class="panel-header-title text-lg">Pasos del ensayo</span>
         <div>
           <p-button
@@ -114,7 +119,7 @@
         </div>
       </div>
       <div
-        class="flex flex-1 flex-column"
+        class="flex flex-1 flex-column pt-3 mb-4 border-1 border-200 border-round overflow-auto"
         formArrayName="essayTemplateSteps"
       >
         <ng-container

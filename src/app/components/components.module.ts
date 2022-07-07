@@ -37,6 +37,7 @@ import { SplitButtonModule } from 'primeng/splitbutton';
 import { SpeedDialModule } from 'primeng/speeddial';
 import { DragDropModule } from 'primeng/dragdrop';
 import { OrderListModule } from 'primeng/orderlist';
+import { DirectivesModule } from '../directives/directives.module';
 
 const PrimeNgModules = [
   MenubarModule,
@@ -80,7 +81,13 @@ const EmetsyComponents = [
 
 @NgModule({
   declarations: [EmetsyComponents],
-  imports: [CommonModule, PrimeNgModules, PipesModule, ReactiveFormsModule],
+  imports: [
+    CommonModule,
+    PrimeNgModules,
+    PipesModule,
+    ReactiveFormsModule,
+    DirectivesModule,
+  ],
   exports: [EmetsyComponents, PrimeNgModules],
   providers: [PrimeNgServices]
 })
