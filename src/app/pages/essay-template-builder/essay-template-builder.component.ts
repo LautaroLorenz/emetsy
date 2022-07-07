@@ -205,6 +205,8 @@ export class EssayTemplateBuilderComponent implements OnInit, OnDestroy, Compone
     };
     this.addEssaytemplateStepControl(newEssayTemplateStep);
     this.form.markAsDirty();
+    this.selectIndex(this.getEssaytemplateStepControls().length - 1);
+    setTimeout(() => this.scrollIntoView('panel-index-' + this.selectedIndex));
   }
 
   exit() {
