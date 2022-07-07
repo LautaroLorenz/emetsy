@@ -25,6 +25,7 @@ export class EssayTemplateBuilderComponent implements OnInit, OnDestroy, Compone
   readonly saveButtonMenuItems: MenuItem[] = [];
   readonly steps$: Observable<Step[]>;
 
+  selectedIndex: number | null = null;
   nameInputFocused: boolean = false;
 
   get saveButtonDisabled(): boolean {
@@ -32,6 +33,15 @@ export class EssayTemplateBuilderComponent implements OnInit, OnDestroy, Compone
   }
   get confirmBeforeBack(): boolean {
     return this.form.dirty;
+  }
+  get buttonMoveUpDisabled(): boolean {
+    return this.selectedIndex === null || this.selectedIndex === 0;
+  }
+  get buttonMoveDownDisabled(): boolean {
+    return this.selectedIndex === null || this.selectedIndex === this.getEssaytemplateStepControls().controls.length - 1;
+  }
+  get buttonRemoveDisabled(): boolean {
+    return this.selectedIndex === null;
   }
 
   private readonly destroyed$: ReplaySubject<boolean> = new ReplaySubject(1);
@@ -50,6 +60,7 @@ export class EssayTemplateBuilderComponent implements OnInit, OnDestroy, Compone
       tap((savedFormValue) => {
         this.messagesService.success('Guardado correctamente');
         this.form.reset(savedFormValue);
+        this.selectedIndex = null;
       }),
       catchError((e) => {
         this.messagesService.error('No se pudo guardar');
@@ -160,9 +171,7 @@ export class EssayTemplateBuilderComponent implements OnInit, OnDestroy, Compone
         return RelationsManager.mergeRelationsIntoRows<EssayTemplateStep>(rows, relations, foreignTables);
       }),
       map((essayTemplateStep) => essayTemplateStep.sort((a, b) => a.order - b.order)),
-      tap((essayTemplateSteps) => {
-        essayTemplateSteps.forEach((essayTemplateStep: EssayTemplateStep) => this.addEssaytemplateStepControl(essayTemplateStep));
-      })
+      tap((essayTemplateSteps) => essayTemplateSteps.forEach((essayTemplateStep: EssayTemplateStep) => this.addEssaytemplateStepControl(essayTemplateStep)))
     ).subscribe();
   }
 
@@ -179,26 +188,60 @@ export class EssayTemplateBuilderComponent implements OnInit, OnDestroy, Compone
     this.form.markAsDirty();
   }
 
+  exit() {
+    this.navigationService.back({ targetPage: PageUrlName.availableTest });
+  };
+
   save(): void {
     this.save$().subscribe();
   }
 
-  stepUpByIndex(index: number) {
-    // TODO:
-  }
+  moveUpByIndex(index: number | null) {
+    if (index === null) {
+      return;
+    }
+    if (index === 0) {
+      return;
+    }
 
-  stepDownByIndex(index: number) {
-    // TODO:
-  }
-
-  stepRemoveByIndex(index: number) {
+    const temp = this.getEssaytemplateStepControls().at(index);
     this.getEssaytemplateStepControls().removeAt(index);
+    this.getEssaytemplateStepControls().insert(index - 1, temp);
+    this.selectedIndex = index - 1;
     this.form.markAsDirty();
   }
 
-  exit() {
-    this.navigationService.back({ targetPage: PageUrlName.availableTest });
-  };
+  moveDownByIndex(index: number | null) {
+    if (index === null) {
+      return;
+    }
+    if (index === this.getEssaytemplateStepControls().length - 1) {
+      return;
+    }
+
+    const temp = this.getEssaytemplateStepControls().at(index + 1);
+    this.getEssaytemplateStepControls().removeAt(index + 1);
+    this.getEssaytemplateStepControls().insert(index, temp);
+    this.selectedIndex = index + 1;
+    this.form.markAsDirty();
+  }
+
+  stepRemoveByIndex(index: number | null) {
+    if (index === null) {
+      return;
+    }
+    this.getEssaytemplateStepControls().removeAt(index);
+    this.selectedIndex = null;
+    this.form.markAsDirty();
+  }
+
+  selectIndex(index: number): void {
+    if (this.selectedIndex === index) {
+      this.selectedIndex = null;
+      return;
+    }
+    this.selectedIndex = index;
+  }
 
   @HostListener('window:beforeunload')
   canDeactivate(): Observable<boolean> {

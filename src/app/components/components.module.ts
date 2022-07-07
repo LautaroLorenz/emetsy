@@ -34,6 +34,9 @@ import { TabMenuModule } from 'primeng/tabmenu';
 import { ReactiveFormsModule } from '@angular/forms';
 import { SplitterModule } from 'primeng/splitter';
 import { SplitButtonModule } from 'primeng/splitbutton';
+import { SpeedDialModule } from 'primeng/speeddial';
+import { DragDropModule } from 'primeng/dragdrop';
+import { OrderListModule } from 'primeng/orderlist';
 
 const PrimeNgModules = [
   MenubarModule,
@@ -57,6 +60,9 @@ const PrimeNgModules = [
   TabMenuModule,
   SplitterModule,
   SplitButtonModule,
+  SpeedDialModule,
+  DragDropModule,
+  OrderListModule,
 ];
 
 const PrimeNgServices = [

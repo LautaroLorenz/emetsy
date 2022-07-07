@@ -1,9 +1,17 @@
+@import 'primeflex/primeflex.scss';
+
 .name-input {
   &:hover:not(:focus) {
     background-color: var(--surface-100) !important;
   }
 }
 
-.panel-header {
+.panel-header-title {
   font-family: var(--font-family);
+}
+
+.essay-template-step-selected {
+  ::ng-deep .p-panel.p-component{
+    @include styleclass('shadow-4 border-1 border-blue-500');
+  }
 }

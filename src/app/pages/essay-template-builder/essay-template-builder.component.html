@@ -45,7 +45,7 @@
   <div class="flex justify-content-evenly">
 
     <div class="flex flex-1 flex-column pl-3">
-      <p class="panel-header text-lg">
+      <p class="panel-header-title text-lg">
         Herramientas
       </p>
       <p-panel
@@ -77,32 +77,72 @@
     <p-divider layout="vertical"></p-divider>
 
     <div class="flex flex-1 flex-column">
-      <p class="panel-header text-lg">
-        Pasos del ensayo
-      </p>
-      <ng-container formArrayName="essayTemplateSteps">
+      <div class="flex pt-2 pb-4 align-items-center justify-content-between">
+        <span class="panel-header-title text-lg">Pasos del ensayo</span>
+        <div>
+          <p-button
+            icon="pi pi-arrow-up"
+            styleClass="p-button-outlined mr-2"
+            [disabled]="buttonMoveUpDisabled"
+            [tooltipDisabled]="buttonMoveUpDisabled"
+            pTooltip="Subir posición"
+            tooltipPosition="bottom"
+            [showDelay]="1250"
+            (click)="moveUpByIndex(selectedIndex)"
+          ></p-button>
+          <p-button
+            icon="pi pi-arrow-down"
+            styleClass="p-button-outlined mr-2"
+            [disabled]="buttonMoveDownDisabled"
+            [tooltipDisabled]="buttonMoveDownDisabled"
+            pTooltip="Bajar posición"
+            tooltipPosition="bottom"
+            [showDelay]="1250"
+            (click)="moveDownByIndex(selectedIndex)"
+          ></p-button>
+          <p-button
+            icon="pi pi-times"
+            styleClass="p-button-outlined p-button-danger"
+            [disabled]="buttonRemoveDisabled"
+            [tooltipDisabled]="buttonRemoveDisabled"
+            pTooltip="Eliminar"
+            tooltipPosition="bottom"
+            [showDelay]="1250"
+            (click)="stepRemoveByIndex(selectedIndex)"
+          ></p-button>
+        </div>
+      </div>
+      <div
+        class="flex flex-1 flex-column"
+        formArrayName="essayTemplateSteps"
+      >
         <ng-container
           *ngFor="let essayTemplateStepControl of getEssaytemplateStepControls().controls; let i = index"
         >
           <p-panel
             class="w-full"
-            styleClass="mb-2"
+            styleClass="mb-2 cursor-pointer select-none"
+            (click)="selectIndex(i)"
+            [ngClass]="{
+              'essay-template-step-selected': i === selectedIndex
+            }"
           >
             <ng-template pTemplate="header">
-              {{essayTemplateStepControl.value.foreign.step.name}}
+              <div
+                class="custom-header flex flex-1 align-items-center justify-content-between"
+              >
+                {{essayTemplateStepControl.value.foreign.step.name}}
+              </div>
             </ng-template>
-            <button (click)="stepUpByIndex(i)">Subir</button>
-            <button (click)="stepDownByIndex(i)">Bajar</button>
-            <button (click)="stepRemoveByIndex(i)">Eliminar</button>
           </p-panel>
         </ng-container>
-      </ng-container>
+      </div>
     </div>
 
     <p-divider layout="vertical"></p-divider>
 
     <div class="flex flex-1 flex-column pr-3">
-      <p class="panel-header text-lg">
+      <p class="panel-header-title text-lg">
         Administración del paso selccionado
       </p>
       <p-panel
