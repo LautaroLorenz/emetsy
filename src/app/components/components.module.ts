@@ -39,6 +39,7 @@ import { DragDropModule } from 'primeng/dragdrop';
 import { OrderListModule } from 'primeng/orderlist';
 import { DirectivesModule } from '../directives/directives.module';
 import { FillAvailableSpaceComponent } from './fill-available-space/fill-available-space.component';
+import { StepSelectorComponent } from './step-selector/step-selector.component';
 
 const PrimeNgModules = [
   MenubarModule,
@@ -79,6 +80,7 @@ const EmetsyComponents = [
   PageTitleComponent,
   TabMenuTestComponent,
   FillAvailableSpaceComponent,
+  StepSelectorComponent,
 ]
 
 @NgModule({
