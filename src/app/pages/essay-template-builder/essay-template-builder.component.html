@@ -22,9 +22,9 @@
             [appSelectOnFocus]="true"
             [(appFocused)]="nameInputFocused"
             [ngClass]="{
-            'cursor-pointer': !nameInputFocused,
-            'border-none': !nameInputFocused && nameInput.value
-          }"
+              'cursor-pointer': !nameInputFocused,
+              'border-none': !nameInputFocused && nameInput.value
+            }"
           />
         </ng-container>
       </div>
@@ -43,7 +43,7 @@
     </ng-container>
   </app-page-title>
 
-  <app-fill-available-space>
+  <app-fill-available-space class="flex justify-content-evenly">
 
     <div class="flex flex-1 flex-column pl-3">
       <p class="panel-header-title text-lg pt-1">

@@ -4,7 +4,6 @@ import { ScreenService } from 'src/app/services/screen.service';
 
 @Component({
   selector: 'app-fill-available-space',
-  styleUrls: ['./fill-available-space.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: '<ng-content></ng-content>',
 })
@@ -12,7 +11,7 @@ export class FillAvailableSpaceComponent implements OnInit, OnDestroy {
 
   @HostBinding('style.maxHeight.px')
   @HostBinding('style.minHeight.px')
-  height: number = 10;
+  height: number = 0;
 
   private readonly destroyed$: ReplaySubject<boolean> = new ReplaySubject(1);
 
