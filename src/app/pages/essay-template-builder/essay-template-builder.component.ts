@@ -105,6 +105,10 @@ export class EssayTemplateBuilderComponent implements OnInit, OnDestroy, Compone
   private readonly addEssaytemplateStepControl = (essayTemplateStep: Partial<EssayTemplateStep>): void => {
     this.getEssaytemplateStepControls().push(new FormControl(essayTemplateStep));
   }
+  private readonly scrollIntoView = (selector: string): void => {
+    const itemToScrollTo = document.getElementById(selector);
+    itemToScrollTo?.scrollIntoView({ behavior: 'auto', block: 'center', inline: 'center' });
+  }
 
   constructor(
     private readonly route: ActivatedRoute,
@@ -208,6 +212,7 @@ export class EssayTemplateBuilderComponent implements OnInit, OnDestroy, Compone
     this.getEssaytemplateStepControls().removeAt(index);
     this.getEssaytemplateStepControls().insert(index - 1, temp);
     this.selectedIndex = index - 1;
+    this.scrollIntoView('panel-index-' + this.selectedIndex);
     this.form.markAsDirty();
   }
 
@@ -223,6 +228,7 @@ export class EssayTemplateBuilderComponent implements OnInit, OnDestroy, Compone
     this.getEssaytemplateStepControls().removeAt(index + 1);
     this.getEssaytemplateStepControls().insert(index, temp);
     this.selectedIndex = index + 1;
+    this.scrollIntoView('panel-index-' + this.selectedIndex);
     this.form.markAsDirty();
   }
 

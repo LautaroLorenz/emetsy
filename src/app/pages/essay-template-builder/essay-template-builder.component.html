@@ -45,7 +45,7 @@
   <div class="flex justify-content-evenly">
 
     <div class="flex flex-1 flex-column pl-3">
-      <p class="panel-header-title text-lg">
+      <p class="panel-header-title text-lg pt-1">
         Herramientas
       </p>
       <p-panel
@@ -77,7 +77,7 @@
     <p-divider layout="vertical"></p-divider>
 
     <div class="flex flex-1 flex-column">
-      <div class="flex pt-2 pb-4 align-items-center justify-content-between">
+      <div class="flex pt-3 pb-4 align-items-center justify-content-between">
         <span class="panel-header-title text-lg">Pasos del ensayo</span>
         <div>
           <p-button
@@ -113,15 +113,16 @@
         </div>
       </div>
       <div
-        class="flex flex-1 flex-column"
+        class="flex flex-1 flex-column max-h-30rem overflow-auto"
         formArrayName="essayTemplateSteps"
       >
         <ng-container
           *ngFor="let essayTemplateStepControl of getEssaytemplateStepControls().controls; let i = index"
         >
           <p-panel
+            id="panel-index-{{i}}"
             class="w-full"
-            styleClass="mb-2 cursor-pointer select-none"
+            styleClass="mb-2 mx-1 cursor-pointer select-none"
             (click)="selectIndex(i)"
             [ngClass]="{
               'essay-template-step-selected': i === selectedIndex
@@ -141,7 +142,7 @@
 
     <p-divider layout="vertical"></p-divider>
 
-    <div class="flex flex-1 flex-column pr-3">
+    <div class="flex flex-1 flex-column pr-3 pt-1">
       <p class="panel-header-title text-lg">
         Administración del paso selccionado
       </p>
