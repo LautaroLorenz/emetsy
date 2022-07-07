@@ -11,7 +11,7 @@
 }
 
 .essay-template-step-selected {
-  ::ng-deep .p-panel.p-component{
+  ::ng-deep .p-panel.p-component {
     @include styleclass('shadow-4 border-1 border-blue-500');
   }
 }

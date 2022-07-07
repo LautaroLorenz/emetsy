@@ -1,6 +1,7 @@
 <form
   novalidate
   [formGroup]="form"
+  class=""
 >
   <app-page-title
     [title]="title"
@@ -43,14 +44,14 @@
   </app-page-title>
 
   <div class="flex justify-content-evenly">
-
+    
     <div class="flex flex-1 flex-column pl-3">
       <p class="panel-header-title text-lg pt-1">
         Herramientas
       </p>
       <p-panel
         class="w-full"
-        styleClass=""
+        styleClass="shadow-none"
       >
         <ng-template pTemplate="header">
           Selector de pasos
@@ -113,7 +114,7 @@
         </div>
       </div>
       <div
-        class="flex flex-1 flex-column max-h-30rem overflow-auto"
+        class="flex flex-1 flex-column"
         formArrayName="essayTemplateSteps"
       >
         <ng-container
@@ -122,7 +123,7 @@
           <p-panel
             id="panel-index-{{i}}"
             class="w-full"
-            styleClass="mb-2 mx-1 cursor-pointer select-none"
+            styleClass="mb-3 mx-1 cursor-pointer select-none"
             (click)="selectIndex(i)"
             [ngClass]="{
               'essay-template-step-selected': i === selectedIndex
