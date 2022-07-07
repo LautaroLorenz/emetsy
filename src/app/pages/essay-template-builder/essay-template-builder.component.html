@@ -43,13 +43,8 @@
     </ng-container>
   </app-page-title>
 
-  <div
-    class="flex justify-content-evenly"
-    [ngStyle]="{
-      'max-height': panelMaxHeight,
-      'min-height': panelMaxHeight
-    }"
-  >
+  <app-fill-available-space>
+
     <div class="flex flex-1 flex-column pl-3">
       <p class="panel-header-title text-lg pt-1">
         Herramientas
@@ -163,5 +158,5 @@
       </p-panel>
     </div>
 
-  </div>
+  </app-fill-available-space>
 </form>

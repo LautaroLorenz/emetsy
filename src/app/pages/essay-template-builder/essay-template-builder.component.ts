@@ -2,7 +2,7 @@ import { Component, HostListener, OnDestroy, OnInit } from '@angular/core';
 import { FormArray, FormControl, FormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { ConfirmationService, MenuItem, PrimeIcons } from 'primeng/api';
-import { catchError, debounceTime, filter, first, map, Observable, of, ReplaySubject, switchMap, takeUntil, tap, throwError } from 'rxjs';
+import { catchError, filter, first, map, Observable, of, ReplaySubject, switchMap, takeUntil, tap, throwError } from 'rxjs';
 import { ComponentCanDeactivate } from 'src/app/guards/pending-changes.guard';
 import { EssayTemplate, EssayTemplateDbTableContext, PageUrlName, RelationsManager, Step, StepDbTableContext, WhereKind, WhereOperator } from 'src/app/models';
 import { EssayTemplateStep, EssayTemplateStepDbTableContext } from 'src/app/models/database/tables/essay-template-step.model';
@@ -10,7 +10,6 @@ import { DatabaseService } from 'src/app/services/database.service';
 import { EssayService } from 'src/app/services/essay.service';
 import { MessagesService } from 'src/app/services/messages.service';
 import { NavigationService } from 'src/app/services/navigation.service';
-import { ScreenService } from 'src/app/services/screen.service';
 
 @Component({
   templateUrl: './essay-template-builder.component.html',
@@ -29,11 +28,6 @@ export class EssayTemplateBuilderComponent implements OnInit, OnDestroy, Compone
   selectedIndex: number | null = null;
   nameInputFocused: boolean = false;
 
-
-  private _panelHeight: number = 0;
-  get panelMaxHeight(): string {
-    return `${this._panelHeight}px`;
-  }
   get saveButtonDisabled(): boolean {
     return !this.form.valid || this.form.pristine;
   }
@@ -125,7 +119,6 @@ export class EssayTemplateBuilderComponent implements OnInit, OnDestroy, Compone
     private readonly navigationService: NavigationService,
     private readonly messagesService: MessagesService,
     private readonly confirmationService: ConfirmationService,
-    private readonly screenService: ScreenService,
   ) {
     this.id$ = this.route.queryParams.pipe(
       filter(({ id }) => id),
@@ -184,14 +177,6 @@ export class EssayTemplateBuilderComponent implements OnInit, OnDestroy, Compone
       map((essayTemplateStep) => essayTemplateStep.sort((a, b) => a.order - b.order)),
       tap((essayTemplateSteps) => essayTemplateSteps.forEach((essayTemplateStep: EssayTemplateStep) => this.addEssaytemplateStepControl(essayTemplateStep)))
     ).subscribe();
-
-    this.screenService.componentHeights$.pipe(
-      takeUntil(this.destroyed$),
-      debounceTime(100),
-      tap(({ pMenubar, appPageTitle, windowHeight }) => {
-        this._panelHeight = windowHeight - (pMenubar + appPageTitle);
-      }),
-    ).subscribe()
   }
 
   getEssaytemplateStepControls(): FormArray {
