@@ -46,7 +46,7 @@
   <app-fill-available-space class="flex justify-content-evenly">
 
     <div class="flex flex-1 flex-column pl-3">
-      <p class="panel-header-title text-lg text-700">
+      <p class="p-font-family text-lg text-700">
         Herramientas
       </p>
       <p-panel
@@ -76,20 +76,32 @@
           [(selectedIndex)]="selectedIndex"
           [scrollToIndex]="scrollToIndex"
           [arrayOfControls]="essatTemplateStepsArrayForm"
-          [itemHeaderTemplate]="itemHeaderTemplate"
+          [itemTemplate]="itemTemplate"
           (onChanges)="form.markAsDirty()"
         >
           <ng-template
-            #itemHeaderTemplate
+            #itemTemplate
             let-controlValue="controlValue"
             let-index="index"
           >
-            <div
-              class="custom-header flex flex-1 align-items-center justify-content-between"
-            >
-              <span>{{controlValue.foreign.step.name}}</span>
-              <!-- <span>{{index+1}}</span> TODO: mostrar el orden -->
+            <div class="flex">
+              <div
+                class="p-3 border-right-1 border-200"
+                [ngClass]="{ 'border-purple-100': selectedIndex === index }"
+              >
+                <span
+                  class="p-font-family text-800 select-none"
+                  [ngClass]="{ 'text-purple-500': selectedIndex === index }"
+                >{{index+1 | number:'2.0'}}</span>
+              </div>
+              <div class="flex align-items-center pl-3">
+                <span
+                  class="p-font-family text-800 select-none"
+                  [ngClass]="{ 'text-purple-500': selectedIndex === index }"
+                >{{controlValue.foreign.step.name}}</span>
+              </div>
             </div>
+            <!-- <span>{{index+1}}</span> TODO: mostrar el orden -->
           </ng-template>
         </app-form-array-controls-order-list>
       </ng-container>
@@ -100,8 +112,10 @@
     <div class="flex flex-1 flex-column pr-3 pt-1">
       <ng-container *ngIf="hasSelectedIndex">
         <p
-          class="panel-header-title text-lg pb-2 border-bottom-3 border-pink-300 text-700">
-          {{selectedControl?.value.foreign.step.name}}
+          class="p-font-family text-lg pb-2 border-bottom-3 border-purple-300 text-700">
+          <span>{{selectedIndex!+1 | number:'2.0'}}</span>
+          <span class="mx-1">-</span>
+          <span>{{selectedControl?.value.foreign.step.name}}</span>
         </p>
         ...
         <!-- TODO: Acciones del paso -->

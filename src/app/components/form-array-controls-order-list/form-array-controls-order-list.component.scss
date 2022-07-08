@@ -4,12 +4,16 @@
   @include styleclass('flex flex-column h-full');
 }
 
-.header-title {
+.p-font-family {
   font-family: var(--font-family);
 }
 
-.panel-selected {
-  ::ng-deep .p-panel.p-component {
-    @include styleclass('border-pink-300 border-bottom-2 border-round');
+.item {
+  &:hover {
+    @include styleclass('bg-purple-50');
   }
+}
+
+.item-selected {
+  @include styleclass('border-purple-300 border-bottom-2 border-round');
 }

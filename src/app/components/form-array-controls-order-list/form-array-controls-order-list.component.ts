@@ -10,7 +10,6 @@ import { FormArray, FormControl } from '@angular/forms';
 export class FormArrayControlsOrderListComponent implements OnChanges {
 
   @Input() headerText: string | null = null;
-  @Input() itemHeaderTemplate: TemplateRef<any> | null = null;
   @Input() itemTemplate: TemplateRef<any> | null = null;
   @Input() arrayOfControls: FormArray = new FormArray<FormControl>([]);
   @Input() scrollToIndex: number | null = null;
