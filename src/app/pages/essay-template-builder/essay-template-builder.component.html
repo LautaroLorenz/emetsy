@@ -68,28 +68,26 @@
     <p-divider layout="vertical"></p-divider>
 
     <div class="flex flex-1 flex-column">
-      <ng-container *ngIf="getEssaytemplateStepControls() as arrayOfControls">
-        <ng-container *ngIf="arrayOfControls.controls.length">
-          <app-form-array-controls-order-list
-            headerText="Listado de pasos"
-            [(selectedIndex)]="selectedIndex"
-            [scrollToIndex]="scrollToIndex"
-            [arrayOfControls]="arrayOfControls"
-            [itemHeaderTemplate]="itemHeaderTemplate"
-            (onChanges)="form.markAsDirty()"
+      <ng-container *ngIf="getEssaytemplateStepControls() as essatTemplateStepsArrayForm">
+        <app-form-array-controls-order-list
+          headerText="Listado de pasos"
+          [(selectedIndex)]="selectedIndex"
+          [scrollToIndex]="scrollToIndex"
+          [arrayOfControls]="essatTemplateStepsArrayForm"
+          [itemHeaderTemplate]="itemHeaderTemplate"
+          (onChanges)="form.markAsDirty()"
+        >
+          <ng-template
+            #itemHeaderTemplate
+            let-controlValue="controlValue"
           >
-            <ng-template
-              #itemHeaderTemplate
-              let-control="control"
+            <div
+              class="custom-header flex flex-1 align-items-center justify-content-between"
             >
-              <div
-                class="custom-header flex flex-1 align-items-center justify-content-between"
-              >
-                {{control.value.foreign.step.name}}
-              </div>
-            </ng-template>
-          </app-form-array-controls-order-list>
-        </ng-container>
+              {{controlValue.foreign.step.name}}
+            </div>
+          </ng-template>
+        </app-form-array-controls-order-list>
       </ng-container>
     </div>
 
