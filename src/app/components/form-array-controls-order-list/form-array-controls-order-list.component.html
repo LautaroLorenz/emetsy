@@ -1,5 +1,8 @@
 <div class="my-3 flex justify-content-between flex-wrap">
-  <div *ngIf="headerText" class="flex align-items-center">
+  <div
+    *ngIf="headerText"
+    class="flex align-items-center"
+  >
     <span class="header-title text-lg">{{headerText}}</span>
   </div>
   <div class="flex flex-1 justify-content-end">
@@ -37,7 +40,7 @@
 </div>
 
 <div
-  class="flex flex-1 flex-column pt-3 mb-4 border-1 border-200 border-round overflow-auto"
+  class="flex flex-1 flex-column pt-3 px-2 mb-4 border-1 border-200 border-round overflow-auto"
 >
   <ng-container *ngFor="let control of arrayOfControls.controls; let i = index">
     <p-panel
@@ -51,10 +54,14 @@
     >
       <ng-template pTemplate="header">
         <ng-container
-          [ngTemplateOutlet]="itemTemplate"
+          [ngTemplateOutlet]="itemHeaderTemplate"
           [ngTemplateOutletContext]="{ control }"
         ></ng-container>
       </ng-template>
+      <ng-container
+        [ngTemplateOutlet]="itemTemplate"
+        [ngTemplateOutletContext]="{ control }"
+      ></ng-container>
     </p-panel>
   </ng-container>
 </div>

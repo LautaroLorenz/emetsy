@@ -10,6 +10,7 @@ import { FormArray, FormControl } from '@angular/forms';
 export class FormArrayControlsOrderListComponent implements OnChanges {
 
   @Input() headerText: string | null = null;
+  @Input() itemHeaderTemplate: TemplateRef<any> | null = null;
   @Input() itemTemplate: TemplateRef<any> | null = null;
   @Input() arrayOfControls: FormArray = new FormArray<FormControl>([]);
   @Input() scrollToIndex: number | null = null;
@@ -31,11 +32,11 @@ export class FormArrayControlsOrderListComponent implements OnChanges {
     if (index === null) {
       return null;
     }
-    if (this.arrayOfControls.controls[index]) {
-      return index;
-    }
     if (this.arrayOfControls.controls[index - 1]) {
       return index - 1;
+    }
+    if (this.arrayOfControls.controls[index]) {
+      return index;
     }
     return null;
   }

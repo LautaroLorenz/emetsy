@@ -75,11 +75,11 @@
             [(selectedIndex)]="selectedIndex"
             [scrollToIndex]="scrollToIndex"
             [arrayOfControls]="arrayOfControls"
-            [itemTemplate]="itemTemplate"
+            [itemHeaderTemplate]="itemHeaderTemplate"
             (onChanges)="form.markAsDirty()"
           >
             <ng-template
-              #itemTemplate
+              #itemHeaderTemplate
               let-control="control"
             >
               <div
