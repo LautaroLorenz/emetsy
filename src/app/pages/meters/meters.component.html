@@ -7,11 +7,12 @@
     [dataset]="meters"
     [columns]="cols"
     [detailFormValid]="form.valid"
+    [abmDetailTemplate]="abmDetailTemplate"
     (deleteEvent)="deleteMeters($event)"
     (openDetailEvent)="setFormValues($event)"
     (saveDetailEvent)="saveMeter()"
   >
-    <ng-template #abmDetailForm>
+    <ng-template #abmDetailTemplate>
       <form
         novalidate
         [formGroup]="form"

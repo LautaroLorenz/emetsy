@@ -6,16 +6,20 @@ import { MessageService } from "primeng/api";
   providedIn: "root"
 })
 export class MessagesService {
-  private messageLifeMs = 5000;
+  private messageInfoLifeMs = 5000;
+  private messageWarnLifeMs = 5000;
+  private messageSuccessLifeMs = 1250;
 
-  constructor(private messageService: MessageService) { }
+  constructor(
+    private readonly messageService: MessageService
+  ) { }
 
   public info(message: string): void {
     this.messageService.add({
       severity: 'info',
       summary: 'Información',
       detail: message,
-      life: this.messageLifeMs
+      life: this.messageInfoLifeMs
     });
   }
 
@@ -24,7 +28,7 @@ export class MessagesService {
       severity: 'warn',
       summary: 'Aviso',
       detail: message,
-      life: this.messageLifeMs
+      life: this.messageWarnLifeMs
     });
   }
 
@@ -33,7 +37,7 @@ export class MessagesService {
       severity: 'success',
       summary: 'Realizado',
       detail: message,
-      life: this.messageLifeMs
+      life: this.messageSuccessLifeMs
     });
   }
 

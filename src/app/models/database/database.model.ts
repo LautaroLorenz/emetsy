@@ -26,3 +26,25 @@ export interface ForeignTable {
   foreignKey: string;
   properyName: string;
 };
+
+export enum WhereKind {
+  where = "where",
+  andWhere = "andWhere",
+  orWhere = "orWhere"
+};
+
+export enum WhereOperator {
+  mayor = ">",
+  minor = "<",
+  like = "like",
+  in = "in",
+  notIn = "not in", 
+  equal = "="
+};
+
+export interface Where {
+  kind: WhereKind;
+  columnName: string;
+  operator: WhereOperator;
+  value: any;
+}

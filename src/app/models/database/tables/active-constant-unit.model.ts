@@ -1,5 +1,5 @@
-import { AbmColum } from "./abm.model";
-import { DbTableContext } from "./database.model";
+import { AbmColum } from "../../abm.model";
+import { DbTableContext } from "../database.model";
 
 export interface ActiveConstantUnit {
 	id: number;
@@ -8,7 +8,7 @@ export interface ActiveConstantUnit {
 
 export const ActiveConstantUnitDbTableContext: DbTableContext = {
 	tableName: 'active_constant_unit',
-	foreignTables: []
+	foreignTables: [],
 };
 
 export const ActiveConstantUnitTableColumns: AbmColum[] = [
@@ -16,5 +16,5 @@ export const ActiveConstantUnitTableColumns: AbmColum[] = [
 		field: 'name',
 		header: 'Nombre',
 		sortable: true,
-	}
+	},
 ];

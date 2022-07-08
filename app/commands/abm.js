@@ -3,14 +3,33 @@ const { ipcMain } = require('electron');
 let knex;
 
 ipcMain.on('get-table', async ({ reply }, dbTableConnection) => {
-  const { tableName, relations } = dbTableConnection;
-  const queryBuilder = knex(tableName);
-  const relationsMap = {};  
+  const { tableName, relations, conditions } = dbTableConnection;
+  const relationsMap = {};
+  const queryBuilder = knex(tableName).orderBy('id', 'desc');
+
+  for (const condition of conditions) {
+    const { kind, columnName, operator, value } = condition;
+    if (kind === "where") {
+      queryBuilder.where(columnName, operator, value);
+    }
+    if (kind === "andWhere") {
+      queryBuilder.andWhere(columnName, operator, value);
+    }
+    if (kind === "orWhere") {
+      queryBuilder.orWhere(columnName, operator, value);
+    }
+  }
+
   const rows = await queryBuilder;
   for await (const relation of relations) {
     relationsMap[relation] = await knex(relation);
   }
   reply('get-table-reply', { tableNameReply: tableName, rows, relations: relationsMap });
+});
+
+ipcMain.handle('get-table-row', async (_, { tableName, id }) => {
+  const row = await knex(tableName).select().where('id', id);
+  return row[0];
 });
 
 ipcMain.handle('delete-from-table', async (_, { tableName, ids }) => {

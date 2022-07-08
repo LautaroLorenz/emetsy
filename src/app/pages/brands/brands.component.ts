@@ -43,9 +43,9 @@ export class BrandsComponent extends AbmPage<Brand> implements OnInit {
   }
 
   ngOnInit(): void {
-    this.requestTableDataFromDatabase(
+    this.dbService.getTable(
       BrandDbTableContext.tableName,
-      BrandDbTableContext.foreignTables.map(ft => ft.tableName)
+      { relations: BrandDbTableContext.foreignTables.map(ft => ft.tableName) }
     );
   }
 
@@ -54,7 +54,7 @@ export class BrandsComponent extends AbmPage<Brand> implements OnInit {
       .pipe(
         first(),
         tap(() => {
-          this.requestTableDataFromDatabase(BrandDbTableContext.tableName);
+          this.dbService.getTable(BrandDbTableContext.tableName);
           this.messagesService.success('Agregado correctamente');
         }),
       ).subscribe({
@@ -63,16 +63,16 @@ export class BrandsComponent extends AbmPage<Brand> implements OnInit {
   }
 
   private editBrand(brand: Brand) {
-  this.dbService.editElementFromTable$(BrandDbTableContext.tableName, brand)
-    .pipe(
-      first(),
-      tap(() => {
-        this.requestTableDataFromDatabase(BrandDbTableContext.tableName);
-        this.messagesService.success('Editado correctamente');
-      }),
-    ).subscribe({
-      error: () => this.messagesService.error('No se pudo editar el elemento')
-    });
+    this.dbService.editElementFromTable$(BrandDbTableContext.tableName, brand)
+      .pipe(
+        first(),
+        tap(() => {
+          this.dbService.getTable(BrandDbTableContext.tableName);
+          this.messagesService.success('Editado correctamente');
+        }),
+      ).subscribe({
+        error: () => this.messagesService.error('No se pudo editar el elemento')
+      });
   }
 
   deleteBrands(ids: string[] = []) {
@@ -81,7 +81,7 @@ export class BrandsComponent extends AbmPage<Brand> implements OnInit {
         first(),
         filter((numberOfElementsDeleted) => numberOfElementsDeleted === ids.length),
         tap(() => {
-          this.requestTableDataFromDatabase(BrandDbTableContext.tableName);
+          this.dbService.getTable(BrandDbTableContext.tableName);
           this.messagesService.success('Eliminado correctamente');
         })
       ).subscribe({

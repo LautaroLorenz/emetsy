@@ -1,5 +1,5 @@
-import { AbmColum } from "./abm.model";
-import { DbTableContext } from "./database.model";
+import { AbmColum } from "../../abm.model";
+import { DbTableContext } from "../database.model";
 
 export interface Connection {
 	id: number;
@@ -8,7 +8,7 @@ export interface Connection {
 
 export const ConnectionDbTableContext: DbTableContext = {
 	tableName: 'connections',
-	foreignTables: []
+	foreignTables: [],
 };
 
 export const ConnectionTableColumns: AbmColum[] = [

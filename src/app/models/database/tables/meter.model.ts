@@ -1,5 +1,5 @@
-import { AbmColum } from "./abm.model";
-import { DbForeignKey, DbTableContext } from "./database.model";
+import { AbmColum } from "../../abm.model";
+import { DbForeignKey, DbTableContext } from "../database.model";
 import { Brand, BrandDbTableContext } from "./brand.model";
 import { ActiveConstantUnit, ActiveConstantUnitDbTableContext } from "./active-constant-unit.model";
 import { ReactiveConstantUnit, ReactiveConstantUnitDbTableContext } from "./reactive-constant-unit.model";
@@ -18,7 +18,7 @@ export interface Meter extends DbForeignKey {
 		brand: Brand,
 		activeConstantUnit: ActiveConstantUnit,
 		reactiveConstantUnit: ReactiveConstantUnit,
-	}
+	};
 }
 
 export const MeterDbTableContext: DbTableContext = {
@@ -39,7 +39,7 @@ export const MeterDbTableContext: DbTableContext = {
 			foreignKey: 'reactiveConstantUnit_id',
 			properyName: 'reactiveConstantUnit',
 		},
-	]
+	],
 };
 
 export const MeterTableColumns: AbmColum[] = [

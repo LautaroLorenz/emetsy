@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { PrimeIcons } from 'primeng/api';
 
 @Component({
@@ -8,12 +8,14 @@ import { PrimeIcons } from 'primeng/api';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class PageTitleComponent implements OnInit {
+
   @Input() title: string = '';
-  @Input() headerIcon: PrimeIcons = '';
+  @Input() headerIcon: PrimeIcons | null = null;
+  @Input() showBack: boolean = false;
+
+  @Output() backEvent = new EventEmitter<boolean>();
 
   constructor() { }
 
-  ngOnInit(): void {
-  }
-
+  ngOnInit(): void { }
 }

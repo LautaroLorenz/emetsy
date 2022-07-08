@@ -1,5 +1,5 @@
-import { AbmColum } from "./abm.model";
-import { DbTableContext } from "./database.model";
+import { AbmColum } from "../../abm.model";
+import { DbTableContext } from "../database.model";
 
 export interface ReactiveConstantUnit {
 	id: number;
@@ -8,7 +8,7 @@ export interface ReactiveConstantUnit {
 
 export const ReactiveConstantUnitDbTableContext: DbTableContext = {
 	tableName: 'reactive_constant_unit',
-	foreignTables: []
+	foreignTables: [],
 };
 
 export const ReactiveConstantUnitTableColumns: AbmColum[] = [
@@ -16,5 +16,5 @@ export const ReactiveConstantUnitTableColumns: AbmColum[] = [
 		field: 'name',
 		header: 'Nombre',
 		sortable: true,
-	}
+	},
 ];

@@ -60,32 +60,32 @@ export class MetersComponent extends AbmPage<Meter> implements OnInit, OnDestroy
       reactiveConstantUnit_id: new FormControl(undefined, Validators.required),
       brand_id: new FormControl(undefined, Validators.required),
     });
-    this.initFormValueVhangeListeners();
+    this.initFormValueChangeListeners();
   }
 
   ngOnInit(): void {
-    this.requestTableDataFromDatabase(
+    this.dbService.getTable(
       MeterDbTableContext.tableName,
-      MeterDbTableContext.foreignTables.map(ft => ft.tableName)
+      { relations: MeterDbTableContext.foreignTables.map(ft => ft.tableName) }
     );
   }
 
-  private initFormValueVhangeListeners(): void {
+  private initFormValueChangeListeners(): void {
     this.form.get('activeConstantUnit_id')?.valueChanges.pipe(
       takeUntil(this.destroyed$),
       tap((activeConstantUnit_id) => {
-        if(!this.form.get('reactiveConstantUnit_id')?.value) {
+        if (!this.form.get('reactiveConstantUnit_id')?.value) {
           this.form.get('reactiveConstantUnit_id')?.setValue(activeConstantUnit_id)
         }
+        return activeConstantUnit_id;
       }),
     ).subscribe();
     this.form.get('reactiveConstantUnit_id')?.valueChanges.pipe(
       takeUntil(this.destroyed$),
       tap((reactiveConstantUnit_id) => {
-        if(!this.form.get('activeConstantUnit_id')?.value) {
+        if (!this.form.get('activeConstantUnit_id')?.value) {
           this.form.get('activeConstantUnit_id')?.setValue(reactiveConstantUnit_id)
         }
-
         return reactiveConstantUnit_id;
       }),
     ).subscribe();
@@ -96,7 +96,7 @@ export class MetersComponent extends AbmPage<Meter> implements OnInit, OnDestroy
       .pipe(
         first(),
         tap(() => {
-          this.requestTableDataFromDatabase(MeterDbTableContext.tableName);
+          this.dbService.getTable(MeterDbTableContext.tableName);
           this.messagesService.success('Agregado correctamente');
         }),
       ).subscribe({
@@ -109,7 +109,7 @@ export class MetersComponent extends AbmPage<Meter> implements OnInit, OnDestroy
       .pipe(
         first(),
         tap(() => {
-          this.requestTableDataFromDatabase(MeterDbTableContext.tableName);
+          this.dbService.getTable(MeterDbTableContext.tableName);
           this.messagesService.success('Editado correctamente');
         }),
       ).subscribe({
@@ -123,7 +123,7 @@ export class MetersComponent extends AbmPage<Meter> implements OnInit, OnDestroy
         first(),
         filter((numberOfElementsDeleted) => numberOfElementsDeleted === ids.length),
         tap(() => {
-          this.requestTableDataFromDatabase(MeterDbTableContext.tableName);
+          this.dbService.getTable(MeterDbTableContext.tableName);
           this.messagesService.success('Eliminado correctamente');
         })
       ).subscribe({

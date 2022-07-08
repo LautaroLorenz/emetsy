@@ -1,18 +1,29 @@
-<p-toolbar styleClass="py-5">
+<p-toolbar styleClass="py-5 px-3 border-noround">
   <div class="p-toolbar-group-left">
     <span class="p-input-icon-left">
-      <i class="pi pi-search"></i>
+      <i
+        *ngIf="!search.getRawValue()"
+        class="pi pi-search"
+      ></i>
+      <i
+        *ngIf="search.getRawValue()"
+        class="pi pi-times cursor-pointer"
+        pRipple
+        pTooltip="Limpiar búsqueda"
+        [showDelay]="700"
+        (click)="clearSearch()"
+      ></i>
       <input
         type="text"
         class="w-20rem"
         pInputText
         placeholder="Buscar"
-        (input)="filterDataset($event)"
+        [formControl]="search"
       >
     </span>
   </div>
   <div class="p-toolbar-group-right">
-    <ng-container *ngIf="hasDetailForm">
+    <ng-container *ngIf="abmDetailTemplate">
       <p-button
         label="Nuevo"
         icon="pi pi-plus"
@@ -20,12 +31,13 @@
         (click)="createElement()"
       ></p-button>
     </ng-container>
+    <ng-content select="[toolbar-group-right]"></ng-content>
   </div>
 </p-toolbar>
 
 <p-table
   #primeNgTable
-  styleClass="p-datatable-gridlines p-datatable-striped"
+  styleClass="p-datatable-gridlines p-datatable-striped mx-3"
   [columns]="columns"
   [value]="dataset"
   [paginator]="paginator"
@@ -92,12 +104,16 @@
         </ng-container>
       </ng-container>
       <td class="p-2 text-center">
-        <ng-container *ngIf="hasDetailForm">
+        <ng-container
+          [ngTemplateOutlet]="tableColumnButtonsTemplate"
+          [ngTemplateOutletContext]="{ element: rowData }"
+        ></ng-container>
+        <ng-container *ngIf="abmDetailTemplate">
           <button
             pButton
             pRipple
             icon="pi pi-pencil"
-            class="p-button-outlined p-button-rounded p-button-text p-button-primary mr-2"
+            class="p-button-outlined p-button-rounded p-button-text p-button-primary mr-2 p-button-lg"
             (click)="editElement(rowData)"
           ></button>
         </ng-container>
@@ -113,7 +129,7 @@
   </ng-template>
 </p-table>
 
-<ng-container *ngIf="hasDetailForm">
+<ng-container *ngIf="abmDetailTemplate">
   <p-dialog
     [(visible)]="detailDialogVisible"
     [style]="{minWidth: '450px'}"
@@ -122,7 +138,7 @@
     styleClass="p-fluid"
   >
     <ng-template pTemplate="content">
-      <ng-container *ngTemplateOutlet="abmDetailForm"></ng-container>
+      <ng-container *ngTemplateOutlet="abmDetailTemplate"></ng-container>
     </ng-template>
 
     <ng-template pTemplate="footer">

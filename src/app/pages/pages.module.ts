@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
+import { DirectivesModule } from '../directives/directives.module';
 import { ComponentsModule } from '../components/components.module';
 import { AvailableTestComponent } from './available-test/available-test.component';
 import { ImportComponent } from './import/import.component';
@@ -10,6 +11,9 @@ import { HistoryAndReportsComponent } from './history-and-reports/history-and-re
 import { MetersComponent } from './meters/meters.component';
 import { BrandsComponent } from './brands/brands.component';
 import { ReactiveFormsModule } from '@angular/forms';
+import { EssayTemplateBuilderComponent } from './essay-template-builder/essay-template-builder.component';
+import { ExecuteEssayComponent } from './execute-essay/execute-essay.component';
+import { PendingChangesGuard } from '../guards/pending-changes.guard';
 
 
 @NgModule({
@@ -21,12 +25,18 @@ import { ReactiveFormsModule } from '@angular/forms';
     HistoryAndReportsComponent,
     MetersComponent,
     BrandsComponent,
+    EssayTemplateBuilderComponent,
+    ExecuteEssayComponent,
   ],
   imports: [
     CommonModule,
     ComponentsModule,
     ReactiveFormsModule,
+    DirectivesModule,
   ],
-  exports: []
+  exports: [],
+  providers: [
+    PendingChangesGuard
+  ]
 })
 export class PagesModule { }

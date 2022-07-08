@@ -29,6 +29,15 @@ import { TooltipModule } from 'primeng/tooltip';
 import { RippleModule } from 'primeng/ripple';
 import { CheckboxModule } from 'primeng/checkbox';
 import { MenuModule } from 'primeng/menu';
+import { TabMenuTestComponent } from './tab-menu-test/tab-menu-test.component';
+import { TabMenuModule } from 'primeng/tabmenu';
+import { ReactiveFormsModule } from '@angular/forms';
+import { SplitterModule } from 'primeng/splitter';
+import { SplitButtonModule } from 'primeng/splitbutton';
+import { SpeedDialModule } from 'primeng/speeddial';
+import { DragDropModule } from 'primeng/dragdrop';
+import { OrderListModule } from 'primeng/orderlist';
+import { DirectivesModule } from '../directives/directives.module';
 
 const PrimeNgModules = [
   MenubarModule,
@@ -48,7 +57,13 @@ const PrimeNgModules = [
   TooltipModule,
   RippleModule,
   CheckboxModule,
-  MenuModule
+  MenuModule,
+  TabMenuModule,
+  SplitterModule,
+  SplitButtonModule,
+  SpeedDialModule,
+  DragDropModule,
+  OrderListModule,
 ];
 
 const PrimeNgServices = [
@@ -60,12 +75,19 @@ const EmetsyComponents = [
   MenuComponent,
   AbmComponent,
   ConfirmDialogComponent,
-  PageTitleComponent
+  PageTitleComponent,
+  TabMenuTestComponent,
 ]
 
 @NgModule({
   declarations: [EmetsyComponents],
-  imports: [CommonModule, PrimeNgModules, PipesModule],
+  imports: [
+    CommonModule,
+    PrimeNgModules,
+    PipesModule,
+    ReactiveFormsModule,
+    DirectivesModule,
+  ],
   exports: [EmetsyComponents, PrimeNgModules],
   providers: [PrimeNgServices]
 })
