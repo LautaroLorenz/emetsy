@@ -81,9 +81,9 @@ export class FormArrayControlsOrderListComponent implements OnChanges {
     if (index === this.arrayOfControls.length - 1) {
       return;
     }
-    const temp = this.arrayOfControls.at(index + 1);
-    this.arrayOfControls.removeAt(index + 1);
-    this.arrayOfControls.insert(index, temp);
+    const temp = this.arrayOfControls.at(index);
+    this.arrayOfControls.removeAt(index);
+    this.arrayOfControls.insert(index + 1, temp);
     this.selectIndex(index + 1);
     this.scrollIntoViewByIndex(index + 1);
     this.onChanges.emit();
