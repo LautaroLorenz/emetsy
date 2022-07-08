@@ -1,0 +1,19 @@
+@import 'primeflex/primeflex.scss';
+
+:host {
+  @include styleclass('flex flex-column h-full');
+}
+
+.p-font-family {
+  font-family: var(--font-family);
+}
+
+.item {
+  &:hover {
+    @include styleclass('bg-purple-50');
+  }
+}
+
+.item-selected {
+  @include styleclass('border-purple-300 border-bottom-2 border-round');
+}

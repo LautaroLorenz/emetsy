@@ -1,0 +1,13 @@
+<div class="flex flex-column mt-2">
+  <div
+    *ngFor="let step of steps"
+    class="mb-2"
+  >
+    <p-button
+      icon="pi pi-plus"
+      styleClass="p-button-outlined w-full text-left"
+      [label]="step.name"
+      (click)="stepSelected.emit(step)"
+    ></p-button>
+  </div>
+</div>

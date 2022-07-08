@@ -1,0 +1,61 @@
+<div class="my-3 flex justify-content-between flex-wrap">
+  <div
+    *ngIf="headerText"
+    class="flex align-items-center"
+  >
+    <span class="p-font-family text-lg text-700">{{headerText}}</span>
+  </div>
+  <div class="flex flex-1 justify-content-end">
+    <p-button
+      icon="pi pi-arrow-up"
+      styleClass="p-button-outlined mr-2"
+      pTooltip="Subir posición"
+      tooltipPosition="bottom"
+      [showDelay]="1250"
+      [disabled]="buttonMoveUpDisabled"
+      [tooltipDisabled]="buttonMoveUpDisabled"
+      (click)="moveUpByIndex(selectedIndex)"
+    ></p-button>
+    <p-button
+      icon="pi pi-arrow-down"
+      styleClass="p-button-outlined mr-2"
+      pTooltip="Bajar posición"
+      tooltipPosition="bottom"
+      [showDelay]="1250"
+      [disabled]="buttonMoveDownDisabled"
+      [tooltipDisabled]="buttonMoveDownDisabled"
+      (click)="moveDownByIndex(selectedIndex)"
+    ></p-button>
+    <p-button
+      icon="pi pi-times"
+      styleClass="p-button-outlined p-button-danger"
+      pTooltip="Eliminar"
+      tooltipPosition="bottom"
+      [showDelay]="1250"
+      [disabled]="buttonRemoveDisabled"
+      [tooltipDisabled]="buttonRemoveDisabled"
+      (click)="removeByIndex(selectedIndex)"
+    ></p-button>
+  </div>
+</div>
+
+<div class="flex flex-1 flex-column mb-4 overflow-auto">
+  <ng-container *ngIf="(this.arrayOfControls.valueChanges | async) as controls">
+    <ng-container *ngFor="let controlValue of controls; let i = index">
+      <div
+        id="panel-index-{{i}}"
+        class="w-full"
+        (click)="selectIndex(i)"
+        class="item my-2 cursor-pointer shadow-1 border-1 border-200 border-noround"
+        [ngClass]="{ 
+          'item-selected': i === selectedIndex
+        }"
+      >
+        <ng-container
+          [ngTemplateOutlet]="itemTemplate"
+          [ngTemplateOutletContext]="{ controlValue, index: i }"
+        ></ng-container>
+      </div>
+    </ng-container>
+  </ng-container>
+</div>

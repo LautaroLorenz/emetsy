@@ -79,6 +79,7 @@ export const MeterTableColumns: AbmColum[] = [
 		header: 'Cte. energía activa',
 		sortable: false,
 		styleClass: 'text-right pr-1 border-right-none',
+		headerTooltip: 'Constante de energía activa',
 		colSpan: 2,
 		colSpanColumns: [
 			{
@@ -94,6 +95,7 @@ export const MeterTableColumns: AbmColum[] = [
 		header: 'Cte. energía reactiva',
 		sortable: false,
 		styleClass: 'text-right pr-1 border-right-none',
+		headerTooltip: 'Constante de energía reactiva',
 		colSpan: 2,
 		colSpanColumns: [
 			{

@@ -2,7 +2,7 @@ import { Component, HostListener, OnDestroy, OnInit } from '@angular/core';
 import { FormArray, FormControl, FormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { ConfirmationService, MenuItem, PrimeIcons } from 'primeng/api';
-import { catchError, debounceTime, filter, first, map, Observable, of, ReplaySubject, switchMap, takeUntil, tap, throwError } from 'rxjs';
+import { catchError, filter, first, map, Observable, of, ReplaySubject, switchMap, takeUntil, tap, throwError } from 'rxjs';
 import { ComponentCanDeactivate } from 'src/app/guards/pending-changes.guard';
 import { EssayTemplate, EssayTemplateDbTableContext, PageUrlName, RelationsManager, Step, StepDbTableContext, WhereKind, WhereOperator } from 'src/app/models';
 import { EssayTemplateStep, EssayTemplateStepDbTableContext } from 'src/app/models/database/tables/essay-template-step.model';
@@ -10,7 +10,6 @@ import { DatabaseService } from 'src/app/services/database.service';
 import { EssayService } from 'src/app/services/essay.service';
 import { MessagesService } from 'src/app/services/messages.service';
 import { NavigationService } from 'src/app/services/navigation.service';
-import { ScreenService } from 'src/app/services/screen.service';
 
 @Component({
   templateUrl: './essay-template-builder.component.html',
@@ -27,27 +26,20 @@ export class EssayTemplateBuilderComponent implements OnInit, OnDestroy, Compone
   readonly steps$: Observable<Step[]>;
 
   selectedIndex: number | null = null;
+  scrollToIndex: number | null = null;
   nameInputFocused: boolean = false;
 
-
-  private _panelHeight: number = 0;
-  get panelMaxHeight(): string {
-    return `${this._panelHeight}px`;
+  get selectedControl(): FormControl | null {
+    return this.hasSelectedIndex ? this.getEssaytemplateStepControls().controls[this.selectedIndex!] : null
+  }
+  get hasSelectedIndex(): boolean {
+    return this.selectedIndex !== null;
   }
   get saveButtonDisabled(): boolean {
     return !this.form.valid || this.form.pristine;
   }
   get confirmBeforeBack(): boolean {
     return this.form.dirty;
-  }
-  get buttonMoveUpDisabled(): boolean {
-    return this.selectedIndex === null || this.selectedIndex === 0;
-  }
-  get buttonMoveDownDisabled(): boolean {
-    return this.selectedIndex === null || this.selectedIndex === this.getEssaytemplateStepControls().controls.length - 1;
-  }
-  get buttonRemoveDisabled(): boolean {
-    return this.selectedIndex === null;
   }
 
   private readonly destroyed$: ReplaySubject<boolean> = new ReplaySubject(1);
@@ -66,7 +58,6 @@ export class EssayTemplateBuilderComponent implements OnInit, OnDestroy, Compone
       tap((savedFormValue) => {
         this.messagesService.success('Guardado correctamente');
         this.form.reset(savedFormValue);
-        this.selectedIndex = null;
       }),
       catchError((e) => {
         this.messagesService.error('No se pudo guardar');
@@ -111,10 +102,6 @@ export class EssayTemplateBuilderComponent implements OnInit, OnDestroy, Compone
   private readonly addEssaytemplateStepControl = (essayTemplateStep: Partial<EssayTemplateStep>): void => {
     this.getEssaytemplateStepControls().push(new FormControl(essayTemplateStep));
   }
-  private readonly scrollIntoView = (selector: string): void => {
-    const itemToScrollTo = document.getElementById(selector);
-    itemToScrollTo?.scrollIntoView({ behavior: 'auto', block: 'center', inline: 'center' });
-  }
 
   constructor(
     private readonly route: ActivatedRoute,
@@ -125,7 +112,6 @@ export class EssayTemplateBuilderComponent implements OnInit, OnDestroy, Compone
     private readonly navigationService: NavigationService,
     private readonly messagesService: MessagesService,
     private readonly confirmationService: ConfirmationService,
-    private readonly screenService: ScreenService,
   ) {
     this.id$ = this.route.queryParams.pipe(
       filter(({ id }) => id),
@@ -184,17 +170,9 @@ export class EssayTemplateBuilderComponent implements OnInit, OnDestroy, Compone
       map((essayTemplateStep) => essayTemplateStep.sort((a, b) => a.order - b.order)),
       tap((essayTemplateSteps) => essayTemplateSteps.forEach((essayTemplateStep: EssayTemplateStep) => this.addEssaytemplateStepControl(essayTemplateStep)))
     ).subscribe();
-
-    this.screenService.componentHeights$.pipe(
-      takeUntil(this.destroyed$),
-      debounceTime(100),
-      tap(({ pMenubar, appPageTitle, windowHeight }) => {
-        this._panelHeight = windowHeight - (pMenubar + appPageTitle);
-      }),
-    ).subscribe()
   }
 
-  getEssaytemplateStepControls(): FormArray {
+  getEssaytemplateStepControls(): FormArray<FormControl> {
     return (this.form.get('essayTemplateSteps') as FormArray);
   }
 
@@ -204,9 +182,9 @@ export class EssayTemplateBuilderComponent implements OnInit, OnDestroy, Compone
       foreign: { step }
     };
     this.addEssaytemplateStepControl(newEssayTemplateStep);
+    this.selectedIndex = this.getEssaytemplateStepControls().length - 1;
+    this.scrollToIndex = this.selectedIndex;
     this.form.markAsDirty();
-    this.selectIndex(this.getEssaytemplateStepControls().length - 1);
-    setTimeout(() => this.scrollIntoView('panel-index-' + this.selectedIndex));
   }
 
   exit() {
@@ -215,54 +193,6 @@ export class EssayTemplateBuilderComponent implements OnInit, OnDestroy, Compone
 
   save(): void {
     this.save$().subscribe();
-  }
-
-  moveUpByIndex(index: number | null) {
-    if (index === null) {
-      return;
-    }
-    if (index === 0) {
-      return;
-    }
-
-    const temp = this.getEssaytemplateStepControls().at(index);
-    this.getEssaytemplateStepControls().removeAt(index);
-    this.getEssaytemplateStepControls().insert(index - 1, temp);
-    this.selectedIndex = index - 1;
-    this.scrollIntoView('panel-index-' + this.selectedIndex);
-    this.form.markAsDirty();
-  }
-
-  moveDownByIndex(index: number | null) {
-    if (index === null) {
-      return;
-    }
-    if (index === this.getEssaytemplateStepControls().length - 1) {
-      return;
-    }
-    const temp = this.getEssaytemplateStepControls().at(index + 1);
-    this.getEssaytemplateStepControls().removeAt(index + 1);
-    this.getEssaytemplateStepControls().insert(index, temp);
-    this.selectedIndex = index + 1;
-    this.scrollIntoView('panel-index-' + this.selectedIndex);
-    this.form.markAsDirty();
-  }
-
-  stepRemoveByIndex(index: number | null) {
-    if (index === null) {
-      return;
-    }
-    this.getEssaytemplateStepControls().removeAt(index);
-    this.selectedIndex = null;
-    this.form.markAsDirty();
-  }
-
-  selectIndex(index: number): void {
-    if (this.selectedIndex === index) {
-      this.selectedIndex = null;
-      return;
-    }
-    this.selectedIndex = index;
   }
 
   @HostListener('window:beforeunload')

@@ -73,21 +73,17 @@ export class MetersComponent extends AbmPage<Meter> implements OnInit, OnDestroy
   private initFormValueChangeListeners(): void {
     this.form.get('activeConstantUnit_id')?.valueChanges.pipe(
       takeUntil(this.destroyed$),
-      tap((activeConstantUnit_id) => {
-        if (!this.form.get('reactiveConstantUnit_id')?.value) {
-          this.form.get('reactiveConstantUnit_id')?.setValue(activeConstantUnit_id)
-        }
-        return activeConstantUnit_id;
-      }),
+      filter((id) => id !== null),
+      filter((id) => id !== undefined),
+      filter(() => !this.form.get('reactiveConstantUnit_id')?.value),
+      tap((id) => this.form.get('reactiveConstantUnit_id')?.setValue(id)),
     ).subscribe();
     this.form.get('reactiveConstantUnit_id')?.valueChanges.pipe(
       takeUntil(this.destroyed$),
-      tap((reactiveConstantUnit_id) => {
-        if (!this.form.get('activeConstantUnit_id')?.value) {
-          this.form.get('activeConstantUnit_id')?.setValue(reactiveConstantUnit_id)
-        }
-        return reactiveConstantUnit_id;
-      }),
+      filter((id) => id !== null),
+      filter((id) => id !== undefined),
+      filter(() => !this.form.get('activeConstantUnit_id')?.value),
+      tap((id) => this.form.get('activeConstantUnit_id')?.setValue(id)),
     ).subscribe();
   }
 

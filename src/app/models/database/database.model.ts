@@ -34,7 +34,7 @@ export enum WhereKind {
 };
 
 export enum WhereOperator {
-  mayor = ">",
+  major = ">",
   minor = "<",
   like = "like",
   in = "in",

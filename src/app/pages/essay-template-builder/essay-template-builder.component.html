@@ -22,9 +22,9 @@
             [appSelectOnFocus]="true"
             [(appFocused)]="nameInputFocused"
             [ngClass]="{
-            'cursor-pointer': !nameInputFocused,
-            'border-none': !nameInputFocused && nameInput.value
-          }"
+              'cursor-pointer': !nameInputFocused,
+              'border-none': !nameInputFocused && nameInput.value
+            }"
           />
         </ng-container>
       </div>
@@ -43,15 +43,10 @@
     </ng-container>
   </app-page-title>
 
-  <div
-    class="flex justify-content-evenly"
-    [ngStyle]="{
-      'max-height': panelMaxHeight,
-      'min-height': panelMaxHeight
-    }"
-  >
+  <app-fill-available-space class="flex justify-content-evenly">
+
     <div class="flex flex-1 flex-column pl-3">
-      <p class="panel-header-title text-lg pt-1">
+      <p class="p-font-family text-lg text-700">
         Herramientas
       </p>
       <p-panel
@@ -61,107 +56,71 @@
         <ng-template pTemplate="header">
           Selector de pasos
         </ng-template>
-        <div
-          *ngIf="(steps$ | async) as steps"
-          class="flex flex-column mt-2"
-        >
-          <div
-            *ngFor="let step of steps"
-            class="mb-2"
-          >
-            <p-button
-              icon="pi pi-plus"
-              styleClass="p-button-outlined w-full text-left"
-              [label]="step.name"
-              (click)="addEssayTemplateStep(step)"
-            ></p-button>
-          </div>
-        </div>
+        <ng-container *ngIf="(steps$ | async) as steps">
+          <app-step-selector
+            [steps]="steps"
+            (stepSelected)="addEssayTemplateStep($event)"
+          ></app-step-selector>
+        </ng-container>
       </p-panel>
     </div>
 
     <p-divider layout="vertical"></p-divider>
 
     <div class="flex flex-1 flex-column">
-      <div class="flex pt-3 pb-3 align-items-center justify-content-between">
-        <span class="panel-header-title text-lg">Pasos del ensayo</span>
-        <div>
-          <p-button
-            icon="pi pi-arrow-up"
-            styleClass="p-button-outlined mr-2"
-            [disabled]="buttonMoveUpDisabled"
-            [tooltipDisabled]="buttonMoveUpDisabled"
-            pTooltip="Subir posición"
-            tooltipPosition="bottom"
-            [showDelay]="1250"
-            (click)="moveUpByIndex(selectedIndex)"
-          ></p-button>
-          <p-button
-            icon="pi pi-arrow-down"
-            styleClass="p-button-outlined mr-2"
-            [disabled]="buttonMoveDownDisabled"
-            [tooltipDisabled]="buttonMoveDownDisabled"
-            pTooltip="Bajar posición"
-            tooltipPosition="bottom"
-            [showDelay]="1250"
-            (click)="moveDownByIndex(selectedIndex)"
-          ></p-button>
-          <p-button
-            icon="pi pi-times"
-            styleClass="p-button-outlined p-button-danger"
-            [disabled]="buttonRemoveDisabled"
-            [tooltipDisabled]="buttonRemoveDisabled"
-            pTooltip="Eliminar"
-            tooltipPosition="bottom"
-            [showDelay]="1250"
-            (click)="stepRemoveByIndex(selectedIndex)"
-          ></p-button>
-        </div>
-      </div>
-      <div
-        class="flex flex-1 flex-column pt-3 mb-4 border-1 border-200 border-round overflow-auto"
-        formArrayName="essayTemplateSteps"
+      <ng-container
+        *ngIf="getEssaytemplateStepControls() as essatTemplateStepsArrayForm"
       >
-        <ng-container
-          *ngFor="let essayTemplateStepControl of getEssaytemplateStepControls().controls; let i = index"
+        <app-form-array-controls-order-list
+          headerText="Listado de pasos"
+          [(selectedIndex)]="selectedIndex"
+          [scrollToIndex]="scrollToIndex"
+          [arrayOfControls]="essatTemplateStepsArrayForm"
+          [itemTemplate]="itemTemplate"
+          (onChanges)="form.markAsDirty()"
         >
-          <p-panel
-            id="panel-index-{{i}}"
-            class="w-full"
-            styleClass="mb-3 mx-1 cursor-pointer select-none"
-            (click)="selectIndex(i)"
-            [ngClass]="{
-              'essay-template-step-selected': i === selectedIndex
-            }"
+          <ng-template
+            #itemTemplate
+            let-controlValue="controlValue"
+            let-index="index"
           >
-            <ng-template pTemplate="header">
+            <div class="flex">
               <div
-                class="custom-header flex flex-1 align-items-center justify-content-between"
+                class="p-3 border-right-1 border-200"
+                [ngClass]="{ 'border-purple-100': selectedIndex === index }"
               >
-                {{essayTemplateStepControl.value.foreign.step.name}}
+                <span
+                  class="p-font-family text-800 select-none"
+                  [ngClass]="{ 'text-purple-500': selectedIndex === index }"
+                >{{index+1 | number:'2.0'}}</span>
               </div>
-            </ng-template>
-          </p-panel>
-        </ng-container>
-      </div>
+              <div class="flex align-items-center pl-3">
+                <span
+                  class="p-font-family text-800 select-none"
+                  [ngClass]="{ 'text-purple-500': selectedIndex === index }"
+                >{{controlValue.foreign.step.name}}</span>
+              </div>
+            </div>
+            <!-- <span>{{index+1}}</span> TODO: mostrar el orden -->
+          </ng-template>
+        </app-form-array-controls-order-list>
+      </ng-container>
     </div>
 
     <p-divider layout="vertical"></p-divider>
 
     <div class="flex flex-1 flex-column pr-3 pt-1">
-      <p class="panel-header-title text-lg">
-        Administración del paso selccionado
-      </p>
-      <p-panel
-        class="w-full"
-        styleClass=""
-      >
-        <ng-template pTemplate="header">
-          ....
-        </ng-template>
-        <!-- TODO: -->
-      </p-panel>
+      <ng-container *ngIf="hasSelectedIndex">
+        <p
+          class="p-font-family text-lg pb-2 border-bottom-3 border-purple-300 text-700">
+          <span>{{selectedIndex!+1 | number:'2.0'}}</span>
+          <span class="mx-1">-</span>
+          <span>{{selectedControl?.value.foreign.step.name}}</span>
+        </p>
+        ...
+        <!-- TODO: Acciones del paso -->
+      </ng-container>
     </div>
 
-  </div>
+  </app-fill-available-space>
 </form>

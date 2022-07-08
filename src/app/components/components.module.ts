@@ -38,6 +38,9 @@ import { SpeedDialModule } from 'primeng/speeddial';
 import { DragDropModule } from 'primeng/dragdrop';
 import { OrderListModule } from 'primeng/orderlist';
 import { DirectivesModule } from '../directives/directives.module';
+import { FillAvailableSpaceComponent } from './fill-available-space/fill-available-space.component';
+import { StepSelectorComponent } from './step-selector/step-selector.component';
+import { FormArrayControlsOrderListComponent } from './form-array-controls-order-list/form-array-controls-order-list.component';
 
 const PrimeNgModules = [
   MenubarModule,
@@ -77,6 +80,9 @@ const EmetsyComponents = [
   ConfirmDialogComponent,
   PageTitleComponent,
   TabMenuTestComponent,
+  FillAvailableSpaceComponent,
+  StepSelectorComponent,
+  FormArrayControlsOrderListComponent,
 ]
 
 @NgModule({
