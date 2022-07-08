@@ -29,6 +29,12 @@ export class EssayTemplateBuilderComponent implements OnInit, OnDestroy, Compone
   scrollToIndex: number | null = null;
   nameInputFocused: boolean = false;
 
+  get selectedControl(): FormControl | null {
+    return this.hasSelectedIndex ? this.getEssaytemplateStepControls().controls[this.selectedIndex!] : null
+  }
+  get hasSelectedIndex(): boolean {
+    return this.selectedIndex !== null;
+  }
   get saveButtonDisabled(): boolean {
     return !this.form.valid || this.form.pristine;
   }
@@ -52,7 +58,6 @@ export class EssayTemplateBuilderComponent implements OnInit, OnDestroy, Compone
       tap((savedFormValue) => {
         this.messagesService.success('Guardado correctamente');
         this.form.reset(savedFormValue);
-        this.selectedIndex = null;
       }),
       catchError((e) => {
         this.messagesService.error('No se pudo guardar');
@@ -167,7 +172,7 @@ export class EssayTemplateBuilderComponent implements OnInit, OnDestroy, Compone
     ).subscribe();
   }
 
-  getEssaytemplateStepControls(): FormArray {
+  getEssaytemplateStepControls(): FormArray<FormControl> {
     return (this.form.get('essayTemplateSteps') as FormArray);
   }
 

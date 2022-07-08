@@ -46,7 +46,7 @@
   <app-fill-available-space class="flex justify-content-evenly">
 
     <div class="flex flex-1 flex-column pl-3">
-      <p class="panel-header-title text-lg">
+      <p class="panel-header-title text-lg text-700">
         Herramientas
       </p>
       <p-panel
@@ -68,7 +68,9 @@
     <p-divider layout="vertical"></p-divider>
 
     <div class="flex flex-1 flex-column">
-      <ng-container *ngIf="getEssaytemplateStepControls() as essatTemplateStepsArrayForm">
+      <ng-container
+        *ngIf="getEssaytemplateStepControls() as essatTemplateStepsArrayForm"
+      >
         <app-form-array-controls-order-list
           headerText="Listado de pasos"
           [(selectedIndex)]="selectedIndex"
@@ -80,11 +82,13 @@
           <ng-template
             #itemHeaderTemplate
             let-controlValue="controlValue"
+            let-index="index"
           >
             <div
               class="custom-header flex flex-1 align-items-center justify-content-between"
             >
-              {{controlValue.foreign.step.name}}
+              <span>{{controlValue.foreign.step.name}}</span>
+              <!-- <span>{{index+1}}</span> TODO: mostrar el orden -->
             </div>
           </ng-template>
         </app-form-array-controls-order-list>
@@ -94,18 +98,14 @@
     <p-divider layout="vertical"></p-divider>
 
     <div class="flex flex-1 flex-column pr-3 pt-1">
-      <p class="panel-header-title text-lg">
-        Administración del paso selccionado
-      </p>
-      <p-panel
-        class="w-full"
-        styleClass=""
-      >
-        <ng-template pTemplate="header">
-          ....
-        </ng-template>
-        <!-- TODO: -->
-      </p-panel>
+      <ng-container *ngIf="hasSelectedIndex">
+        <p
+          class="panel-header-title text-lg pb-2 border-bottom-3 border-pink-300 text-700">
+          {{selectedControl?.value.foreign.step.name}}
+        </p>
+        ...
+        <!-- TODO: Acciones del paso -->
+      </ng-container>
     </div>
 
   </app-fill-available-space>

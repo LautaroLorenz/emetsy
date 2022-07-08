@@ -10,6 +10,6 @@
 
 .panel-selected {
   ::ng-deep .p-panel.p-component {
-    @include styleclass('shadow-4 border-1 border-blue-500');
+    @include styleclass('border-pink-300 border-bottom-2 border-round');
   }
 }

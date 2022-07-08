@@ -3,7 +3,7 @@
     *ngIf="headerText"
     class="flex align-items-center"
   >
-    <span class="header-title text-lg">{{headerText}}</span>
+    <span class="header-title text-lg text-700">{{headerText}}</span>
   </div>
   <div class="flex flex-1 justify-content-end">
     <p-button
@@ -39,29 +39,27 @@
   </div>
 </div>
 
-<div
-  class="flex flex-1 flex-column pt-3 px-2 mb-4 border-1 border-200 border-round overflow-auto"
->
+<div class="flex flex-1 flex-column mb-4 overflow-auto">
   <ng-container *ngIf="(this.arrayOfControls.valueChanges | async) as controls">
     <ng-container *ngFor="let controlValue of controls; let i = index">
       <p-panel
         id="panel-index-{{i}}"
         class="w-full"
-        styleClass="mb-3 mx-1 cursor-pointer select-none"
         (click)="selectIndex(i)"
-        [ngClass]="{
-        'panel-selected': i === selectedIndex
-      }"
+        styleClass="my-1 cursor-pointer select-none shadow-none border-1 border-200 border-noround"
+        [ngClass]="{ 
+          'panel-selected': i === selectedIndex
+        }"
       >
         <ng-template pTemplate="header">
           <ng-container
             [ngTemplateOutlet]="itemHeaderTemplate"
-            [ngTemplateOutletContext]="{ controlValue }"
+            [ngTemplateOutletContext]="{ controlValue, index: i }"
           ></ng-container>
         </ng-template>
         <ng-container
           [ngTemplateOutlet]="itemTemplate"
-          [ngTemplateOutletContext]="{ controlValue }"
+          [ngTemplateOutletContext]="{ controlValue, index: i }"
         ></ng-container>
       </p-panel>
     </ng-container>
