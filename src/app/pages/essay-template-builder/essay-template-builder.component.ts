@@ -26,6 +26,7 @@ export class EssayTemplateBuilderComponent implements OnInit, OnDestroy, Compone
   readonly steps$: Observable<Step[]>;
 
   selectedIndex: number | null = null;
+  scrollToIndex: number | null = null;
   nameInputFocused: boolean = false;
 
   get saveButtonDisabled(): boolean {
@@ -33,15 +34,6 @@ export class EssayTemplateBuilderComponent implements OnInit, OnDestroy, Compone
   }
   get confirmBeforeBack(): boolean {
     return this.form.dirty;
-  }
-  get buttonMoveUpDisabled(): boolean {
-    return this.selectedIndex === null || this.selectedIndex === 0;
-  }
-  get buttonMoveDownDisabled(): boolean {
-    return this.selectedIndex === null || this.selectedIndex === this.getEssaytemplateStepControls().controls.length - 1;
-  }
-  get buttonRemoveDisabled(): boolean {
-    return this.selectedIndex === null;
   }
 
   private readonly destroyed$: ReplaySubject<boolean> = new ReplaySubject(1);
@@ -104,10 +96,6 @@ export class EssayTemplateBuilderComponent implements OnInit, OnDestroy, Compone
   ).subscribe();
   private readonly addEssaytemplateStepControl = (essayTemplateStep: Partial<EssayTemplateStep>): void => {
     this.getEssaytemplateStepControls().push(new FormControl(essayTemplateStep));
-  }
-  private readonly scrollIntoView = (selector: string): void => {
-    const itemToScrollTo = document.getElementById(selector);
-    itemToScrollTo?.scrollIntoView({ behavior: 'auto', block: 'center', inline: 'center' });
   }
 
   constructor(
@@ -189,9 +177,9 @@ export class EssayTemplateBuilderComponent implements OnInit, OnDestroy, Compone
       foreign: { step }
     };
     this.addEssaytemplateStepControl(newEssayTemplateStep);
+    this.selectedIndex = this.getEssaytemplateStepControls().length - 1;
+    this.scrollToIndex = this.selectedIndex;
     this.form.markAsDirty();
-    this.selectIndex(this.getEssaytemplateStepControls().length - 1);
-    setTimeout(() => this.scrollIntoView('panel-index-' + this.selectedIndex));
   }
 
   exit() {
@@ -200,54 +188,6 @@ export class EssayTemplateBuilderComponent implements OnInit, OnDestroy, Compone
 
   save(): void {
     this.save$().subscribe();
-  }
-
-  moveUpByIndex(index: number | null) {
-    if (index === null) {
-      return;
-    }
-    if (index === 0) {
-      return;
-    }
-
-    const temp = this.getEssaytemplateStepControls().at(index);
-    this.getEssaytemplateStepControls().removeAt(index);
-    this.getEssaytemplateStepControls().insert(index - 1, temp);
-    this.selectedIndex = index - 1;
-    this.scrollIntoView('panel-index-' + this.selectedIndex);
-    this.form.markAsDirty();
-  }
-
-  moveDownByIndex(index: number | null) {
-    if (index === null) {
-      return;
-    }
-    if (index === this.getEssaytemplateStepControls().length - 1) {
-      return;
-    }
-    const temp = this.getEssaytemplateStepControls().at(index + 1);
-    this.getEssaytemplateStepControls().removeAt(index + 1);
-    this.getEssaytemplateStepControls().insert(index, temp);
-    this.selectedIndex = index + 1;
-    this.scrollIntoView('panel-index-' + this.selectedIndex);
-    this.form.markAsDirty();
-  }
-
-  stepRemoveByIndex(index: number | null) {
-    if (index === null) {
-      return;
-    }
-    this.getEssaytemplateStepControls().removeAt(index);
-    this.selectedIndex = null;
-    this.form.markAsDirty();
-  }
-
-  selectIndex(index: number): void {
-    if (this.selectedIndex === index) {
-      this.selectedIndex = null;
-      return;
-    }
-    this.selectedIndex = index;
   }
 
   @HostListener('window:beforeunload')

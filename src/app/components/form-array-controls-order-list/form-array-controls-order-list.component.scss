@@ -1,0 +1,15 @@
+@import 'primeflex/primeflex.scss';
+
+:host {
+  @include styleclass('flex flex-column h-full');
+}
+
+.header-title {
+  font-family: var(--font-family);
+}
+
+.panel-selected {
+  ::ng-deep .p-panel.p-component {
+    @include styleclass('shadow-4 border-1 border-blue-500');
+  }
+}

@@ -9,9 +9,3 @@
 .panel-header-title {
   font-family: var(--font-family);
 }
-
-.essay-template-step-selected {
-  ::ng-deep .p-panel.p-component {
-    @include styleclass('shadow-4 border-1 border-blue-500');
-  }
-}
