@@ -53,7 +53,7 @@ ipcMain.handle('save-essay-template', async (_, { essayTemplate, essayTemplateSt
     essayTemplateSteps = formatEssayTemplateSteps(essayTemplateSteps, essayTemplate.id);
     const essayTemplateStepsUpdated = await essayTemplateStepsUpdateExisting(essayTemplateSteps, transaction);
     const essayTemplateStepsCreated = await essayTemplateStepsCreateNews(essayTemplateSteps, transaction);
-    essayTemplateSteps = [...essayTemplateStepsUpdated, ...essayTemplateStepsCreated];
+    essayTemplateSteps = [...essayTemplateStepsUpdated, ...essayTemplateStepsCreated].sort((a, b) => a.order - b.order);
     await essayTemplateStepsDeleteOlds(essayTemplate.id, essayTemplateSteps, transaction);
     return { essayTemplate, essayTemplateSteps };
   });
