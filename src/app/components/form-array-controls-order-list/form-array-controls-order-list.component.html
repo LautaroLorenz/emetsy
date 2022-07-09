@@ -43,6 +43,7 @@
   <ng-container *ngIf="(this.arrayOfControls.valueChanges | async) as controls">
     <ng-container *ngFor="let controlValue of controls; let i = index">
       <div
+        [@moveAnimation]="controlValue?.animationState"
         id="panel-index-{{i}}"
         class="w-full"
         (click)="selectIndex(i)"
