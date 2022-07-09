@@ -23,7 +23,7 @@ const formatEssayTemplateSteps = (essayTemplateSteps, essayTemplateId) => essayT
 const essayTemplateStepsUpdateExisting = async (essayTemplateSteps, transaction) => {
   const essayTemplateStepsToUpdate = essayTemplateSteps.filter(({ id }) => id);
   for await (const et of essayTemplateStepsToUpdate) {
-    const { foreign, ...propertiesToUpdate } = et;
+    const { foreign, animationState, ...propertiesToUpdate } = et;
     await knex('essay_templates_steps').transacting(transaction).update(propertiesToUpdate).where('id', et.id);
   }
   return essayTemplateStepsToUpdate;
@@ -31,7 +31,7 @@ const essayTemplateStepsUpdateExisting = async (essayTemplateSteps, transaction)
 const essayTemplateStepsCreateNews = async (essayTemplateSteps, transaction) => {
   const essayTemplateStepsToCreate = essayTemplateSteps.filter(({ id }) => !id);
   for await (const et of essayTemplateStepsToCreate) {
-    const { foreign, ...propertiesToInsert } = et;
+    const { foreign, animationState, ...propertiesToInsert } = et;
     const [id] = await knex('essay_templates_steps').transacting(transaction).insert(propertiesToInsert);
     et.id = id;
   }

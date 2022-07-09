@@ -1,11 +1,13 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnChanges, Output, SimpleChanges, TemplateRef } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, OnChanges, Output, SimpleChanges, TemplateRef } from '@angular/core';
 import { FormArray, FormControl } from '@angular/forms';
+import { moveAnimation } from 'src/app/animations';
 
 @Component({
   selector: 'app-form-array-controls-order-list',
   templateUrl: './form-array-controls-order-list.component.html',
   styleUrls: ['./form-array-controls-order-list.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  animations: [moveAnimation]
 })
 export class FormArrayControlsOrderListComponent implements OnChanges {
 
@@ -27,7 +29,7 @@ export class FormArrayControlsOrderListComponent implements OnChanges {
     return this.selectedIndex === null;
   }
 
-  private getNearestIndex = (index: number | null): number | null => {
+  private readonly getNearestIndex = (index: number | null): number | null => {
     if (index === null) {
       return null;
     }
@@ -40,7 +42,9 @@ export class FormArrayControlsOrderListComponent implements OnChanges {
     return null;
   }
 
-  constructor() { }
+  constructor(
+    private readonly changeDetectorRef: ChangeDetectorRef,
+  ) { }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes) {
@@ -56,36 +60,42 @@ export class FormArrayControlsOrderListComponent implements OnChanges {
       return;
     }
     const itemToScrollTo = document.getElementById(`panel-index-${index}`);
-    itemToScrollTo?.scrollIntoView({ behavior: 'auto', block: 'center', inline: 'center' })
+    itemToScrollTo?.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' })
   }
 
-  moveUpByIndex(index: number | null): void {
-    if (index === null) {
+  moveUpByIndex(indexFrom: number | null): void {
+    if (indexFrom === null) {
       return;
     }
-    if (index === 0) {
+    if (indexFrom === 0) {
       return;
     }
-    const temp = this.arrayOfControls.at(index);
-    this.arrayOfControls.removeAt(index);
-    this.arrayOfControls.insert(index - 1, temp);
-    this.selectIndex(index - 1);
-    this.scrollIntoViewByIndex(index - 1);
+    const indexTo = indexFrom - 1;
+    this.animateItemByIndex(indexFrom, 'move-from-start-up', 'move-done');
+    this.animateItemByIndex(indexTo, 'move-to-start', 'move-done');
+    const temp = this.arrayOfControls.at(indexFrom);
+    this.arrayOfControls.removeAt(indexFrom);
+    this.arrayOfControls.insert(indexTo, temp);
+    this.selectIndex(indexTo);
+    this.scrollIntoViewByIndex(indexTo);
     this.onChanges.emit();
   }
 
-  moveDownByIndex(index: number | null): void {
-    if (index === null) {
+  moveDownByIndex(indexFrom: number | null): void {
+    if (indexFrom === null) {
       return;
     }
-    if (index === this.arrayOfControls.length - 1) {
+    if (indexFrom === this.arrayOfControls.length - 1) {
       return;
     }
-    const temp = this.arrayOfControls.at(index);
-    this.arrayOfControls.removeAt(index);
-    this.arrayOfControls.insert(index + 1, temp);
-    this.selectIndex(index + 1);
-    this.scrollIntoViewByIndex(index + 1);
+    const indexTo = indexFrom + 1;
+    this.animateItemByIndex(indexFrom, 'move-from-start-down', 'move-done');
+    this.animateItemByIndex(indexTo, 'move-to-start', 'move-done');
+    const temp = this.arrayOfControls.at(indexFrom);
+    this.arrayOfControls.removeAt(indexFrom);
+    this.arrayOfControls.insert(indexTo, temp);
+    this.selectIndex(indexTo);
+    this.scrollIntoViewByIndex(indexTo);
     this.onChanges.emit();
   }
 
@@ -93,9 +103,12 @@ export class FormArrayControlsOrderListComponent implements OnChanges {
     if (index === null) {
       return;
     }
-    this.arrayOfControls.removeAt(index);
-    const nearestIndex = this.getNearestIndex(index);
-    this.selectIndex(nearestIndex, { toggle: false });
+    this.animateItemByIndex(index, 'move-to-trash', 'move-to-trash-done');
+    setTimeout(() => {
+      this.arrayOfControls.removeAt(index);
+      const nearestIndex = this.getNearestIndex(index);
+      this.selectIndex(nearestIndex, { toggle: false });
+    }, 350);
     this.onChanges.emit();
   }
 
@@ -105,6 +118,17 @@ export class FormArrayControlsOrderListComponent implements OnChanges {
       return;
     }
     this.selectedIndexChange.emit(index);
+  }
+
+  animateItemByIndex(index: number | null, animationFrom: string, animationTo: string): void {
+    if (index === null) {
+      return;
+    }
+    const { value } = this.arrayOfControls.at(index);
+    value.animationState = animationFrom;
+    this.changeDetectorRef.detectChanges();
+    value.animationState = animationTo;
+    this.changeDetectorRef.detectChanges();
   }
 
 }
