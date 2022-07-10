@@ -13,7 +13,7 @@ let config = {
 function createWindow() {
   // Create the browser window.
   win = new BrowserWindow({
-    width: 1024,
+    width: 1524,
     height: 768,
     title: "EMeTSy",
     webPreferences: {
