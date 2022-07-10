@@ -172,28 +172,6 @@
 
         <div class="formgrid grid">
           <div class="col">
-            <div class="field">
-              <label
-                for="reactiveConstantValue"
-                class="mb-2"
-              >Constante de energía reactiva<span
-                  class="ml-1 text-red-300">*</span></label>
-              <p-inputNumber
-                id="reactiveConstantValue"
-                formControlName="reactiveConstantValue"
-                autofocus
-                [required]="true"
-                [useGrouping]="false"
-              ></p-inputNumber>
-              <ng-container
-                *ngIf="form.get('reactiveConstantValue') as reactiveConstantValueField"
-              >
-                <small
-                  class="text-red-500"
-                  *ngIf="reactiveConstantValueField.invalid && reactiveConstantValueField.dirty"
-                >Requerido</small>
-              </ng-container>
-            </div>
           </div>
           <div class="col">
             <div class="field">
