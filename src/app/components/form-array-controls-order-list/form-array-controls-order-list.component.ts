@@ -19,6 +19,8 @@ export class FormArrayControlsOrderListComponent implements OnChanges {
   @Output() selectedIndexChange = new EventEmitter<number | null>();
   @Output() onChanges = new EventEmitter<void>();
 
+  animationRemoveInProgress: boolean = false;
+
   get buttonMoveUpDisabled(): boolean {
     return this.selectedIndex === null || this.selectedIndex === 0;
   }
@@ -103,8 +105,10 @@ export class FormArrayControlsOrderListComponent implements OnChanges {
     if (index === null) {
       return;
     }
+    this.animationRemoveInProgress = true;
     this.animateItemByIndex(index, 'move-to-trash', 'move-to-trash-done');
     setTimeout(() => {
+      this.animationRemoveInProgress = false;
       this.arrayOfControls.removeAt(index);
       const nearestIndex = this.getNearestIndex(index);
       this.selectIndex(nearestIndex, { toggle: false });

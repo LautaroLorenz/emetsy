@@ -35,6 +35,10 @@
       [disabled]="buttonRemoveDisabled"
       [tooltipDisabled]="buttonRemoveDisabled"
       (click)="removeByIndex(selectedIndex)"
+      [loading]="animationRemoveInProgress"
+      [ngClass]="{
+        'pointer-events-none': animationRemoveInProgress
+      }"
     ></p-button>
   </div>
 </div>
