@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { PrimeIcons } from 'primeng/api';
 import { filter, first, Observable, tap } from 'rxjs';
-import { AbmPage, Brand, BrandTableColumns, BrandDbTableContext, Connection, ConnectionDbTableContext } from 'src/app/models';
+import { AbmPage, Brand, BrandTableColumns, BrandDbTableContext } from 'src/app/models';
 import { DatabaseService } from 'src/app/services/database.service';
 import { MessagesService } from 'src/app/services/messages.service';
 
@@ -18,12 +18,7 @@ export class BrandsComponent extends AbmPage<Brand> implements OnInit {
   readonly form: FormGroup;
   readonly brands$: Observable<Brand[]>;
 
-  dropdownConnectionOptions: Connection[] = [];
-
   private readonly updateDropdownOptions = (): void => {
-    this.dropdownConnectionOptions = this._relations[ConnectionDbTableContext.tableName].sort(
-      (a, b) => a.name.localeCompare(b.name)
-    );
   }
 
   constructor(
@@ -37,8 +32,6 @@ export class BrandsComponent extends AbmPage<Brand> implements OnInit {
     this.form = new FormGroup({
       id: new FormControl(),
       name: new FormControl(undefined, Validators.required),
-      model: new FormControl(undefined, Validators.required),
-      connection_id: new FormControl(undefined, Validators.required),
     });
   }
 

@@ -3,6 +3,7 @@ import { DbForeignKey, DbTableContext } from "../database.model";
 import { Brand, BrandDbTableContext } from "./brand.model";
 import { ActiveConstantUnit, ActiveConstantUnitDbTableContext } from "./active-constant-unit.model";
 import { ReactiveConstantUnit, ReactiveConstantUnitDbTableContext } from "./reactive-constant-unit.model";
+import { Connection, ConnectionDbTableContext } from "./connection.model";
 
 export interface Meter extends DbForeignKey {
 	id: number;
@@ -18,12 +19,18 @@ export interface Meter extends DbForeignKey {
 		brand: Brand,
 		activeConstantUnit: ActiveConstantUnit,
 		reactiveConstantUnit: ReactiveConstantUnit,
+		connection: Connection,
 	};
 }
 
 export const MeterDbTableContext: DbTableContext = {
 	tableName: 'meters',
 	foreignTables: [
+		{
+			tableName: ConnectionDbTableContext.tableName,
+			foreignKey: 'connection_id',
+			properyName: 'connection',
+		},
 		{
 			tableName: BrandDbTableContext.tableName,
 			foreignKey: 'brand_id',
@@ -49,8 +56,13 @@ export const MeterTableColumns: AbmColum[] = [
 		sortable: true,
 	},
 	{
-		field: 'foreign.brand.model',
+		field: 'model',
 		header: 'Modelo',
+		sortable: true,
+	},
+	{
+		field: 'foreign.connection.name',
+		header: 'Conexión',
 		sortable: true,
 	},
 	{

@@ -23,26 +23,103 @@
           formControlName="id"
         >
 
-        <div class="field">
-          <label for="brand_id">Marca - Modelo<span
-              class="ml-1 text-red-300">*</span>
-          </label>
-          <p-dropdown
-            id="brand_id"
-            [options]="dropdownBrandOptions"
-            formControlName="brand_id"
-            optionValue="id"
-            optionLabel="name"
-            appendTo="body"
-            [required]="true"
-            [autoDisplayFirst]="false"
-          ></p-dropdown>
-          <ng-container *ngIf="form.get('brand_id') as brandIdField">
-            <small
-              class="text-red-500"
-              *ngIf="brandIdField.invalid && brandIdField.dirty"
-            >Requerido</small>
-          </ng-container>
+        <div class="formgrid grid">
+          <div class="col">
+            <div class="field">
+              <label for="brand_id">Marca<span
+                  class="ml-1 text-red-300"
+                >*</span>
+              </label>
+              <p-dropdown
+                id="brand_id"
+                [options]="dropdownBrandOptions"
+                formControlName="brand_id"
+                optionValue="id"
+                optionLabel="name"
+                appendTo="body"
+                [required]="true"
+                [autoDisplayFirst]="false"
+              ></p-dropdown>
+              <ng-container *ngIf="form.get('brand_id') as brandIdField">
+                <small
+                  class="text-red-500"
+                  *ngIf="brandIdField.invalid && brandIdField.dirty"
+                >Requerido</small>
+              </ng-container>
+            </div>
+          </div>
+
+          <div class="col">
+            <div class="field">
+              <label for="model">Modelo<span
+                  class="ml-1 text-red-300">*</span></label>
+              <input
+                type="text"
+                pInputText
+                id="model"
+                formControlName="model"
+                required
+              />
+              <ng-container *ngIf="form.get('model') as modelField">
+                <small
+                  class="text-red-500"
+                  *ngIf="modelField.invalid && modelField.dirty"
+                >Requerido</small>
+              </ng-container>
+            </div>
+          </div>
+        </div>
+
+        <div class="formgrid grid">
+          <div class="col">
+            <div class="field">
+              <label for="connection_id">Conexión<span
+                  class="ml-1 text-red-300">*</span>
+              </label>
+              <p-dropdown
+                id="connection_id"
+                [options]="dropdownConnectionOptions"
+                formControlName="connection_id"
+                optionValue="id"
+                optionLabel="name"
+                appendTo="body"
+                [required]="true"
+                [autoDisplayFirst]="false"
+              ></p-dropdown>
+              <ng-container
+                *ngIf="form.get('connection_id') as connectionIdField"
+              >
+                <small
+                  class="text-red-500"
+                  *ngIf="connectionIdField.invalid && connectionIdField.dirty"
+                >Requerido</small>
+              </ng-container>
+            </div>
+          </div>
+          <div class="col">
+            <div class="field">
+              <label
+                for="ratedVoltage"
+                class="mb-2"
+              >Tensión nominal (Un) [V]<span
+                  class="ml-1 text-red-300">*</span></label>
+              <p-inputNumber
+                id="ratedVoltage"
+                formControlName="ratedVoltage"
+                autofocus
+                [required]="true"
+                [useGrouping]="false"
+              ></p-inputNumber>
+              <ng-container
+                *ngIf="form.get('ratedVoltage') as ratedVoltageField"
+              >
+                <small
+                  class="text-red-500"
+                  *ngIf="ratedVoltageField.invalid && ratedVoltageField.dirty"
+                >Requerido</small>
+              </ng-container>
+            </div>
+          </div>
         </div>
 
         <div class="formgrid grid">
@@ -94,27 +171,6 @@
               </ng-container>
             </div>
           </div>
-        </div>
-
-        <div class="field">
-          <label
-            for="ratedVoltage"
-            class="mb-2"
-          >Tensión nominal (Un) [V]<span
-              class="ml-1 text-red-300">*</span></label>
-          <p-inputNumber
-            id="ratedVoltage"
-            formControlName="ratedVoltage"
-            autofocus
-            [required]="true"
-            [useGrouping]="false"
-          ></p-inputNumber>
-          <ng-container *ngIf="form.get('ratedVoltage') as ratedVoltageField">
-            <small
-              class="text-red-500"
-              *ngIf="ratedVoltageField.invalid && ratedVoltageField.dirty"
-            >Requerido</small>
-          </ng-container>
         </div>
 
         <div class="formgrid grid">
