@@ -20,5 +20,6 @@ export const BrandTableColumns: AbmColum[] = [
 		field: 'name',
 		header: 'Marca',
 		sortable: true,
+		styleClass: 'w-9'
 	},
 ];
