@@ -2,7 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { PrimeIcons } from 'primeng/api';
 import { filter, first, Observable, ReplaySubject, takeUntil, tap } from 'rxjs';
-import { AbmPage, ActiveConstantUnit, ActiveConstantUnitDbTableContext, Brand, BrandDbTableContext, Meter, MeterDbTableContext, MeterTableColumns, ReactiveConstantUnit, ReactiveConstantUnitDbTableContext } from 'src/app/models';
+import { AbmPage, ActiveConstantUnit, ActiveConstantUnitDbTableContext, Brand, BrandDbTableContext, Connection, ConnectionDbTableContext, Meter, MeterDbTableContext, MeterTableColumns, ReactiveConstantUnit, ReactiveConstantUnitDbTableContext } from 'src/app/models';
 import { DatabaseService } from 'src/app/services/database.service';
 import { MessagesService } from 'src/app/services/messages.service';
 
@@ -21,6 +21,7 @@ export class MetersComponent extends AbmPage<Meter> implements OnInit, OnDestroy
   dropdownActiveConstantUnitOptions: ActiveConstantUnit[] = [];
   dropdownReactiveConstantUnitOptions: ReactiveConstantUnit[] = [];
   dropdownBrandOptions: Brand[] = [];
+  dropdownConnectionOptions: Connection[] = [];
 
   private readonly updateDropdownOptions = (): void => {
     this.dropdownActiveConstantUnitOptions = this._relations[ActiveConstantUnitDbTableContext.tableName].sort(
@@ -29,12 +30,10 @@ export class MetersComponent extends AbmPage<Meter> implements OnInit, OnDestroy
     this.dropdownReactiveConstantUnitOptions = this._relations[ReactiveConstantUnitDbTableContext.tableName].sort(
       (a, b) => a.name.localeCompare(b.name)
     );
-    this.dropdownBrandOptions = this._relations[BrandDbTableContext.tableName].map(
-      brand => ({
-        ...brand,
-        name: `${brand.name} - ${brand.model}`,
-      })
-    ).sort(
+    this.dropdownBrandOptions = this._relations[BrandDbTableContext.tableName].sort(
+      (a, b) => a.name.localeCompare(b.name)
+    );
+    this.dropdownConnectionOptions = this._relations[ConnectionDbTableContext.tableName].sort(
       (a, b) => a.name.localeCompare(b.name)
     );
   }
@@ -51,6 +50,7 @@ export class MetersComponent extends AbmPage<Meter> implements OnInit, OnDestroy
     );
     this.form = new FormGroup({
       id: new FormControl(),
+      model: new FormControl(undefined, Validators.required),
       maximumCurrent: new FormControl(undefined, Validators.required),
       ratedCurrent: new FormControl(undefined, Validators.required),
       ratedVoltage: new FormControl(undefined, Validators.required),
@@ -59,6 +59,7 @@ export class MetersComponent extends AbmPage<Meter> implements OnInit, OnDestroy
       reactiveConstantValue: new FormControl(undefined, Validators.required),
       reactiveConstantUnit_id: new FormControl(undefined, Validators.required),
       brand_id: new FormControl(undefined, Validators.required),
+      connection_id: new FormControl(undefined, Validators.required),
     });
     this.initFormValueChangeListeners();
   }
