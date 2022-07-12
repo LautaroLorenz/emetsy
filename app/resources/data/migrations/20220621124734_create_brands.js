@@ -7,8 +7,6 @@ exports.up = function (knex) {
     .createTable('brands', (table) => {
       table.increments('id').notNullable().primary();
       table.string('name').notNullable();
-      table.string('model').notNullable();
-      table.integer('connection_id').notNullable().references('id').inTable('connections').onDelete('CASCADE');
     });
 };
 
