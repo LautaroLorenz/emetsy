@@ -20,7 +20,7 @@ export class PreparationStepComponent extends StepComponentClass implements OnIn
     }, {
       actionEnum: ActionComponentEnum.MeterIdentification,
       workInStepStates: [StepStateEnum.EXECUTION],
-    },]
+    },];
   }
 
   ngOnInit(): void {

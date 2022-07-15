@@ -1,8 +1,17 @@
-<p-fieldset>
-  <ng-template pTemplate="header">
-    <span>{{name}}</span>
-  </ng-template>
-  <ng-container>
-    
-  </ng-container>
-</p-fieldset>
+<fom
+  novalidate
+  [formGroup]="form"
+>
+  <p-fieldset>
+    <ng-template pTemplate="header">
+      <span>{{name}}</span>
+    </ng-template>
+    <ng-container *ngIf="getStandGroups() as groupsArray">
+      <ng-container *ngFor="let group of groupsArray.controls; let i = index">
+        <div [formGroup]="group">
+          {{i}}-{{group.getRawValue()|json}}
+        </div>
+      </ng-container>
+    </ng-container>
+  </p-fieldset>
+</fom>

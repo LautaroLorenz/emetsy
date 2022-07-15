@@ -15,7 +15,7 @@ export class StandIdentificationActionComponent implements ActionComponent, OnIn
 
   constructor() { 
     this.form = new FormGroup({
-      stands: new FormArray([])
+      stands: new FormArray<FormGroup>([])
     });
   }
 
@@ -23,12 +23,12 @@ export class StandIdentificationActionComponent implements ActionComponent, OnIn
     this.buildStands();
   }
 
-  getStandControls(): FormArray<FormGroup> {
+  getStandGroups(): FormArray<FormGroup> {
     return (this.form.get('stands') as FormArray);
   }
 
   private addStandInput(): void {
-    this.getStandControls().push(new FormGroup({
+    this.getStandGroups().push(new FormGroup({
       isActive: new FormControl(),
       meter: new FormControl()
     }));
