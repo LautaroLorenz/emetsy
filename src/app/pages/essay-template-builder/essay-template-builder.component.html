@@ -109,19 +109,21 @@
 
     <p-divider layout="vertical"></p-divider>
 
-    <div class="flex flex-1 flex-column pr-3 pt-1">
+    <div class="flex flex-1 flex-column pr-3 pb-4">
       <ng-container *ngIf="hasSelectedIndex">
-        <p
-          class="p-font-family text-lg pb-2 border-bottom-3 border-purple-300 text-700">
+        <div
+          class="p-font-family text-lg py-3 border-bottom-3 border-purple-300 text-700"
+        >
           <span>{{selectedIndex!+1 | number:'2.0'}}</span>
           <span class="mx-1">-</span>
           <span>{{selectedControl?.value.foreign.step.name}}</span>
-        </p>
-        <app-step-switch
-          [stepStateEnum]="stepStateEnum"
-          [stepId]="selectedControl?.value.step_id"
-        >
-        </app-step-switch>
+        </div>
+          <app-step-switch
+            class="overflow-auto mt-2 pr-2"
+            [stepStateEnum]="stepStateEnum"
+            [stepId]="selectedControl?.value.step_id"
+          >
+          </app-step-switch>
       </ng-container>
     </div>
 

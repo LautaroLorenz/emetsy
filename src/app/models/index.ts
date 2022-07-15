@@ -16,3 +16,4 @@ export * from "./pages/abm-page.model";
 export * from "./components/abm.model";
 export * from "./database/database.model";
 export * from "./pages/page-name.model";
+export * from "./configuration.model";

@@ -112,7 +112,7 @@ export class FormArrayControlsOrderListComponent implements OnChanges {
       this.arrayOfControls.removeAt(index);
       const nearestIndex = this.getNearestIndex(index);
       this.selectIndex(nearestIndex, { toggle: false });
-    }, 350);
+    }, 250);
     this.onChanges.emit();
   }
 

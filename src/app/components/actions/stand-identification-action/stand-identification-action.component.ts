@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
-import { ActionComponent } from 'src/app/models';
+import { FormArray, FormControl, FormGroup } from '@angular/forms';
+import { ActionComponent, CompileParams } from 'src/app/models';
 
 @Component({
   selector: 'app-stand-identification-action',
@@ -9,11 +10,34 @@ import { ActionComponent } from 'src/app/models';
 })
 export class StandIdentificationActionComponent implements ActionComponent, OnInit {
 
-  name = 'Identificación de puestos';
+  readonly name = 'Identificación de puestos';
+  readonly form: FormGroup;
 
-  constructor() { }
+  constructor() { 
+    this.form = new FormGroup({
+      stands: new FormArray([])
+    });
+  }
 
   ngOnInit(): void {
+    this.buildStands();
+  }
+
+  getStandControls(): FormArray<FormGroup> {
+    return (this.form.get('stands') as FormArray);
+  }
+
+  private addStandInput(): void {
+    this.getStandControls().push(new FormGroup({
+      isActive: new FormControl(),
+      meter: new FormControl()
+    }));
+  }
+
+  private buildStands(): void {
+    for(let i = 0; i < CompileParams.STANDS_LENGTH; i++) {
+      this.addStandInput();
+    }
   }
 
 }

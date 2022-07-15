@@ -9,7 +9,7 @@ import { ActionComponent } from 'src/app/models';
 })
 export class MeterIdentificationActionComponent implements ActionComponent, OnInit {
 
-  name = 'Identificación de medidores';
+  readonly name = 'Identificación de medidores';
 
   constructor() { }
 
