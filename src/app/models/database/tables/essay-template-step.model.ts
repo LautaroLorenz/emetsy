@@ -1,4 +1,4 @@
-import { AbmColum } from "../../abm.model";
+import { AbmColum } from "../../components/abm.model";
 import { DbForeignKey, DbTableContext } from "../database.model";
 import { EssayTemplate, EssayTemplateDbTableContext } from "./essay-template.model";
 import { Step, StepDbTableContext } from "./step.model";

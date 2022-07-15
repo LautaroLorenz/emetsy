@@ -1,7 +1,7 @@
 import { map, Observable, tap } from "rxjs";
-import { DatabaseService } from "../services/database.service";
-import { DbTableContext, TableRelationsMap } from "./database/database.model";
-import { RelationsManager } from "./database/relations-manager.model";
+import { DatabaseService } from "../../services/database.service";
+import { DbTableContext, TableRelationsMap } from "../database/database.model";
+import { RelationsManager } from "../database/relations-manager.model";
 
 export class AbmPage<T> {
   private readonly _dbService: DatabaseService<T>;
