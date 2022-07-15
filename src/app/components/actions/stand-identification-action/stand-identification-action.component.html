@@ -9,7 +9,24 @@
     <ng-container *ngIf="getStandGroups() as groupsArray">
       <ng-container *ngFor="let group of groupsArray.controls; let i = index">
         <div [formGroup]="group">
-          {{i}}-{{group.getRawValue()|json}}
+          <div class="flex mb-3">
+            <div class="flex align-items-center pr-4 pt-4">
+              <p-inputSwitch formControlName="isActive"></p-inputSwitch>
+            </div>
+            <div class="flex flex-1 flex-column">
+              <label class="pb-1" for="meterId">Puesto {{i+1|number:'2.0'}}</label>
+              <p-dropdown
+                styleClass="w-full"
+                id="meterId"
+                [options]="dropdownMeterOptions"
+                formControlName="meterId"
+                optionValue="id"
+                optionLabel="label"
+                appendTo="body"
+                [autoDisplayFirst]="false"
+              ></p-dropdown>
+            </div>
+          </div>
         </div>
       </ng-container>
     </ng-container>

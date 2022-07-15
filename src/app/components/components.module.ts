@@ -46,6 +46,7 @@ import { PreparationStepComponent } from './steps/preparation-step/preparation-s
 import { ActionSwitchComponent } from './actions/action-switch/action-switch.component';
 import { StandIdentificationActionComponent } from './actions/stand-identification-action/stand-identification-action.component';
 import { MeterIdentificationActionComponent } from './actions/meter-identification-action/meter-identification-action.component';
+import { InputSwitchModule } from 'primeng/inputswitch';
 
 const PrimeNgModules = [
   MenubarModule,
@@ -72,6 +73,7 @@ const PrimeNgModules = [
   SpeedDialModule,
   DragDropModule,
   OrderListModule,
+  InputSwitchModule,
 ];
 
 const PrimeNgServices = [
