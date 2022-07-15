@@ -4,7 +4,7 @@ import { ActivatedRoute } from '@angular/router';
 import { ConfirmationService, MenuItem, PrimeIcons } from 'primeng/api';
 import { catchError, filter, first, map, Observable, of, ReplaySubject, switchMap, takeUntil, tap, throwError } from 'rxjs';
 import { ComponentCanDeactivate } from 'src/app/guards/pending-changes.guard';
-import { EssayTemplate, EssayTemplateDbTableContext, PageUrlName, RelationsManager, Step, StepDbTableContext, WhereKind, WhereOperator } from 'src/app/models';
+import { EssayTemplate, EssayTemplateDbTableContext, PageUrlName, RelationsManager, Step, StepDbTableContext, StepStateEnum, WhereKind, WhereOperator } from 'src/app/models';
 import { EssayTemplateStep, EssayTemplateStepDbTableContext } from 'src/app/models/database/tables/essay-template-step.model';
 import { DatabaseService } from 'src/app/services/database.service';
 import { EssayService } from 'src/app/services/essay.service';
@@ -24,6 +24,7 @@ export class EssayTemplateBuilderComponent implements OnInit, OnDestroy, Compone
   readonly confirmBeforeBackText: string = "¿Confirma qué quiere salir sin guardar?";
   readonly saveButtonMenuItems: MenuItem[] = [];
   readonly steps$: Observable<Step[]>;
+  readonly stepStateEnum = StepStateEnum.BUILDER;
 
   selectedIndex: number | null = null;
   scrollToIndex: number | null = null;

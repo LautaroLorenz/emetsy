@@ -1,0 +1,12 @@
+<ng-container *ngFor="let actionComponentEnum of actionComponentEnums">
+  <ng-container [ngSwitch]="actionComponentEnum">
+    <app-stand-identification-action
+      *ngSwitchCase="ActionComponentEnum.StandIdentification"
+    >
+    </app-stand-identification-action>
+    <app-meter-identification-action
+      *ngSwitchCase="ActionComponentEnum.MeterIdentification"
+    >
+    </app-meter-identification-action>
+  </ng-container>
+</ng-container>

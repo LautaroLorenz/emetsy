@@ -117,8 +117,11 @@
           <span class="mx-1">-</span>
           <span>{{selectedControl?.value.foreign.step.name}}</span>
         </p>
-        ...
-        <!-- TODO: Acciones del paso -->
+        <app-step-switch
+          [stepStateEnum]="stepStateEnum"
+          [stepId]="selectedControl?.value.step_id"
+        >
+        </app-step-switch>
       </ng-container>
     </div>
 

@@ -41,6 +41,11 @@ import { DirectivesModule } from '../directives/directives.module';
 import { FillAvailableSpaceComponent } from './fill-available-space/fill-available-space.component';
 import { StepSelectorComponent } from './step-selector/step-selector.component';
 import { FormArrayControlsOrderListComponent } from './form-array-controls-order-list/form-array-controls-order-list.component';
+import { StepSwitchComponent } from './steps/step-switch/step-switch.component';
+import { PreparationStepComponent } from './steps/preparation-step/preparation-step.component';
+import { ActionSwitchComponent } from './actions/action-switch/action-switch.component';
+import { StandIdentificationActionComponent } from './actions/stand-identification-action/stand-identification-action.component';
+import { MeterIdentificationActionComponent } from './actions/meter-identification-action/meter-identification-action.component';
 
 const PrimeNgModules = [
   MenubarModule,
@@ -83,10 +88,14 @@ const EmetsyComponents = [
   FillAvailableSpaceComponent,
   StepSelectorComponent,
   FormArrayControlsOrderListComponent,
+  PreparationStepComponent,
+  StandIdentificationActionComponent,
+  StepSwitchComponent,
+  ActionSwitchComponent,
 ]
 
 @NgModule({
-  declarations: [EmetsyComponents],
+  declarations: [EmetsyComponents, MeterIdentificationActionComponent],
   imports: [
     CommonModule,
     PrimeNgModules,
