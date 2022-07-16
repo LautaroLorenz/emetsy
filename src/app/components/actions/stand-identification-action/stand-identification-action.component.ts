@@ -1,8 +1,9 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { FormArray, FormControl, FormGroup } from '@angular/forms';
-import { map, ReplaySubject, takeUntil, tap } from 'rxjs';
+import { debounceTime, map, ReplaySubject, takeUntil, tap } from 'rxjs';
 import { ActionComponent, ActionLink, CompileParams, Meter, MeterDbTableContext, RelationsManager } from 'src/app/models';
 import { DatabaseService } from 'src/app/services/database.service';
+import { standIdentificationValidator } from 'src/app/validators';
 
 @Component({
   selector: 'app-stand-identification-action',
@@ -44,7 +45,7 @@ export class StandIdentificationActionComponent implements ActionComponent, OnIn
     private readonly dbServiceMeters: DatabaseService<Meter>,
   ) {
     this.form = new FormGroup({
-      stands: new FormArray<FormGroup>([])
+      stands: new FormArray<FormGroup>([], standIdentificationValidator())
     });
   }
 
@@ -76,6 +77,7 @@ export class StandIdentificationActionComponent implements ActionComponent, OnIn
     this.requestDropdownOptions();
     this.form.valueChanges.pipe(
       takeUntil(this.destroyed$),
+      debounceTime(100),
       tap((value) => this.actionLinkChange.emit({
         ...this.actionLink,
         actionRawData: value
