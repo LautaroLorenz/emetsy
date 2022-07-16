@@ -43,10 +43,10 @@ import { StepSelectorComponent } from './step-selector/step-selector.component';
 import { FormArrayControlsOrderListComponent } from './form-array-controls-order-list/form-array-controls-order-list.component';
 import { StepSwitchComponent } from './steps/step-switch/step-switch.component';
 import { PreparationStepComponent } from './steps/preparation-step/preparation-step.component';
-import { ActionSwitchComponent } from './actions/action-switch/action-switch.component';
 import { StandIdentificationActionComponent } from './actions/stand-identification-action/stand-identification-action.component';
 import { MeterIdentificationActionComponent } from './actions/meter-identification-action/meter-identification-action.component';
 import { InputSwitchModule } from 'primeng/inputswitch';
+import { ActionSwitchListComponent } from './actions/action-switch-list/action-switch-list.component';
 
 const PrimeNgModules = [
   MenubarModule,
@@ -93,11 +93,12 @@ const EmetsyComponents = [
   PreparationStepComponent,
   StandIdentificationActionComponent,
   StepSwitchComponent,
-  ActionSwitchComponent,
+  MeterIdentificationActionComponent, 
+  ActionSwitchListComponent,
 ]
 
 @NgModule({
-  declarations: [EmetsyComponents, MeterIdentificationActionComponent],
+  declarations: [EmetsyComponents],
   imports: [
     CommonModule,
     PrimeNgModules,

@@ -2,12 +2,12 @@ import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output
 import { ActionComponentEnum, ActionLink } from 'src/app/models';
 
 @Component({
-  selector: 'app-action-switch',
-  templateUrl: './action-switch.component.html',
-  styleUrls: ['./action-switch.component.scss'],
+  selector: 'app-action-switch-list',
+  templateUrl: './action-switch-list.component.html',
+  styleUrls: ['./action-switch-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ActionSwitchComponent implements OnInit {
+export class ActionSwitchListComponent implements OnInit {
 
   @Input() actionLinks!: ActionLink[];
   @Output() actionLinksChange = new EventEmitter<ActionLink[]>();
