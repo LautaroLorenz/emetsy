@@ -8,16 +8,54 @@
     </ng-template>
     <ng-container *ngIf="getStandGroups() as groupsArray">
       <ng-container *ngFor="let group of groupsArray.controls; let i = index">
-        <div [formGroup]="group">
-          <div class="flex mb-3">
-            <div class="flex align-items-center pr-4 pt-4">
-              <p-inputSwitch formControlName="isActive"></p-inputSwitch>
+        <div
+          [formGroup]="group"
+          class="relative border-1 border-200 p-3 mb-3"
+          [ngClass]="{
+            'border-purple-100': isActive.checked(),
+            'shadow-1': isActive.checked()
+          }"
+        >
+          <button
+            *ngIf="i===0"
+            pButton
+            pRipple
+            icon="pi pi-copy"
+            class="absolute top-0 right-0 z-2 p-button-rounded p-button-text p-button-primary p-button-sm"
+            (click)="copyToAllActive(group)"
+            pTooltip="Replicar valores del Puesto 01 en todos los puestos activos"
+            tooltipPosition="left"
+            [showDelay]="1250"
+            [disabled]="!isActive.checked()"
+          ></button>
+          <div class="relative mb-3 flex flex-1 justify-content-center">
+            <div class="absolute left-0">
+              <p-inputSwitch
+                #isActive
+                formControlName="isActive"
+                (onChange)="inputIsActiveChange(group)"
+                [pTooltip]="isActive.checked() ? 'Desactivar puesto' : 'Activar puesto'"
+                tooltipPosition="left"
+                [showDelay]="1250"
+              ></p-inputSwitch>
             </div>
+            <div>
+              <label
+                for="meterId"
+                [ngClass]="{
+                  'text-black-alpha-40': !isActive.checked()
+                }"
+              >
+                Puesto {{i+1|number:'2.0'}}
+              </label>
+            </div>
+          </div>
+          <div class="flex">
             <div class="flex flex-1 flex-column">
-              <label class="pb-1" for="meterId">Puesto {{i+1|number:'2.0'}}</label>
               <p-dropdown
                 styleClass="w-full"
                 id="meterId"
+                placeholder="Medidor"
                 [options]="dropdownMeterOptions"
                 formControlName="meterId"
                 optionValue="id"

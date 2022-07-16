@@ -51,7 +51,7 @@ export class StandIdentificationActionComponent implements ActionComponent, OnIn
   private addStandInput(initValue: any): void {
     this.getStandGroups().push(new FormGroup({
       isActive: new FormControl(initValue?.isActive),
-      meterId: new FormControl(initValue?.meterId)
+      meterId: new FormControl({ value: initValue?.meterId, disabled: !initValue?.isActive })
     }));
   }
 
@@ -85,6 +85,23 @@ export class StandIdentificationActionComponent implements ActionComponent, OnIn
 
   getStandGroups(): FormArray<FormGroup> {
     return (this.form.get('stands') as FormArray);
+  }
+
+  inputIsActiveChange(group: FormGroup): void {
+    const isActive = group.get('isActive')?.value;
+    isActive ? group.get('meterId')?.enable() : group.get('meterId')?.disable();
+    !isActive && group.get('meterId')?.reset()
+  }
+
+  copyToAllActive(group: FormGroup): void {
+    this.getStandGroups().controls.forEach((control) => {
+      if(!control.get('isActive')?.value) {
+        return;
+      }
+
+      control.patchValue(group.value);
+      this.inputIsActiveChange(control);
+    });
   }
 
   ngOnDestroy() {
