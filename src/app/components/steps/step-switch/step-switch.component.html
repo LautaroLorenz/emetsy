@@ -1,6 +1,10 @@
-<ng-container [ngSwitch]="stepId">
-    <app-preparation-step
-        *ngSwitchCase="6"
-        [stepStateEnum]="stepStateEnum"
-    ></app-preparation-step>
+<ng-container *ngIf="refreshInterface | async">
+    <ng-container [ngSwitch]="stepId">
+        <app-preparation-step
+            *ngSwitchCase="6"
+            [stepStateEnum]="stepStateEnum"
+            [actionsRawData]="actionsRawData"
+            (actionsRawDataChange)="compareActionsRawDataChange($event)"
+        ></app-preparation-step>
+    </ng-container>
 </ng-container>

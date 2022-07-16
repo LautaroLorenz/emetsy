@@ -1,3 +1,4 @@
+import { Component, EventEmitter, Input, Output } from "@angular/core";
 import { ActionComponentEnum } from "./action-component.model";
 import { StepStateBuilder } from "./step-state/step-state-builder.model";
 import { StepStateExecution } from "./step-state/step-state-execution.model";
@@ -16,13 +17,20 @@ export interface StepComponent {
 export interface ActionLink {
   actionEnum: ActionComponentEnum;
   workInStepStates: StepStateEnum[];
+  actionRawData: any;
 }
 
+@Component({
+  template: ``
+})
 export class StepComponentClass implements StepComponent {
 
-  stepStateEnum!: StepStateEnum;
   actions: ActionLink[] = [];
   protected stepState!: StepState;
+
+  @Input() stepStateEnum!: StepStateEnum;
+  @Input() actionsRawData: any[] = [];
+  @Output() actionsRawDataChange = new EventEmitter<any>();
 
   constructor() { }
 
@@ -35,7 +43,11 @@ export class StepComponentClass implements StepComponent {
     }
   }
 
-  getActions(): ActionComponentEnum[] {
+  getActions(): ActionLink[] {
     return this.stepState.getActions();
+  }
+
+  setActionsRawData(actionLinks: ActionLink[]): void {
+    this.actionsRawDataChange.emit(actionLinks.map(({ actionRawData }) => actionRawData))
   }
 }

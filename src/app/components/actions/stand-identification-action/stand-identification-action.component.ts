@@ -1,7 +1,7 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, OnDestroy, OnInit, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { FormArray, FormControl, FormGroup } from '@angular/forms';
 import { map, ReplaySubject, takeUntil, tap } from 'rxjs';
-import { ActionComponent, CompileParams, Meter, MeterDbTableContext, RelationsManager } from 'src/app/models';
+import { ActionComponent, ActionLink, CompileParams, Meter, MeterDbTableContext, RelationsManager } from 'src/app/models';
 import { DatabaseService } from 'src/app/services/database.service';
 
 @Component({
@@ -15,7 +15,8 @@ export class StandIdentificationActionComponent implements ActionComponent, OnIn
   readonly name = 'Identificación de puestos';
   readonly form: FormGroup;
 
-  @Output() valueChanges = new EventEmitter();
+  @Input() actionLink!: ActionLink;
+  @Output() actionLinkChange = new EventEmitter<ActionLink>();
 
   dropdownMeterOptions: Meter[] = [];
 
@@ -35,27 +36,29 @@ export class StandIdentificationActionComponent implements ActionComponent, OnIn
         (a, b) => a.label.localeCompare(b.label)
       ))),
       tap((rows) => this.dropdownMeterOptions = rows),
+      tap(() => this.form.updateValueAndValidity()),
     ).subscribe();
   }
 
   constructor(
-    private readonly dbServiceMeters: DatabaseService<Meter>
+    private readonly dbServiceMeters: DatabaseService<Meter>,
   ) {
     this.form = new FormGroup({
       stands: new FormArray<FormGroup>([])
     });
   }
 
-  private addStandInput(): void {
+  private addStandInput(initValue: any): void {
     this.getStandGroups().push(new FormGroup({
-      isActive: new FormControl(),
-      meterId: new FormControl()
+      isActive: new FormControl(initValue?.isActive),
+      meterId: new FormControl(initValue?.meterId)
     }));
   }
 
-  private buildStands(): void {
+  private buildStands(stands: any[]): void {
     for (let i = 0; i < CompileParams.STANDS_LENGTH; i++) {
-      this.addStandInput();
+      const value = (stands && stands[i]) ?? {};
+      this.addStandInput(value);
     }
   }
 
@@ -67,12 +70,16 @@ export class StandIdentificationActionComponent implements ActionComponent, OnIn
   }
 
   ngOnInit(): void {
-    this.buildStands();
+    const { stands } = this.actionLink.actionRawData ?? [];
+    this.buildStands(stands);
     this.lisenRequestReplyDropdownOptions();
     this.requestDropdownOptions();
     this.form.valueChanges.pipe(
       takeUntil(this.destroyed$),
-      tap((value) => this.valueChanges.emit(value)),
+      tap((value) => this.actionLinkChange.emit({
+        ...this.actionLink,
+        actionRawData: value
+      })),
     ).subscribe();
   }
 

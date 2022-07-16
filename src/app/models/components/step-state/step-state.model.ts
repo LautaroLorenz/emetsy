@@ -1,5 +1,4 @@
-import { ActionComponentEnum } from "../action-component.model";
-import { StepComponent } from "../step-component.model";
+import { ActionLink, StepComponent } from "../step-component.model";
 
 export abstract class StepState {
   protected stepComponent: StepComponent;
@@ -8,5 +7,5 @@ export abstract class StepState {
     this.stepComponent = stepComponent;
   }
 
-  abstract getActions(): ActionComponentEnum[];
+  abstract getActions(): ActionLink[];
 }

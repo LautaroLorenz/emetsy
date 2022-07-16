@@ -1,1 +1,4 @@
-<app-action-switch [actionComponentEnums]="getActions()"></app-action-switch>
+<app-action-switch
+  [actionLinks]="getActions()"
+  (actionLinksChange)="setActionsRawData($event)"
+></app-action-switch>

@@ -31,7 +31,7 @@ export class EssayTemplateBuilderComponent implements OnInit, OnDestroy, Compone
   nameInputFocused: boolean = false;
 
   get selectedControl(): FormControl | null {
-    return this.hasSelectedIndex ? this.getEssaytemplateStepControls().controls[this.selectedIndex!] : null
+    return this.hasSelectedIndex ? this.getEssaytemplateStepControls().controls[this.selectedIndex!] : null;
   }
   get hasSelectedIndex(): boolean {
     return this.selectedIndex !== null;
@@ -101,7 +101,10 @@ export class EssayTemplateBuilderComponent implements OnInit, OnDestroy, Compone
     tap(({ essayTemplate: { id } }) => this.navigationService.go(PageUrlName.executeEssay, { queryParams: { id } }))
   ).subscribe();
   private readonly addEssaytemplateStepControl = (essayTemplateStep: Partial<EssayTemplateStep>): void => {
-    this.getEssaytemplateStepControls().push(new FormControl(essayTemplateStep));
+    this.getEssaytemplateStepControls().push(new FormControl({
+      ...essayTemplateStep,
+      actions_raw_data: JSON.parse(essayTemplateStep?.actions_raw_data?.toString() || '[]')
+    }));
   }
 
   constructor(
@@ -180,6 +183,7 @@ export class EssayTemplateBuilderComponent implements OnInit, OnDestroy, Compone
   addEssayTemplateStep(step: Step): void {
     const newEssayTemplateStep: Partial<EssayTemplateStep> = {
       step_id: step.id,
+      actions_raw_data: [],
       foreign: { step }
     };
     this.addEssaytemplateStepControl(newEssayTemplateStep);

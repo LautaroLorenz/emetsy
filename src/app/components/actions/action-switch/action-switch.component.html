@@ -1,11 +1,15 @@
-<ng-container *ngFor="let actionComponentEnum of actionComponentEnums">
-  <ng-container [ngSwitch]="actionComponentEnum">
+<ng-container *ngFor="let actionLink of actionLinks; let i = index;">
+  <ng-container [ngSwitch]="actionLink.actionEnum">
     <app-stand-identification-action
       *ngSwitchCase="ActionComponentEnum.StandIdentification"
+      [actionLink]="actionLink"
+      (actionLinkChange)="setActionLinkValue($event, i)"
     >
     </app-stand-identification-action>
     <app-meter-identification-action
       *ngSwitchCase="ActionComponentEnum.MeterIdentification"
+      [actionLink]="actionLink"
+      (actionLinkChange)="setActionLinkValue($event, i)"
     >
     </app-meter-identification-action>
   </ng-container>

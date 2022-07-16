@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { ActionComponentEnum, StepComponentClass, StepStateEnum } from 'src/app/models';
 
 @Component({
@@ -9,22 +9,21 @@ import { ActionComponentEnum, StepComponentClass, StepStateEnum } from 'src/app/
 })
 export class PreparationStepComponent extends StepComponentClass implements OnInit {
 
-  @Input() override stepStateEnum!: StepStateEnum;
-
   constructor() {
     super();
-
-    this.actions = [{
-      actionEnum: ActionComponentEnum.StandIdentification,
-      workInStepStates: [StepStateEnum.BUILDER, StepStateEnum.EXECUTION],
-    }, {
-      actionEnum: ActionComponentEnum.MeterIdentification,
-      workInStepStates: [StepStateEnum.EXECUTION],
-    },];
   }
 
   ngOnInit(): void {
+    this.actions = [{
+      actionEnum: ActionComponentEnum.StandIdentification,
+      workInStepStates: [StepStateEnum.BUILDER, StepStateEnum.EXECUTION],
+      actionRawData: (this.actionsRawData && this.actionsRawData[0]) ?? {},
+    }, {
+      actionEnum: ActionComponentEnum.MeterIdentification,
+      workInStepStates: [StepStateEnum.EXECUTION],
+      actionRawData: (this.actionsRawData && this.actionsRawData[1]) ?? {},
+    },];
+
     this.stepState = this.buildState(this.stepStateEnum);
   }
-
 }

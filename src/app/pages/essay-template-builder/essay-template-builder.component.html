@@ -118,12 +118,15 @@
           <span class="mx-1">-</span>
           <span>{{selectedControl?.value.foreign.step.name}}</span>
         </div>
-          <app-step-switch
-            class="overflow-auto mt-2 pr-2"
-            [stepStateEnum]="stepStateEnum"
-            [stepId]="selectedControl?.value.step_id"
-          >
-          </app-step-switch>
+        <app-step-switch
+          class="overflow-auto mt-2 pr-2"
+          [selectedIndex]="selectedIndex"
+          [stepStateEnum]="stepStateEnum"
+          [stepId]="selectedControl?.value.step_id"
+          [(actionsRawData)]="selectedControl?.value.actions_raw_data"
+          (actionsRawDataChange)="form.markAsDirty()"
+        >
+        </app-step-switch>
       </ng-container>
     </div>
 

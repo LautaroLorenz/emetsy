@@ -1,3 +1,5 @@
+import { ActionLink } from "./step-component.model";
+
 export enum ActionComponentEnum {
   StandIdentification = 'StandIdentification',
   MeterIdentification = 'MeterIdentification',
@@ -5,4 +7,5 @@ export enum ActionComponentEnum {
 
 export interface ActionComponent {
   readonly name: string;
+  readonly actionLink: ActionLink;
 }

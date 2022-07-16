@@ -1,5 +1,5 @@
-import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
-import { ActionComponentEnum } from 'src/app/models';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { ActionComponentEnum, ActionLink } from 'src/app/models';
 
 @Component({
   selector: 'app-action-switch',
@@ -9,15 +9,21 @@ import { ActionComponentEnum } from 'src/app/models';
 })
 export class ActionSwitchComponent implements OnInit {
 
-  @Input() actionComponentEnums!: ActionComponentEnum[];
+  @Input() actionLinks!: ActionLink[];
+  @Output() actionLinksChange = new EventEmitter<ActionLink[]>();
   readonly ActionComponentEnum = ActionComponentEnum;
 
   constructor() { }
 
   ngOnInit(): void {
-    if(!this.actionComponentEnums) {
-      throw new Error("@Input() \"actionComponentEnums\" is required");
+    if(!this.actionLinks) {
+      throw new Error("@Input() \"actionLinks\" is required");
     }
+  }
+
+  setActionLinkValue(actionLink: ActionLink, index: number): void {
+    this.actionLinks[index] = actionLink;
+    this.actionLinksChange.emit(this.actionLinks);
   }
 
 }

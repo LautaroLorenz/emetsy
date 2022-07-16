@@ -1,5 +1,5 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
-import { ActionComponent } from 'src/app/models';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { ActionComponent, ActionLink } from 'src/app/models';
 
 @Component({
   selector: 'app-meter-identification-action',
@@ -10,6 +10,8 @@ import { ActionComponent } from 'src/app/models';
 export class MeterIdentificationActionComponent implements ActionComponent, OnInit {
 
   readonly name = 'Identificación de medidores';
+  @Input() actionLink!: ActionLink;
+  @Output() actionLinkChange = new EventEmitter<ActionLink>();
 
   constructor() { }
 
