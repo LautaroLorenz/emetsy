@@ -4,6 +4,7 @@ export enum ActionComponentEnum {
   StandIdentification = 'StandIdentification',
   MeterIdentification = 'MeterIdentification',
   PhotocellAdjustmentValues = 'PhotocellAdjustmentValues',
+  EnterTestValues = 'EnterTestValues',
 }
 
 export interface ActionComponent {

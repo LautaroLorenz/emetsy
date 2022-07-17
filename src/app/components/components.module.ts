@@ -51,6 +51,8 @@ import { PhotocellAdjustmentStepComponent } from './steps/photocell-adjustment-s
 import { PhotocellAdjustmentValuesActionComponent } from './actions/photocell-adjustment-values-action/photocell-adjustment-values-action.component';
 import { SelectButtonModule } from 'primeng/selectbutton';
 import { PhaseFormGroupComponent } from './phase-form-group/phase-form-group.component';
+import { ContrastTestStepComponent } from './steps/contrast-test-step/contrast-test-step.component';
+import { EnterTestValuesActionComponent } from './actions/enter-test-values-action/enter-test-values-action.component';
 
 const PrimeNgModules = [
   MenubarModule,
@@ -103,6 +105,8 @@ const EmetsyComponents = [
   PhotocellAdjustmentStepComponent,
   PhotocellAdjustmentValuesActionComponent,
   PhaseFormGroupComponent,
+  ContrastTestStepComponent,
+  EnterTestValuesActionComponent,
 ]
 
 @NgModule({

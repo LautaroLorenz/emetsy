@@ -16,5 +16,7 @@ export class PhaseFormGroupComponent {
   @Input() voltageLabel!: string;
   @Input() currentFormControlName!: string;
   @Input() currentLabel!: string;
+  @Input() angleFormControlName!: string;
+  @Input() angleLabel!: string;
 
 }

@@ -18,6 +18,7 @@ export interface ActionLink {
   actionEnum: ActionComponentEnum;
   workInStepStates: StepStateEnum[];
   actionRawData: any;
+  actionOptionalParams?: Record<string, any>;
 }
 
 @Component({

@@ -6,11 +6,16 @@
       </label>
     </div>
     <p-divider></p-divider>
+
     <div
       class="flex flex-1 flex-column"
       [formGroupName]="formGroupName"
     >
-      <div class="flex flex-1 flex-column">
+
+      <div
+        *ngIf="voltageFormControlName"
+        class="flex flex-1 flex-column"
+      >
         <label
           for="{{voltageFormControlName}}"
           class="mb-2"
@@ -26,7 +31,11 @@
           [useGrouping]="false"
         ></p-inputNumber>
       </div>
-      <div class="flex flex-1 flex-column mt-3">
+
+      <div
+        *ngIf="currentFormControlName"
+        class="flex flex-1 flex-column mt-3"
+      >
         <label
           for="{{currentFormControlName}}"
           class="mb-2"
@@ -42,6 +51,28 @@
           [useGrouping]="false"
         ></p-inputNumber>
       </div>
+
+      <div
+        *ngIf="angleFormControlName"
+        class="flex flex-1 flex-column mt-3"
+      >
+        <label
+          for="{{angleFormControlName}}"
+          class="mb-2"
+        >Ángulo de ensayo {{angleLabel}} [º]<span
+            class="ml-1 text-red-300">*</span>
+        </label>
+        <p-inputNumber
+          styleClass="flex flex-1"
+          id="{{angleFormControlName}}"
+          [formControlName]="angleFormControlName"
+          autofocus
+          [required]="true"
+          [useGrouping]="false"
+        ></p-inputNumber>
+      </div>
+
     </div>
+
   </div>
 </ng-container>

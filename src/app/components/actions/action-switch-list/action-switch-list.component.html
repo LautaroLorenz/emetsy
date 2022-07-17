@@ -18,5 +18,11 @@
       (actionLinkChange)="setActionLinkValue($event, i)"
     >
     </app-photocell-adjustment-values-action>
+    <app-enter-test-values-action
+      *ngSwitchCase="ActionComponentEnum.EnterTestValues"
+      [actionLink]="actionLink"
+      (actionLinkChange)="setActionLinkValue($event, i)"
+    >
+    </app-enter-test-values-action>
   </ng-container>
 </ng-container>
