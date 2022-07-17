@@ -1,3 +1,3 @@
 export const CompileParams = {
-  STANDS_LENGTH: 20
+  STANDS_LENGTH: 3,
 }

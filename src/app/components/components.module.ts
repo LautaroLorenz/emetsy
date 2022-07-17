@@ -47,6 +47,8 @@ import { StandIdentificationActionComponent } from './actions/stand-identificati
 import { MeterIdentificationActionComponent } from './actions/meter-identification-action/meter-identification-action.component';
 import { InputSwitchModule } from 'primeng/inputswitch';
 import { ActionSwitchListComponent } from './actions/action-switch-list/action-switch-list.component';
+import { PhotocellAdjustmentStepComponent } from './steps/photocell-adjustment-step/photocell-adjustment-step.component';
+import { PhotocellAdjustmentValuesActionComponent } from './actions/photocell-adjustment-values-action/photocell-adjustment-values-action.component';
 
 const PrimeNgModules = [
   MenubarModule,
@@ -95,6 +97,8 @@ const EmetsyComponents = [
   StepSwitchComponent,
   MeterIdentificationActionComponent, 
   ActionSwitchListComponent,
+  PhotocellAdjustmentStepComponent, 
+  PhotocellAdjustmentValuesActionComponent
 ]
 
 @NgModule({

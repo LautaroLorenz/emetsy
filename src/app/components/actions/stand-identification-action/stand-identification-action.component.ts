@@ -19,6 +19,7 @@ export class StandIdentificationActionComponent implements ActionComponent, OnIn
   @Input() actionLink!: ActionLink;
   @Output() actionLinkChange = new EventEmitter<ActionLink>();
 
+  standsBuilded = false;
   dropdownMeterOptions: Meter[] = [];
 
   private readonly destroyed$: ReplaySubject<boolean> = new ReplaySubject(1);
@@ -38,6 +39,7 @@ export class StandIdentificationActionComponent implements ActionComponent, OnIn
       ))),
       tap((rows) => this.dropdownMeterOptions = rows),
       tap(() => this.form.updateValueAndValidity()),
+      tap(() => this.standsBuilded = true),
     ).subscribe();
   }
 
@@ -97,7 +99,7 @@ export class StandIdentificationActionComponent implements ActionComponent, OnIn
 
   copyToAllActive(group: FormGroup): void {
     this.getStandGroups().controls.forEach((control) => {
-      if(!control.get('isActive')?.value) {
+      if (!control.get('isActive')?.value) {
         return;
       }
 

@@ -1,5 +1,11 @@
 <ng-container *ngIf="refreshInterface | async">
     <ng-container [ngSwitch]="stepId">
+        <app-photocell-adjustment-step
+            *ngSwitchCase="5"
+            [stepStateEnum]="stepStateEnum"
+            [actionsRawData]="actionsRawData"
+            (actionsRawDataChange)="compareActionsRawDataChange($event)"
+        ></app-photocell-adjustment-step>
         <app-preparation-step
             *ngSwitchCase="6"
             [stepStateEnum]="stepStateEnum"

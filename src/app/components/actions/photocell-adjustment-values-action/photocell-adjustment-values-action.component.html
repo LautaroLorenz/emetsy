@@ -1,0 +1,143 @@
+<fom
+  novalidate
+  [formGroup]="form"
+>
+  <p-fieldset>
+    <ng-template pTemplate="header">
+      <span>{{name}}</span>
+    </ng-template>
+
+    <div class="border-1 border-200 p-3 mb-3 shadow-1">
+      <div class="mb-3 flex flex-1 justify-content-center">
+        <label for="phase">
+          Fase L1
+        </label>
+      </div>
+      <p-divider></p-divider>
+      <div
+        class="flex flex-1 flex-column"
+        formGroupName="phaseL1"
+      >
+        <div class="flex flex-1 flex-column">
+          <label
+            for="voltageU1"
+            class="mb-2"
+          >Tensión de ensayo U1 [V]<span class="ml-1 text-red-300">*</span>
+          </label>
+          <p-inputNumber
+            styleClass="flex flex-1"
+            id="voltageU1"
+            formControlName="voltageU1"
+            autofocus
+            [required]="true"
+            [useGrouping]="false"
+          ></p-inputNumber>
+        </div>
+        <div class="flex flex-1 flex-column mt-3">
+          <label
+            for="currentI1"
+            class="mb-2"
+          >Corriente de ensayo I1 [A]<span class="ml-1 text-red-300">*</span>
+          </label>
+          <p-inputNumber
+            styleClass="flex flex-1"
+            id="currentI1"
+            formControlName="currentI1"
+            autofocus
+            [required]="true"
+            [useGrouping]="false"
+          ></p-inputNumber>
+        </div>
+      </div>
+    </div>
+
+    <div class="border-1 border-200 p-3 mb-3 shadow-1">
+      <div class="mb-3 flex flex-1 justify-content-center">
+        <label for="phase">
+          Fase L2
+        </label>
+      </div>
+      <p-divider></p-divider>
+      <div
+        class="flex flex-1 flex-column"
+        formGroupName="phaseL2"
+      >
+        <div class="flex flex-1 flex-column">
+          <label
+            for="voltageU2"
+            class="mb-2"
+          >Tensión de ensayo U2 [V]<span class="ml-1 text-red-300">*</span>
+          </label>
+          <p-inputNumber
+            styleClass="flex flex-1"
+            id="voltageU2"
+            formControlName="voltageU2"
+            autofocus
+            [required]="true"
+            [useGrouping]="false"
+          ></p-inputNumber>
+        </div>
+        <div class="flex flex-1 flex-column mt-3">
+          <label
+            for="currentI2"
+            class="mb-2"
+          >Corriente de ensayo I2 [A]<span class="ml-1 text-red-300">*</span>
+          </label>
+          <p-inputNumber
+            styleClass="flex flex-1"
+            id="currentI2"
+            formControlName="currentI2"
+            autofocus
+            [required]="true"
+            [useGrouping]="false"
+          ></p-inputNumber>
+        </div>
+      </div>
+    </div>
+
+    <div class="border-1 border-200 p-3 mb-3 shadow-1">
+      <div class="mb-3 flex flex-1 justify-content-center">
+        <label for="phase">
+          Fase L3
+        </label>
+      </div>
+      <p-divider></p-divider>
+      <div
+        class="flex flex-1 flex-column"
+        formGroupName="phaseL3"
+      >
+        <div class="flex flex-1 flex-column">
+          <label
+            for="voltageU3"
+            class="mb-2"
+          >Tensión de ensayo U3 [V]<span class="ml-1 text-red-300">*</span>
+          </label>
+          <p-inputNumber
+            styleClass="flex flex-1"
+            id="voltageU3"
+            formControlName="voltageU3"
+            autofocus
+            [required]="true"
+            [useGrouping]="false"
+          ></p-inputNumber>
+        </div>
+        <div class="flex flex-1 flex-column mt-3">
+          <label
+            for="currentI3"
+            class="mb-2"
+          >Corriente de ensayo I3 [A]<span class="ml-1 text-red-300">*</span>
+          </label>
+          <p-inputNumber
+            styleClass="flex flex-1"
+            id="currentI3"
+            formControlName="currentI3"
+            autofocus
+            [required]="true"
+            [useGrouping]="false"
+          ></p-inputNumber>
+        </div>
+      </div>
+    </div>
+
+  </p-fieldset>
+</fom>
