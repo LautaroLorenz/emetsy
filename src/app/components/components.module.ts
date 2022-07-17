@@ -50,6 +50,7 @@ import { ActionSwitchListComponent } from './actions/action-switch-list/action-s
 import { PhotocellAdjustmentStepComponent } from './steps/photocell-adjustment-step/photocell-adjustment-step.component';
 import { PhotocellAdjustmentValuesActionComponent } from './actions/photocell-adjustment-values-action/photocell-adjustment-values-action.component';
 import { SelectButtonModule } from 'primeng/selectbutton';
+import { PhaseFormGroupComponent } from './phase-form-group/phase-form-group.component';
 
 const PrimeNgModules = [
   MenubarModule,
@@ -100,7 +101,8 @@ const EmetsyComponents = [
   MeterIdentificationActionComponent,
   ActionSwitchListComponent,
   PhotocellAdjustmentStepComponent,
-  PhotocellAdjustmentValuesActionComponent
+  PhotocellAdjustmentValuesActionComponent,
+  PhaseFormGroupComponent,
 ]
 
 @NgModule({

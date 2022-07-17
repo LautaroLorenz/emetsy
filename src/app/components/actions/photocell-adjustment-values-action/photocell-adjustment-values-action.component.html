@@ -7,137 +7,35 @@
       <span>{{name}}</span>
     </ng-template>
 
-    <div class="border-1 border-200 p-3 mb-3 shadow-1">
-      <div class="mb-3 flex flex-1 justify-content-center">
-        <label for="phase" class="text-lg">
-          Fase L1
-        </label>
-      </div>
-      <p-divider></p-divider>
-      <div
-        class="flex flex-1 flex-column"
-        formGroupName="phaseL1"
-      >
-        <div class="flex flex-1 flex-column">
-          <label
-            for="voltageU1"
-            class="mb-2"
-          >Tensión de ensayo U1 [V]<span class="ml-1 text-red-300">*</span>
-          </label>
-          <p-inputNumber
-            styleClass="flex flex-1"
-            id="voltageU1"
-            formControlName="voltageU1"
-            autofocus
-            [required]="true"
-            [useGrouping]="false"
-          ></p-inputNumber>
-        </div>
-        <div class="flex flex-1 flex-column mt-3">
-          <label
-            for="currentI1"
-            class="mb-2"
-          >Corriente de ensayo I1 [A]<span class="ml-1 text-red-300">*</span>
-          </label>
-          <p-inputNumber
-            styleClass="flex flex-1"
-            id="currentI1"
-            formControlName="currentI1"
-            autofocus
-            [required]="true"
-            [useGrouping]="false"
-          ></p-inputNumber>
-        </div>
-      </div>
-    </div>
+    <app-phase-form-group
+      [form]="form"
+      formGroupName="phaseL1"
+      faseLabel="L1"
+      voltageFormControlName="voltageU1"
+      voltageLabel="U1"
+      currentFormControlName="currentI1"
+      currentLabel="I1"
+    ></app-phase-form-group>
 
-    <div class="border-1 border-200 p-3 mb-3 shadow-1">
-      <div class="mb-3 flex flex-1 justify-content-center">
-        <label for="phase" class="text-lg">
-          Fase L2
-        </label>
-      </div>
-      <p-divider></p-divider>
-      <div
-        class="flex flex-1 flex-column"
-        formGroupName="phaseL2"
-      >
-        <div class="flex flex-1 flex-column">
-          <label
-            for="voltageU2"
-            class="mb-2"
-          >Tensión de ensayo U2 [V]<span class="ml-1 text-red-300">*</span>
-          </label>
-          <p-inputNumber
-            styleClass="flex flex-1"
-            id="voltageU2"
-            formControlName="voltageU2"
-            autofocus
-            [required]="true"
-            [useGrouping]="false"
-          ></p-inputNumber>
-        </div>
-        <div class="flex flex-1 flex-column mt-3">
-          <label
-            for="currentI2"
-            class="mb-2"
-          >Corriente de ensayo I2 [A]<span class="ml-1 text-red-300">*</span>
-          </label>
-          <p-inputNumber
-            styleClass="flex flex-1"
-            id="currentI2"
-            formControlName="currentI2"
-            autofocus
-            [required]="true"
-            [useGrouping]="false"
-          ></p-inputNumber>
-        </div>
-      </div>
-    </div>
+    <app-phase-form-group
+      [form]="form"
+      formGroupName="phaseL2"
+      faseLabel="L2"
+      voltageFormControlName="voltageU2"
+      voltageLabel="U2"
+      currentFormControlName="currentI2"
+      currentLabel="I2"
+    ></app-phase-form-group>
 
-    <div class="border-1 border-200 p-3 mb-3 shadow-1">
-      <div class="mb-3 flex flex-1 justify-content-center">
-        <label for="phase" class="text-lg">
-          Fase L3
-        </label>
-      </div>
-      <p-divider></p-divider>
-      <div
-        class="flex flex-1 flex-column"
-        formGroupName="phaseL3"
-      >
-        <div class="flex flex-1 flex-column">
-          <label
-            for="voltageU3"
-            class="mb-2"
-          >Tensión de ensayo U3 [V]<span class="ml-1 text-red-300">*</span>
-          </label>
-          <p-inputNumber
-            styleClass="flex flex-1"
-            id="voltageU3"
-            formControlName="voltageU3"
-            autofocus
-            [required]="true"
-            [useGrouping]="false"
-          ></p-inputNumber>
-        </div>
-        <div class="flex flex-1 flex-column mt-3">
-          <label
-            for="currentI3"
-            class="mb-2"
-          >Corriente de ensayo I3 [A]<span class="ml-1 text-red-300">*</span>
-          </label>
-          <p-inputNumber
-            styleClass="flex flex-1"
-            id="currentI3"
-            formControlName="currentI3"
-            autofocus
-            [required]="true"
-            [useGrouping]="false"
-          ></p-inputNumber>
-        </div>
-      </div>
-    </div>
+    <app-phase-form-group
+      [form]="form"
+      formGroupName="phaseL3"
+      faseLabel="L3"
+      voltageFormControlName="voltageU3"
+      voltageLabel="U3"
+      currentFormControlName="currentI3"
+      currentLabel="I3"
+    ></app-phase-form-group>
 
   </p-fieldset>
 </fom>

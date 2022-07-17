@@ -1,0 +1,47 @@
+<ng-container [formGroup]="form">
+  <div class="border-1 border-200 p-3 mb-3 shadow-1">
+    <div class="mb-3 flex flex-1 justify-content-center">
+      <label class="text-lg">
+        Fase {{faseLabel}}
+      </label>
+    </div>
+    <p-divider></p-divider>
+    <div
+      class="flex flex-1 flex-column"
+      [formGroupName]="formGroupName"
+    >
+      <div class="flex flex-1 flex-column">
+        <label
+          for="{{voltageFormControlName}}"
+          class="mb-2"
+        >Tensión de ensayo {{voltageLabel}} [V]<span
+            class="ml-1 text-red-300">*</span>
+        </label>
+        <p-inputNumber
+          styleClass="flex flex-1"
+          id="{{voltageFormControlName}}"
+          [formControlName]="voltageFormControlName"
+          autofocus
+          [required]="true"
+          [useGrouping]="false"
+        ></p-inputNumber>
+      </div>
+      <div class="flex flex-1 flex-column mt-3">
+        <label
+          for="{{currentFormControlName}}"
+          class="mb-2"
+        >Corriente de ensayo {{currentLabel}} [A]<span
+            class="ml-1 text-red-300">*</span>
+        </label>
+        <p-inputNumber
+          styleClass="flex flex-1"
+          id="{{currentFormControlName}}"
+          [formControlName]="currentFormControlName"
+          autofocus
+          [required]="true"
+          [useGrouping]="false"
+        ></p-inputNumber>
+      </div>
+    </div>
+  </div>
+</ng-container>
