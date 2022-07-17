@@ -49,6 +49,7 @@ import { InputSwitchModule } from 'primeng/inputswitch';
 import { ActionSwitchListComponent } from './actions/action-switch-list/action-switch-list.component';
 import { PhotocellAdjustmentStepComponent } from './steps/photocell-adjustment-step/photocell-adjustment-step.component';
 import { PhotocellAdjustmentValuesActionComponent } from './actions/photocell-adjustment-values-action/photocell-adjustment-values-action.component';
+import { SelectButtonModule } from 'primeng/selectbutton';
 
 const PrimeNgModules = [
   MenubarModule,
@@ -76,6 +77,7 @@ const PrimeNgModules = [
   DragDropModule,
   OrderListModule,
   InputSwitchModule,
+  SelectButtonModule,
 ];
 
 const PrimeNgServices = [
@@ -95,9 +97,9 @@ const EmetsyComponents = [
   PreparationStepComponent,
   StandIdentificationActionComponent,
   StepSwitchComponent,
-  MeterIdentificationActionComponent, 
+  MeterIdentificationActionComponent,
   ActionSwitchListComponent,
-  PhotocellAdjustmentStepComponent, 
+  PhotocellAdjustmentStepComponent,
   PhotocellAdjustmentValuesActionComponent
 ]
 
