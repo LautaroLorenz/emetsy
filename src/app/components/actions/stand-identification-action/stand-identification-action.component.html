@@ -8,14 +8,10 @@
         <span>{{name}}</span>
       </ng-template>
       <ng-container *ngIf="getStandGroups() as groupsArray">
-        <ng-container *ngFor="let group of groupsArray.controls; let i = index">
+        <ng-container *ngFor="let group of groupsArray.controls; let i = index; let last = last">
           <div
             [formGroup]="group"
-            class="relative border-1 border-200 p-3 mb-3"
-            [ngClass]="{
-            'border-purple-100': isActive.checked(),
-            'shadow-1': isActive.checked()
-          }"
+            class="relative p-3 mb-3"
           >
             <button
               *ngIf="i===0"
@@ -52,7 +48,6 @@
                 </label>
               </div>
             </div>
-            <p-divider></p-divider>
             <div class="flex">
               <div class="flex flex-1 flex-column">
                 <label
@@ -76,6 +71,7 @@
               </div>
             </div>
           </div>
+          <p-divider *ngIf="!last"></p-divider>
         </ng-container>
       </ng-container>
     </p-fieldset>

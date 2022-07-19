@@ -7,39 +7,35 @@
       <span>{{name}}</span>
     </ng-template>
 
-    <div class="border-1 border-200 p-3 mb-3 shadow-1">
-      <div class="field pb-0 mb-0">
-        <label
-          for="testName"
-          class="mb-2"
-        >Nombre de la prueba<span class="ml-1 text-red-300">*</span>
-        </label>
-        <input
-          class="w-full"
-          type="text"
-          pInputText
-          id="testName"
-          formControlName="testName"
-          required
-        />
-      </div>
+    <div class="field pb-0 mb-3">
+      <label
+        for="testName"
+        class="mb-2"
+      >Nombre de la prueba<span class="ml-1 text-red-300">*</span>
+      </label>
+      <input
+        class="w-full"
+        type="text"
+        pInputText
+        id="testName"
+        formControlName="testName"
+        required
+      />
     </div>
 
-    <div class="border-1 border-200 p-3 mb-3 shadow-1">
-      <div class="field pb-0 mb-0">
-        <label
-          for="meterConstant"
-          class="mb-2"
-        >Constante del medidor<span class="ml-1 text-red-300">*</span>
-        </label>
-        <p-selectButton
-          [options]="MeterConstants"
-          id="meterConstant"
-          formControlName="meterConstant"
-          optionLabel="name"
-          optionValue="id"
-        ></p-selectButton>
-      </div>
+    <div class="field pb-0 mb-3">
+      <label
+        for="meterConstant"
+        class="mb-2"
+      >Constante del medidor<span class="ml-1 text-red-300">*</span>
+      </label>
+      <p-selectButton
+        [options]="MeterConstants"
+        id="meterConstant"
+        formControlName="meterConstant"
+        optionLabel="name"
+        optionValue="id"
+      ></p-selectButton>
     </div>
 
     <app-phase-form-group
@@ -54,6 +50,8 @@
       angleLabel="&#632;1"
     ></app-phase-form-group>
 
+    <p-divider></p-divider>
+
     <app-phase-form-group
       [form]="form"
       formGroupName="phaseL2"
@@ -66,6 +64,8 @@
       angleLabel="&#632;2"
     ></app-phase-form-group>
 
+    <p-divider></p-divider>
+    
     <app-phase-form-group
       [form]="form"
       formGroupName="phaseL3"

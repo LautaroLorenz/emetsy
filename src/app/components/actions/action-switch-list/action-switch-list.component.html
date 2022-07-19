@@ -4,25 +4,36 @@
       *ngSwitchCase="ActionComponentEnum.StandIdentification"
       [actionLink]="actionLink"
       (actionLinkChange)="setActionLinkValue($event, i)"
+      class="mb-3"
     >
     </app-stand-identification-action>
     <app-meter-identification-action
       *ngSwitchCase="ActionComponentEnum.MeterIdentification"
       [actionLink]="actionLink"
       (actionLinkChange)="setActionLinkValue($event, i)"
+      class="mb-3"
     >
     </app-meter-identification-action>
     <app-photocell-adjustment-values-action
       *ngSwitchCase="ActionComponentEnum.PhotocellAdjustmentValues"
       [actionLink]="actionLink"
       (actionLinkChange)="setActionLinkValue($event, i)"
+      class="mb-3"
     >
     </app-photocell-adjustment-values-action>
     <app-enter-test-values-action
       *ngSwitchCase="ActionComponentEnum.EnterTestValues"
       [actionLink]="actionLink"
       (actionLinkChange)="setActionLinkValue($event, i)"
+      class="mb-3"
     >
     </app-enter-test-values-action>
+    <app-contrast-test-parameters-action
+      *ngSwitchCase="ActionComponentEnum.ContrastTestParameters"
+      [actionLink]="actionLink"
+      (actionLinkChange)="setActionLinkValue($event, i)"
+      class="mb-3"
+    >
+    </app-contrast-test-parameters-action>
   </ng-container>
 </ng-container>

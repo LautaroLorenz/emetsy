@@ -53,6 +53,7 @@ import { SelectButtonModule } from 'primeng/selectbutton';
 import { PhaseFormGroupComponent } from './phase-form-group/phase-form-group.component';
 import { ContrastTestStepComponent } from './steps/contrast-test-step/contrast-test-step.component';
 import { EnterTestValuesActionComponent } from './actions/enter-test-values-action/enter-test-values-action.component';
+import { ContrastTestParametersActionComponent } from './actions/contrast-test-parameters-action/contrast-test-parameters-action.component';
 
 const PrimeNgModules = [
   MenubarModule,
@@ -86,7 +87,7 @@ const PrimeNgModules = [
 const PrimeNgServices = [
   MessageService,
   ConfirmationService,
-]
+];
 
 const EmetsyComponents = [
   MenuComponent,
@@ -107,7 +108,8 @@ const EmetsyComponents = [
   PhaseFormGroupComponent,
   ContrastTestStepComponent,
   EnterTestValuesActionComponent,
-]
+  ContrastTestParametersActionComponent,
+];
 
 @NgModule({
   declarations: [EmetsyComponents],

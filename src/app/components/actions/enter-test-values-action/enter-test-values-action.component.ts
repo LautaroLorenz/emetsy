@@ -11,7 +11,7 @@ import { ActionComponent, ActionLink, MeterConstants } from 'src/app/models';
 })
 export class EnterTestValuesActionComponent implements ActionComponent, OnInit, OnDestroy {
 
-  readonly name = 'Valores para la prueba';
+  readonly name = 'Valores generales de la prueba';
   readonly form: FormGroup;
   readonly MeterConstants = MeterConstants;
 
@@ -64,4 +64,3 @@ export class EnterTestValuesActionComponent implements ActionComponent, OnInit, 
     this.destroyed$.complete();
   }
 }
-
