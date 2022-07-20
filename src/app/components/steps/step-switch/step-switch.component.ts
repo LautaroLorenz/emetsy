@@ -34,10 +34,4 @@ export class StepSwitchComponent implements OnInit, OnChanges {
       }
     }
   }
-
-  compareActionsRawDataChange(actionsRawData: any[]): void {
-    if (JSON.stringify(this.actionsRawData) !== JSON.stringify(actionsRawData)) {
-      this.actionsRawDataChange.emit(actionsRawData);
-    }
-  }
 }

@@ -36,7 +36,7 @@ export class StepComponentClass {
   formValueChanges(): Observable<any[]> {
     return this.form.valueChanges.pipe(
       takeUntil(this.destroyed$),
-      filter((value) => JSON.stringify(this.actionsRawData) !== JSON.stringify(value)),
+      filter(() => JSON.stringify(this.actionsRawData) !== JSON.stringify(this.form.getRawValue())),
       tap(() => this.actionsRawDataChange.emit(this.form.getRawValue())), // raw value to include disabled
     );
   }
