@@ -1,4 +1,4 @@
-import { AbmColum } from "../../abm.model";
+import { AbmColum } from "../../components/abm.model";
 import { DbForeignKey, DbTableContext } from "../database.model";
 import { Brand, BrandDbTableContext } from "./brand.model";
 import { ActiveConstantUnit, ActiveConstantUnitDbTableContext } from "./active-constant-unit.model";
@@ -7,6 +7,7 @@ import { Connection, ConnectionDbTableContext } from "./connection.model";
 
 export interface Meter extends DbForeignKey {
 	id: number;
+	model: string;
 	maximumCurrent: number;
 	ratedCurrent: number;
 	ratedVoltage: number;
@@ -15,6 +16,7 @@ export interface Meter extends DbForeignKey {
 	reactveConstantValue: number;
 	reactveConstantUnit_id: number;
 	brand_id: number;
+	connection_id: number;
 	foreign: {
 		brand: Brand,
 		activeConstantUnit: ActiveConstantUnit,

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, HostBinding, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, HostBinding, Input, OnDestroy, OnInit } from '@angular/core';
 import { debounceTime, ReplaySubject, takeUntil, tap } from 'rxjs';
 import { ScreenService } from 'src/app/services/screen.service';
 
@@ -9,6 +9,8 @@ import { ScreenService } from 'src/app/services/screen.service';
 })
 export class FillAvailableSpaceComponent implements OnInit, OnDestroy {
 
+  @Input() componentsToSubtrac: string[] = [];
+  
   @HostBinding('style.maxHeight.px')
   @HostBinding('style.minHeight.px')
   height: number = 0;
@@ -23,8 +25,15 @@ export class FillAvailableSpaceComponent implements OnInit, OnDestroy {
     this.screenService.componentHeights$.pipe(
       takeUntil(this.destroyed$),
       debounceTime(100),
-      tap(({ pMenubar, appPageTitle, windowHeight }) => {
-        this.height = windowHeight - (pMenubar + appPageTitle);
+      tap((components) => {
+        const { pMenubar, appPageTitle, windowHeight } = components;
+
+        let extras = 0;
+        for(const componentToSubtrac of this.componentsToSubtrac) {
+          extras += components[componentToSubtrac] ?? 0;
+        }
+
+        this.height = windowHeight - (pMenubar + appPageTitle + extras);
       }),
     ).subscribe()
   }

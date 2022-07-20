@@ -1,4 +1,4 @@
-import { AbmColum } from "../../abm.model";
+import { AbmColum } from "../../components/abm.model";
 import { DbTableContext } from "../database.model";
 
 export interface ReactiveConstantUnit {

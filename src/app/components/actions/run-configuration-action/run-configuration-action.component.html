@@ -1,0 +1,99 @@
+<fom
+  novalidate
+  [formGroup]="form"
+>
+  <p-fieldset>
+    <ng-template pTemplate="header">
+      <span>{{name}}</span>
+    </ng-template>
+
+    <div class="field pb-0">
+      <label
+        for="completionMode"
+        class="mb-2"
+      >La ejecución finaliza<span class="ml-1 text-red-300">*</span>
+      </label>
+      <div class="p-inputgroup">
+        <span
+          class="p-inputgroup-addon"
+          #helpIcon1
+        >
+          <i
+            class="pi pi-info-circle"
+            (mouseenter)="op1.show($event, helpIcon1)"
+            (mouseleave)="op1.hide()"
+          ></i>
+        </span>
+        <p-overlayPanel
+          #op1
+          [appendTo]="helpIcon1"
+        >
+          <ng-template pTemplate>
+            <div class="mb-3">
+              Opciones para completar la ejecución del paso:
+            </div>
+            <div class="text-sm text-700 flex flex-column">
+              <span>- Automáticamente</span>
+              <i class="ml-3 mb-2">La ejecución se completa cuando se registran
+                resultados en todos los puestos.</i>
+              <span>- Manualmente</span>
+              <i class="ml-3">Registrando resultados de forma
+                indeterminada,<br>la ejecución se completa cuando se hace click
+                en el botón completar. </i>
+            </div>
+          </ng-template>
+        </p-overlayPanel>
+        <p-dropdown
+          styleClass="w-full"
+          id="completionMode"
+          [options]="CompleteModeConstants"
+          formControlName="completionMode"
+          optionValue="id"
+          optionLabel="name"
+          appendTo="body"
+          [autoDisplayFirst]="false"
+        ></p-dropdown>
+      </div>
+    </div>
+
+    <div class="flex flex-1 flex-column">
+      <label
+        for="numberOfDiscardedResults"
+        class="mb-2"
+      >Descartar los primeros N resultados<span
+          class="ml-1 text-red-300">*</span>
+      </label>
+      <div class="p-inputgroup">
+        <span
+          class="p-inputgroup-addon"
+          #helpIcon2
+        >
+          <i
+            class="pi pi-info-circle"
+            (mouseenter)="op2.show($event, helpIcon2)"
+            (mouseleave)="op2.hide()"
+          ></i>
+        </span>
+        <p-overlayPanel
+          #op2
+          [appendTo]="helpIcon2"
+        >
+          <ng-template pTemplate>
+            <div class="text-sm text-700 flex flex-column">
+              Se descartan los primeros N resultados y se registran valores a partir del resultado N+1.
+            </div>
+          </ng-template>
+        </p-overlayPanel>
+        <p-inputNumber
+          styleClass="flex flex-1"
+          id="numberOfDiscardedResults"
+          formControlName="numberOfDiscardedResults"
+          autofocus
+          [required]="true"
+          [useGrouping]="false"
+        ></p-inputNumber>
+      </div>
+    </div>
+
+  </p-fieldset>
+</fom>

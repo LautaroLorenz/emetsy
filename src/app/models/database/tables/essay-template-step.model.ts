@@ -1,4 +1,4 @@
-import { AbmColum } from "../../abm.model";
+import { AbmColum } from "../../components/abm.model";
 import { DbForeignKey, DbTableContext } from "../database.model";
 import { EssayTemplate, EssayTemplateDbTableContext } from "./essay-template.model";
 import { Step, StepDbTableContext } from "./step.model";
@@ -8,6 +8,7 @@ export interface EssayTemplateStep extends DbForeignKey {
   order: number;
   essay_template_id: number;
   step_id: number;
+  actions_raw_data: any[];
   foreign: {
     essayTemplate?: EssayTemplate,
     step?: Step,

@@ -1,0 +1,45 @@
+<fom
+  novalidate
+  [formGroup]="form"
+>
+  <p-fieldset>
+    <ng-template pTemplate="header">
+      <span>{{name}}</span>
+    </ng-template>
+
+    <app-phase-form-group
+      [form]="form"
+      formGroupName="phaseL1"
+      faseLabel="L1"
+      voltageFormControlName="voltageU1"
+      voltageLabel="U1"
+      currentFormControlName="currentI1"
+      currentLabel="I1"
+    ></app-phase-form-group>
+
+    <p-divider></p-divider>
+
+    <app-phase-form-group
+      [form]="form"
+      formGroupName="phaseL2"
+      faseLabel="L2"
+      voltageFormControlName="voltageU2"
+      voltageLabel="U2"
+      currentFormControlName="currentI2"
+      currentLabel="I2"
+    ></app-phase-form-group>
+
+    <p-divider></p-divider>
+
+    <app-phase-form-group
+      [form]="form"
+      formGroupName="phaseL3"
+      faseLabel="L3"
+      voltageFormControlName="voltageU3"
+      voltageLabel="U3"
+      currentFormControlName="currentI3"
+      currentLabel="I3"
+    ></app-phase-form-group>
+
+  </p-fieldset>
+</fom>

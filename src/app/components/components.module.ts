@@ -41,6 +41,22 @@ import { DirectivesModule } from '../directives/directives.module';
 import { FillAvailableSpaceComponent } from './fill-available-space/fill-available-space.component';
 import { StepSelectorComponent } from './step-selector/step-selector.component';
 import { FormArrayControlsOrderListComponent } from './form-array-controls-order-list/form-array-controls-order-list.component';
+import { StepSwitchComponent } from './steps/step-switch/step-switch.component';
+import { PreparationStepComponent } from './steps/preparation-step/preparation-step.component';
+import { StandIdentificationActionComponent } from './actions/stand-identification-action/stand-identification-action.component';
+import { InputSwitchModule } from 'primeng/inputswitch';
+import { ActionSwitchListComponent } from './actions/action-switch-list/action-switch-list.component';
+import { PhotocellAdjustmentStepComponent } from './steps/photocell-adjustment-step/photocell-adjustment-step.component';
+import { PhotocellAdjustmentValuesActionComponent } from './actions/photocell-adjustment-values-action/photocell-adjustment-values-action.component';
+import { SelectButtonModule } from 'primeng/selectbutton';
+import { PhaseFormGroupComponent } from './phase-form-group/phase-form-group.component';
+import { ContrastTestStepComponent } from './steps/contrast-test-step/contrast-test-step.component';
+import { EnterTestValuesActionComponent } from './actions/enter-test-values-action/enter-test-values-action.component';
+import { ContrastTestParametersActionComponent } from './actions/contrast-test-parameters-action/contrast-test-parameters-action.component';
+import { RunConfigurationActionComponent } from './actions/run-configuration-action/run-configuration-action.component';
+import { OverlayPanelModule } from 'primeng/overlaypanel';
+import { MessagesModule } from 'primeng/messages';
+import { MessageModule } from 'primeng/message';
 
 const PrimeNgModules = [
   MenubarModule,
@@ -67,12 +83,17 @@ const PrimeNgModules = [
   SpeedDialModule,
   DragDropModule,
   OrderListModule,
+  InputSwitchModule,
+  SelectButtonModule,
+  OverlayPanelModule,
+  MessagesModule,
+  MessageModule,
 ];
 
 const PrimeNgServices = [
   MessageService,
   ConfirmationService,
-]
+];
 
 const EmetsyComponents = [
   MenuComponent,
@@ -83,10 +104,20 @@ const EmetsyComponents = [
   FillAvailableSpaceComponent,
   StepSelectorComponent,
   FormArrayControlsOrderListComponent,
-]
+  PreparationStepComponent,
+  StandIdentificationActionComponent,
+  StepSwitchComponent,
+  ActionSwitchListComponent,
+  PhotocellAdjustmentStepComponent,
+  PhotocellAdjustmentValuesActionComponent,
+  PhaseFormGroupComponent,
+  ContrastTestStepComponent,
+  EnterTestValuesActionComponent,
+  ContrastTestParametersActionComponent,
+];
 
 @NgModule({
-  declarations: [EmetsyComponents],
+  declarations: [EmetsyComponents, RunConfigurationActionComponent],
   imports: [
     CommonModule,
     PrimeNgModules,

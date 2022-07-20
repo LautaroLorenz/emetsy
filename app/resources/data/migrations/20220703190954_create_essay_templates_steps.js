@@ -7,6 +7,7 @@ exports.up = function (knex) {
     .createTable('essay_templates_steps', (table) => {
       table.increments('id').notNullable().primary();
       table.integer('order').notNullable();
+      table.string('actions_raw_data');
       table.integer('essay_template_id').notNullable().references('id').inTable('essay_templates').onDelete('CASCADE');
       table.integer('step_id').notNullable().references('id').inTable('steps').onDelete('RESTRICT');
     });

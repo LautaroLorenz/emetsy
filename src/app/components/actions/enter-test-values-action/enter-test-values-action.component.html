@@ -1,0 +1,82 @@
+<fom
+  novalidate
+  [formGroup]="form"
+>
+  <p-fieldset>
+    <ng-template pTemplate="header">
+      <span>{{name}}</span>
+    </ng-template>
+
+    <div class="field pb-0 mb-3">
+      <label
+        for="testName"
+        class="mb-2"
+      >Nombre de la prueba<span class="ml-1 text-red-300">*</span>
+      </label>
+      <input
+        class="w-full"
+        type="text"
+        pInputText
+        id="testName"
+        formControlName="testName"
+        required
+      />
+    </div>
+
+    <div class="field pb-0 mb-3">
+      <label
+        for="meterConstant"
+        class="mb-2"
+      >Constante del medidor<span class="ml-1 text-red-300">*</span>
+      </label>
+      <p-selectButton
+        [options]="MeterConstants"
+        id="meterConstant"
+        formControlName="meterConstant"
+        optionLabel="name"
+        optionValue="id"
+      ></p-selectButton>
+    </div>
+
+    <app-phase-form-group
+      [form]="form"
+      formGroupName="phaseL1"
+      faseLabel="L1"
+      voltageFormControlName="voltageU1"
+      voltageLabel="U1"
+      currentFormControlName="currentI1"
+      currentLabel="I1"
+      angleFormControlName="anglePhi1"
+      angleLabel="&#632;1"
+    ></app-phase-form-group>
+
+    <p-divider></p-divider>
+
+    <app-phase-form-group
+      [form]="form"
+      formGroupName="phaseL2"
+      faseLabel="L2"
+      voltageFormControlName="voltageU2"
+      voltageLabel="U2"
+      currentFormControlName="currentI2"
+      currentLabel="I2"
+      angleFormControlName="anglePhi2"
+      angleLabel="&#632;2"
+    ></app-phase-form-group>
+
+    <p-divider></p-divider>
+
+    <app-phase-form-group
+      [form]="form"
+      formGroupName="phaseL3"
+      faseLabel="L3"
+      voltageFormControlName="voltageU3"
+      voltageLabel="U3"
+      currentFormControlName="currentI3"
+      currentLabel="I3"
+      angleFormControlName="anglePhi3"
+      angleLabel="&#632;3"
+    ></app-phase-form-group>
+
+  </p-fieldset>
+</fom>

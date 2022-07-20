@@ -1,0 +1,19 @@
+@import 'primeflex/primeflex.scss';
+
+:host {
+  @include styleclass('flex flex-column h-full');
+}
+
+::ng-deep p-selectbutton {
+  .p-highlight {
+    @include styleclass('bg-primary-500 text-0');
+  }
+
+  .p-buttonset {
+    @include styleclass('flex flex-1 justify-content-center');
+
+    [role="button"] {
+      @include styleclass('flex flex-1');
+    }
+  }
+}

@@ -1,0 +1,44 @@
+<fom
+  novalidate
+  [formGroup]="form"
+>
+  <p-fieldset>
+    <ng-template pTemplate="header">
+      <span>{{name}}</span>
+    </ng-template>
+
+    <div class="flex flex-1 flex-column mb-3">
+      <label
+        for="maxAllowedError"
+        class="mb-2"
+      >Máximo error permitido en el puesto [%]<span
+          class="ml-1 text-red-300">*</span>
+      </label>
+      <p-inputNumber
+        styleClass="flex flex-1"
+        id="maxAllowedError"
+        formControlName="maxAllowedError"
+        autofocus
+        [required]="true"
+        [useGrouping]="false"
+      ></p-inputNumber>
+    </div>
+
+    <div class="flex flex-1 flex-column">
+      <label
+        for="meterPulses"
+        class="mb-2"
+      >Cantidad de impulsos del medidor<span class="ml-1 text-red-300">*</span>
+      </label>
+      <p-inputNumber
+        styleClass="flex flex-1"
+        id="meterPulses"
+        formControlName="meterPulses"
+        autofocus
+        [required]="true"
+        [useGrouping]="false"
+      ></p-inputNumber>
+    </div>
+
+  </p-fieldset>
+</fom>
