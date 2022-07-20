@@ -1,0 +1,78 @@
+<fom
+  novalidate
+  [formGroup]="form"
+>
+  <p-fieldset>
+    <ng-template pTemplate="header">
+      <span>{{name}}</span>
+    </ng-template>
+
+    <div class="field pb-0">
+      <label
+        for="completionMode"
+        class="mb-2"
+      >La ejecución finaliza<span class="ml-1 text-red-300">*</span>
+      </label>
+      <div class="p-inputgroup">
+        <span
+          class="p-inputgroup-addon"
+          #helpIcon
+        >
+          <i
+            class="pi pi-info-circle"
+            (mouseenter)="op.show($event, helpIcon)"
+            (mouseleave)="op.hide()"
+          ></i>
+        </span>
+        <p-overlayPanel
+          #op
+          [appendTo]="helpIcon"
+        >
+          <ng-template pTemplate>
+            <div class="mb-3">
+              La ejecución se completa con las siguientes opciones:
+            </div>
+            <div class="text-sm text-700 flex flex-column">
+              <span>- Automáticamente</span>
+              <i class="ml-3 mb-2">Se descartan los primeros N resultados y
+                luego finaliza en el resultado N+1.</i>
+              <span>- Manualmente</span>
+              <i class="ml-3">Se debe hacer click en un botón para
+                finalizar la ejecución.</i>
+            </div>
+          </ng-template>
+        </p-overlayPanel>
+        <p-dropdown
+          styleClass="w-full"
+          id="completionMode"
+          [options]="CompleteModeConstants"
+          formControlName="completionMode"
+          optionValue="id"
+          optionLabel="name"
+          appendTo="body"
+          [autoDisplayFirst]="false"
+        ></p-dropdown>
+      </div>
+    </div>
+
+    <!-- TODO: deshabilitar y setear en 0 en modo Manual,
+  al habilitar setear en 3 y dejarlo como editable. -->
+    <div class="flex flex-1 flex-column">
+      <label
+        for="meterPulses"
+        class="mb-2"
+      >Descartar los primeros N resultados<span
+          class="ml-1 text-red-300">*</span>
+      </label>
+      <p-inputNumber
+        styleClass="flex flex-1"
+        id="meterPulses"
+        formControlName="meterPulses"
+        autofocus
+        [required]="true"
+        [useGrouping]="false"
+      ></p-inputNumber>
+    </div>
+
+  </p-fieldset>
+</fom>

@@ -54,6 +54,10 @@ import { PhaseFormGroupComponent } from './phase-form-group/phase-form-group.com
 import { ContrastTestStepComponent } from './steps/contrast-test-step/contrast-test-step.component';
 import { EnterTestValuesActionComponent } from './actions/enter-test-values-action/enter-test-values-action.component';
 import { ContrastTestParametersActionComponent } from './actions/contrast-test-parameters-action/contrast-test-parameters-action.component';
+import { RunConfigurationActionComponent } from './actions/run-configuration-action/run-configuration-action.component';
+import { OverlayPanelModule } from 'primeng/overlaypanel';
+import { MessagesModule } from 'primeng/messages';
+import { MessageModule } from 'primeng/message';
 
 const PrimeNgModules = [
   MenubarModule,
@@ -82,6 +86,9 @@ const PrimeNgModules = [
   OrderListModule,
   InputSwitchModule,
   SelectButtonModule,
+  OverlayPanelModule,
+  MessagesModule,
+  MessageModule,
 ];
 
 const PrimeNgServices = [
@@ -112,7 +119,7 @@ const EmetsyComponents = [
 ];
 
 @NgModule({
-  declarations: [EmetsyComponents],
+  declarations: [EmetsyComponents, RunConfigurationActionComponent],
   imports: [
     CommonModule,
     PrimeNgModules,

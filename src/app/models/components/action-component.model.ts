@@ -6,6 +6,7 @@ export enum ActionComponentEnum {
   PhotocellAdjustmentValues = 'PhotocellAdjustmentValues',
   EnterTestValues = 'EnterTestValues',
   ContrastTestParameters = 'ContrastTestParameters',
+  RunConfiguration = 'RunConfiguration',
 }
 
 export interface ActionComponent {

@@ -35,5 +35,12 @@
       class="mb-3"
     >
     </app-contrast-test-parameters-action>
+    <app-run-configuration-action
+      *ngSwitchCase="ActionComponentEnum.RunConfiguration"
+      [actionLink]="actionLink"
+      (actionLinkChange)="setActionLinkValue($event, i)"
+      class="mb-3"
+    >
+    </app-run-configuration-action>
   </ng-container>
 </ng-container>

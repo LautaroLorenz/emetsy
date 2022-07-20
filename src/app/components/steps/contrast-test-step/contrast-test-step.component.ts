@@ -25,6 +25,10 @@ export class ContrastTestStepComponent extends StepComponentClass implements OnI
       actionEnum: ActionComponentEnum.ContrastTestParameters,
       workInStepStates: [StepStateEnum.BUILDER, StepStateEnum.EXECUTION],
       actionRawData: (this.actionsRawData && this.actionsRawData[1]) ?? {},
+    }, {
+      actionEnum: ActionComponentEnum.RunConfiguration,
+      workInStepStates: [StepStateEnum.BUILDER, StepStateEnum.EXECUTION],
+      actionRawData: (this.actionsRawData && this.actionsRawData[2]) ?? {},
     }];
 
     this.stepState = this.buildState(this.stepStateEnum);
