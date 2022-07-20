@@ -44,7 +44,6 @@ import { FormArrayControlsOrderListComponent } from './form-array-controls-order
 import { StepSwitchComponent } from './steps/step-switch/step-switch.component';
 import { PreparationStepComponent } from './steps/preparation-step/preparation-step.component';
 import { StandIdentificationActionComponent } from './actions/stand-identification-action/stand-identification-action.component';
-import { MeterIdentificationActionComponent } from './actions/meter-identification-action/meter-identification-action.component';
 import { InputSwitchModule } from 'primeng/inputswitch';
 import { ActionSwitchListComponent } from './actions/action-switch-list/action-switch-list.component';
 import { PhotocellAdjustmentStepComponent } from './steps/photocell-adjustment-step/photocell-adjustment-step.component';
@@ -108,7 +107,6 @@ const EmetsyComponents = [
   PreparationStepComponent,
   StandIdentificationActionComponent,
   StepSwitchComponent,
-  MeterIdentificationActionComponent,
   ActionSwitchListComponent,
   PhotocellAdjustmentStepComponent,
   PhotocellAdjustmentValuesActionComponent,

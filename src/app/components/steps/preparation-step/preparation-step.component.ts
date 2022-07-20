@@ -1,5 +1,5 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
-import { ActionComponentEnum, StepComponentClass, StepStateEnum } from 'src/app/models';
+import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/core';
+import { StandIdentificationAction, StepComponentClass } from 'src/app/models';
 
 @Component({
   selector: 'app-preparation-step',
@@ -7,23 +7,24 @@ import { ActionComponentEnum, StepComponentClass, StepStateEnum } from 'src/app/
   styleUrls: ['./preparation-step.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class PreparationStepComponent extends StepComponentClass implements OnInit {
+export class PreparationStepComponent extends StepComponentClass implements OnInit, OnDestroy {
 
   constructor() {
     super();
+
+    this.actions = [
+      new StandIdentificationAction(this.destroyed$),
+    ];
   }
 
   ngOnInit(): void {
-    this.actions = [{
-      actionEnum: ActionComponentEnum.StandIdentification,
-      workInStepStates: [StepStateEnum.BUILDER, StepStateEnum.EXECUTION],
-      actionRawData: (this.actionsRawData && this.actionsRawData[0]) ?? {},
-    }, {
-      actionEnum: ActionComponentEnum.MeterIdentification,
-      workInStepStates: [StepStateEnum.EXECUTION],
-      actionRawData: (this.actionsRawData && this.actionsRawData[1]) ?? {},
-    },];
+    this.buildStepForm(this.actions);
+    this.form.patchValue(this.actionsRawData);
+    this.formValueChanges().subscribe();
+  }
 
-    this.stepState = this.buildState(this.stepStateEnum);
+  ngOnDestroy(): void {
+    this.destroyed$.next(true);
+    this.destroyed$.complete();
   }
 }

@@ -1,5 +1,5 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
-import { ActionComponentEnum, StepComponentClass, StepStateEnum } from 'src/app/models';
+import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/core';
+import { EnterTestValuesAction, StepComponentClass, ContrastTestParametersAction, RunConfigurationAction } from 'src/app/models';
 
 @Component({
   selector: 'app-contrast-test-step',
@@ -7,30 +7,26 @@ import { ActionComponentEnum, StepComponentClass, StepStateEnum } from 'src/app/
   styleUrls: ['./contrast-test-step.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ContrastTestStepComponent extends StepComponentClass implements OnInit {
+export class ContrastTestStepComponent extends StepComponentClass implements OnInit, OnDestroy {
 
   constructor() {
     super();
+
+    this.actions = [
+      new EnterTestValuesAction('Prueba de constraste', 0),
+      new ContrastTestParametersAction(),
+      new RunConfigurationAction(0, 3),
+    ];
   }
 
   ngOnInit(): void {
-    this.actions = [{
-      actionEnum: ActionComponentEnum.EnterTestValues,
-      workInStepStates: [StepStateEnum.BUILDER, StepStateEnum.EXECUTION],
-      actionRawData: (this.actionsRawData && this.actionsRawData[0]) ?? {},
-      actionOptionalParams: {
-        testName: 'Prueba de contraste'
-      }
-    }, {
-      actionEnum: ActionComponentEnum.ContrastTestParameters,
-      workInStepStates: [StepStateEnum.BUILDER, StepStateEnum.EXECUTION],
-      actionRawData: (this.actionsRawData && this.actionsRawData[1]) ?? {},
-    }, {
-      actionEnum: ActionComponentEnum.RunConfiguration,
-      workInStepStates: [StepStateEnum.BUILDER, StepStateEnum.EXECUTION],
-      actionRawData: (this.actionsRawData && this.actionsRawData[2]) ?? {},
-    }];
+    this.buildStepForm(this.actions);
+    this.form.patchValue(this.actionsRawData);
+    this.formValueChanges().subscribe();
+  }
 
-    this.stepState = this.buildState(this.stepStateEnum);
+  ngOnDestroy(): void {
+    this.destroyed$.next(true);
+    this.destroyed$.complete();
   }
 }

@@ -1,6 +1,5 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
-import { StepStateEnum } from 'src/app/models';
 
 @Component({
   selector: 'app-step-switch',
@@ -12,7 +11,6 @@ export class StepSwitchComponent implements OnInit, OnChanges {
 
   @Input() selectedIndex!: number | null;
   @Input() stepId!: number;
-  @Input() stepStateEnum!: StepStateEnum;
   @Input() actionsRawData!: any[];
   @Output() actionsRawDataChange = new EventEmitter<any[]>();
 
@@ -23,9 +21,6 @@ export class StepSwitchComponent implements OnInit, OnChanges {
   ngOnInit() {
     if (!this.stepId) {
       throw new Error("@Input() \"stepId\" is required");
-    }
-    if (!this.stepStateEnum) {
-      throw new Error("@Input() \"stepStateEnum\" is required");
     }
   }
 
@@ -39,9 +34,9 @@ export class StepSwitchComponent implements OnInit, OnChanges {
       }
     }
   }
-  
+
   compareActionsRawDataChange(actionsRawData: any[]): void {
-    if(JSON.stringify(this.actionsRawData) !== JSON.stringify(actionsRawData)) {
+    if (JSON.stringify(this.actionsRawData) !== JSON.stringify(actionsRawData)) {
       this.actionsRawDataChange.emit(actionsRawData);
     }
   }

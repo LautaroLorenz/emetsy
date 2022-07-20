@@ -1,9 +1,8 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
-import { FormArray, FormControl, FormGroup } from '@angular/forms';
-import { debounceTime, map, ReplaySubject, takeUntil, tap } from 'rxjs';
-import { ActionComponent, ActionLink, CompileParams, Meter, MeterDbTableContext, RelationsManager } from 'src/app/models';
+import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnDestroy } from '@angular/core';
+import { FormArray, FormGroup } from '@angular/forms';
+import { map, ReplaySubject, takeUntil, tap } from 'rxjs';
+import { Action, ActionComponent, Meter, MeterDbTableContext, RelationsManager, StandIdentificationAction } from 'src/app/models';
 import { DatabaseService } from 'src/app/services/database.service';
-import { standIdentificationValidator } from 'src/app/validators';
 
 @Component({
   selector: 'app-stand-identification-action',
@@ -11,18 +10,22 @@ import { standIdentificationValidator } from 'src/app/validators';
   styleUrls: ['./stand-identification-action.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class StandIdentificationActionComponent implements ActionComponent, OnInit, OnDestroy {
+export class StandIdentificationActionComponent implements ActionComponent, AfterViewInit, OnDestroy {
 
-  readonly name = 'Identificación de puestos';
-  readonly form: FormGroup;
-
-  @Input() actionLink!: ActionLink;
-  @Output() actionLinkChange = new EventEmitter<ActionLink>();
-
-  standsBuilded = false;
   dropdownMeterOptions: Meter[] = [];
+  readonly name = 'Identificación de puestos';
 
-  private readonly destroyed$: ReplaySubject<boolean> = new ReplaySubject(1);
+  @Input() action!: Action;
+
+  get form(): FormGroup {
+    return this.action.form;
+  }
+  get standArray(): FormArray<FormGroup> {
+    return (this.action as StandIdentificationAction).standArray;
+  }
+
+  protected readonly destroyed$: ReplaySubject<boolean> = new ReplaySubject(1);
+
   private readonly lisenRequestReplyDropdownOptions = (): void => {
     this.dbServiceMeters.getTableReply$(MeterDbTableContext.tableName).pipe(
       takeUntil(this.destroyed$),
@@ -38,77 +41,38 @@ export class StandIdentificationActionComponent implements ActionComponent, OnIn
         (a, b) => a.label.localeCompare(b.label)
       ))),
       tap((rows) => this.dropdownMeterOptions = rows),
-      tap(() => this.form.updateValueAndValidity()),
-      tap(() => this.standsBuilded = true),
+      tap(() => this.form.updateValueAndValidity({ emitEvent: true })),
+      tap(() => this.changeDetectorRef.detectChanges()),
     ).subscribe();
   }
 
-  constructor(
-    private readonly dbServiceMeters: DatabaseService<Meter>,
-  ) {
-    this.form = new FormGroup({
-      stands: new FormArray<FormGroup>([], standIdentificationValidator())
-    });
-  }
-
-  private addStandInput(initValue: any): void {
-    this.getStandGroups().push(new FormGroup({
-      isActive: new FormControl(initValue?.isActive),
-      meterId: new FormControl({ value: initValue?.meterId, disabled: !initValue?.isActive })
-    }));
-  }
-
-  private buildStands(stands: any[]): void {
-    for (let i = 0; i < CompileParams.STANDS_LENGTH; i++) {
-      const value = (stands && stands[i]) ?? {};
-      this.addStandInput(value);
-    }
-  }
-
-  private requestDropdownOptions(): void {
+  private requestDropdownOptions = (): void => {
     this.dbServiceMeters.getTable(
       MeterDbTableContext.tableName,
       { relations: MeterDbTableContext.foreignTables.map(ft => ft.tableName) }
     );
   }
 
-  ngOnInit(): void {
-    const { stands } = this.actionLink.actionRawData ?? [];
-    this.buildStands(stands);
+  constructor(
+    private readonly dbServiceMeters: DatabaseService<Meter>,
+    private readonly changeDetectorRef: ChangeDetectorRef,
+  ) { }
+
+  ngAfterViewInit(): void {
     this.lisenRequestReplyDropdownOptions();
     this.requestDropdownOptions();
-    this.form.valueChanges.pipe(
-      takeUntil(this.destroyed$),
-      debounceTime(100),
-      tap((value) => this.actionLinkChange.emit({
-        ...this.actionLink,
-        actionRawData: value
-      })),
-    ).subscribe();
-  }
-
-  getStandGroups(): FormArray<FormGroup> {
-    return (this.form.get('stands') as FormArray);
-  }
-
-  inputIsActiveChange(group: FormGroup): void {
-    const isActive = group.get('isActive')?.value;
-    isActive ? group.get('meterId')?.enable() : group.get('meterId')?.disable();
-    !isActive && group.get('meterId')?.reset()
   }
 
   copyToAllActive(group: FormGroup): void {
-    this.getStandGroups().controls.forEach((control) => {
+    this.standArray.controls.forEach((control) => {
       if (!control.get('isActive')?.value) {
         return;
       }
-
       control.patchValue(group.value);
-      this.inputIsActiveChange(control);
     });
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.destroyed$.next(true);
     this.destroyed$.complete();
   }

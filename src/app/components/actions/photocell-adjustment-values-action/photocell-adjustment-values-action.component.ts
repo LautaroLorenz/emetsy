@@ -1,7 +1,6 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
-import { FormControl, FormGroup } from '@angular/forms';
-import { debounceTime, ReplaySubject, takeUntil, tap } from 'rxjs';
-import { ActionComponent, ActionLink } from 'src/app/models';
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import { FormGroup } from '@angular/forms';
+import { Action, ActionComponent } from 'src/app/models';
 
 @Component({
   selector: 'app-photocell-adjustment-values-action',
@@ -9,50 +8,13 @@ import { ActionComponent, ActionLink } from 'src/app/models';
   styleUrls: ['./photocell-adjustment-values-action.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class PhotocellAdjustmentValuesActionComponent implements ActionComponent, OnInit, OnDestroy {
+export class PhotocellAdjustmentValuesActionComponent implements ActionComponent {
 
   readonly name = 'Valores para ajuste de fotocélula';
-  readonly form: FormGroup;
 
-  @Input() actionLink!: ActionLink;
-  @Output() actionLinkChange = new EventEmitter<ActionLink>();
+  @Input() action!: Action;
 
-  private readonly destroyed$: ReplaySubject<boolean> = new ReplaySubject(1);
-
-  constructor() {
-    this.form = new FormGroup({
-      phaseL1: new FormGroup({
-        voltageU1: new FormControl(),
-        currentI1: new FormControl(),
-        anglePhi1: new FormControl(0),
-      }),
-      phaseL2: new FormGroup({
-        voltageU2: new FormControl(),
-        currentI2: new FormControl(),
-        anglePhi2: new FormControl(0),
-      }),
-      phaseL3: new FormGroup({
-        voltageU3: new FormControl(),
-        currentI3: new FormControl(),
-        anglePhi3: new FormControl(0),
-      }),
-    });
-  }
-
-  ngOnInit(): void {
-    this.form.patchValue(this.actionLink.actionRawData ?? {});
-    this.form.valueChanges.pipe(
-      takeUntil(this.destroyed$),
-      debounceTime(100),
-      tap((value) => this.actionLinkChange.emit({
-        ...this.actionLink,
-        actionRawData: value
-      })),
-    ).subscribe();
-  }
-
-  ngOnDestroy() {
-    this.destroyed$.next(true);
-    this.destroyed$.complete();
+  get form(): FormGroup {
+    return this.action.form;
   }
 }

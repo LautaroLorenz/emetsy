@@ -16,29 +16,30 @@
       <div class="p-inputgroup">
         <span
           class="p-inputgroup-addon"
-          #helpIcon
+          #helpIcon1
         >
           <i
             class="pi pi-info-circle"
-            (mouseenter)="op.show($event, helpIcon)"
-            (mouseleave)="op.hide()"
+            (mouseenter)="op1.show($event, helpIcon1)"
+            (mouseleave)="op1.hide()"
           ></i>
         </span>
         <p-overlayPanel
-          #op
-          [appendTo]="helpIcon"
+          #op1
+          [appendTo]="helpIcon1"
         >
           <ng-template pTemplate>
             <div class="mb-3">
-              La ejecución se completa con las siguientes opciones:
+              Opciones para completar la ejecución del paso:
             </div>
             <div class="text-sm text-700 flex flex-column">
               <span>- Automáticamente</span>
-              <i class="ml-3 mb-2">Se descartan los primeros N resultados y
-                luego finaliza en el resultado N+1.</i>
+              <i class="ml-3 mb-2">La ejecución se completa cuando se registran
+                resultados en todos los puestos.</i>
               <span>- Manualmente</span>
-              <i class="ml-3">Se debe hacer click en un botón para
-                finalizar la ejecución.</i>
+              <i class="ml-3">Registrando resultados de forma
+                indeterminada,<br>la ejecución se completa cuando se hace click
+                en el botón completar. </i>
             </div>
           </ng-template>
         </p-overlayPanel>
@@ -55,23 +56,43 @@
       </div>
     </div>
 
-    <!-- TODO: deshabilitar y setear en 0 en modo Manual,
-  al habilitar setear en 3 y dejarlo como editable. -->
     <div class="flex flex-1 flex-column">
       <label
-        for="meterPulses"
+        for="numberOfDiscardedResults"
         class="mb-2"
       >Descartar los primeros N resultados<span
           class="ml-1 text-red-300">*</span>
       </label>
-      <p-inputNumber
-        styleClass="flex flex-1"
-        id="meterPulses"
-        formControlName="meterPulses"
-        autofocus
-        [required]="true"
-        [useGrouping]="false"
-      ></p-inputNumber>
+      <div class="p-inputgroup">
+        <span
+          class="p-inputgroup-addon"
+          #helpIcon2
+        >
+          <i
+            class="pi pi-info-circle"
+            (mouseenter)="op2.show($event, helpIcon2)"
+            (mouseleave)="op2.hide()"
+          ></i>
+        </span>
+        <p-overlayPanel
+          #op2
+          [appendTo]="helpIcon2"
+        >
+          <ng-template pTemplate>
+            <div class="text-sm text-700 flex flex-column">
+              Se descartan los primeros N resultados y se registran valores a partir del resultado N+1.
+            </div>
+          </ng-template>
+        </p-overlayPanel>
+        <p-inputNumber
+          styleClass="flex flex-1"
+          id="numberOfDiscardedResults"
+          formControlName="numberOfDiscardedResults"
+          autofocus
+          [required]="true"
+          [useGrouping]="false"
+        ></p-inputNumber>
+      </div>
     </div>
 
   </p-fieldset>

@@ -1,5 +1,6 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
-import { ActionComponentEnum, StepComponentClass, StepStateEnum } from 'src/app/models';
+import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/core';
+import { PhotocellAdjustmentValuesAction, StepComponentClass } from 'src/app/models';
+
 
 @Component({
   selector: 'app-photocell-adjustment-step',
@@ -7,19 +8,24 @@ import { ActionComponentEnum, StepComponentClass, StepStateEnum } from 'src/app/
   styleUrls: ['./photocell-adjustment-step.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class PhotocellAdjustmentStepComponent extends StepComponentClass implements OnInit {
+export class PhotocellAdjustmentStepComponent extends StepComponentClass implements OnInit, OnDestroy {
 
   constructor() {
     super();
+
+    this.actions = [
+      new PhotocellAdjustmentValuesAction(),
+    ];
   }
 
   ngOnInit(): void {
-    this.actions = [{
-      actionEnum: ActionComponentEnum.PhotocellAdjustmentValues,
-      workInStepStates: [StepStateEnum.BUILDER, StepStateEnum.EXECUTION],
-      actionRawData: (this.actionsRawData && this.actionsRawData[0]) ?? {},
-    }];
+    this.buildStepForm(this.actions);
+    this.form.patchValue(this.actionsRawData);
+    this.formValueChanges().subscribe();
+  }
 
-    this.stepState = this.buildState(this.stepStateEnum);
+  ngOnDestroy(): void {
+    this.destroyed$.next(true);
+    this.destroyed$.complete();
   }
 }

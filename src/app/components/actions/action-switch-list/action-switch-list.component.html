@@ -1,46 +1,29 @@
-<ng-container *ngFor="let actionLink of actionLinks; let i = index;">
-  <ng-container [ngSwitch]="actionLink.actionEnum">
+<ng-container *ngFor="let action of actions; let i = index;">
+  <ng-container [ngSwitch]="action.actionEnum">
     <app-stand-identification-action
-      *ngSwitchCase="ActionComponentEnum.StandIdentification"
-      [actionLink]="actionLink"
-      (actionLinkChange)="setActionLinkValue($event, i)"
+      *ngSwitchCase="ActionEnum.StandIdentification"
+      [action]="action"
       class="mb-3"
-    >
-    </app-stand-identification-action>
-    <app-meter-identification-action
-      *ngSwitchCase="ActionComponentEnum.MeterIdentification"
-      [actionLink]="actionLink"
-      (actionLinkChange)="setActionLinkValue($event, i)"
-      class="mb-3"
-    >
-    </app-meter-identification-action>
+    ></app-stand-identification-action>
     <app-photocell-adjustment-values-action
-      *ngSwitchCase="ActionComponentEnum.PhotocellAdjustmentValues"
-      [actionLink]="actionLink"
-      (actionLinkChange)="setActionLinkValue($event, i)"
+      *ngSwitchCase="ActionEnum.PhotocellAdjustmentValues"
+      [action]="action"
       class="mb-3"
-    >
-    </app-photocell-adjustment-values-action>
-    <app-enter-test-values-action
-      *ngSwitchCase="ActionComponentEnum.EnterTestValues"
-      [actionLink]="actionLink"
-      (actionLinkChange)="setActionLinkValue($event, i)"
-      class="mb-3"
-    >
-    </app-enter-test-values-action>
+    ></app-photocell-adjustment-values-action>
     <app-contrast-test-parameters-action
-      *ngSwitchCase="ActionComponentEnum.ContrastTestParameters"
-      [actionLink]="actionLink"
-      (actionLinkChange)="setActionLinkValue($event, i)"
+      *ngSwitchCase="ActionEnum.ContrastTestParameters"
+      [action]="action"
       class="mb-3"
-    >
-    </app-contrast-test-parameters-action>
+    ></app-contrast-test-parameters-action>
+    <app-enter-test-values-action
+      *ngSwitchCase="ActionEnum.EnterTestValues"
+      [action]="action"
+      class="mb-3"
+    ></app-enter-test-values-action>
     <app-run-configuration-action
-      *ngSwitchCase="ActionComponentEnum.RunConfiguration"
-      [actionLink]="actionLink"
-      (actionLinkChange)="setActionLinkValue($event, i)"
+      *ngSwitchCase="ActionEnum.RunConfiguration"
+      [action]="action"
       class="mb-3"
-    >
-    </app-run-configuration-action>
+    ></app-run-configuration-action>
   </ng-container>
 </ng-container>
