@@ -2,7 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormArray, FormControl, FormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { filter, map, Observable, ReplaySubject, switchMap, takeUntil, tap } from 'rxjs';
-import { EssayTemplate, EssayTemplateDbTableContext, PageUrlName, RelationsManager, WhereKind, WhereOperator } from 'src/app/models';
+import { ContrastTestStep, EssayTemplate, EssayTemplateDbTableContext, PageUrlName, PhotocellAdjustmentStep, PreparationStep, RelationsManager, StepBuilder, WhereKind, WhereOperator } from 'src/app/models';
 import { EssayTemplateStep, EssayTemplateStepDbTableContext } from 'src/app/models/database/tables/essay-template-step.model';
 import { DatabaseService } from 'src/app/services/database.service';
 import { NavigationService } from 'src/app/services/navigation.service';
@@ -17,6 +17,8 @@ export class ExecuteEssayComponent implements OnInit, OnDestroy {
   readonly id$: Observable<number>;
   readonly form: FormGroup;
 
+  stepBuilders: StepBuilder[] = [];
+  
   private readonly destroyed$: ReplaySubject<boolean> = new ReplaySubject(1);
   private readonly requestTableEssayTemplateSteps = (essayTemplateId: number): void => {
     const { foreignTables } = EssayTemplateStepDbTableContext;
@@ -66,7 +68,6 @@ export class ExecuteEssayComponent implements OnInit, OnDestroy {
       switchMap((id) => this.dbServiceEssayTemplate.getTableElement$(EssayTemplateDbTableContext.tableName, id)),
       tap((essayTemplate) => this.form.get('essayTemplate')?.patchValue(essayTemplate)),
       tap(({ id }) => this.requestTableEssayTemplateSteps(id)),
-      tap(console.log),
     ).subscribe();
 
     this.dbServiceEssayTemplateStep.getTableReply$(EssayTemplateStepDbTableContext.tableName).pipe(
@@ -82,13 +83,36 @@ export class ExecuteEssayComponent implements OnInit, OnDestroy {
           actions_raw_data: JSON.parse(essayTemplateStep?.actions_raw_data?.toString() || '[]')
         }));
       })),
-      tap(() => console.log(this.form.getRawValue())),
+      tap(() => this.buildSteps(this.form.get('essayTemplateSteps')?.getRawValue())),
     ).subscribe();
   }
 
   exit() {
     this.navigationService.back({ targetPage: PageUrlName.availableTest });
   };
+
+  buildSteps(essayTemplateSteps: EssayTemplateStep[]): void {
+    this.stepBuilders = [];
+    essayTemplateSteps.forEach((essayTemplateStep) => {
+      const newStep: StepBuilder = this.buildStepById(essayTemplateStep.step_id, essayTemplateStep);
+      newStep.buildStepForm();
+      newStep.form.patchValue(essayTemplateStep.actions_raw_data);
+      this.stepBuilders.push(newStep);
+    });
+  }
+
+  buildStepById(step_id: number, essayTemplateStep: EssayTemplateStep): StepBuilder {
+    switch (step_id) {
+      case 3:
+        return new ContrastTestStep(essayTemplateStep);
+      case 5:
+        return new PhotocellAdjustmentStep(essayTemplateStep);
+      case 6:
+        return new PreparationStep(essayTemplateStep, this.destroyed$);
+    }
+
+    return new StepBuilder(essayTemplateStep, [], []);
+  }
 
   ngOnDestroy() {
     this.destroyed$.next(true);

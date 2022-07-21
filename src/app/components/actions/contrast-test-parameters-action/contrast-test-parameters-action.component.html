@@ -24,7 +24,7 @@
       ></p-inputNumber>
     </div>
 
-    <div class="flex flex-1 flex-column">
+    <div class="flex flex-1 flex-column mb-3">
       <label
         for="meterPulses"
         class="mb-2"
@@ -38,6 +38,45 @@
         [required]="true"
         [useGrouping]="false"
       ></p-inputNumber>
+    </div>
+
+    <div class="flex flex-1 flex-column">
+      <label
+        for="numberOfDiscardedResults"
+        class="mb-2"
+      >Descartar los primeros N resultados<span
+          class="ml-1 text-red-300">*</span>
+      </label>
+      <div class="p-inputgroup">
+        <span
+          class="p-inputgroup-addon"
+          #helpIcon2
+        >
+          <i
+            class="pi pi-info-circle"
+            (mouseenter)="op2.show($event, helpIcon2)"
+            (mouseleave)="op2.hide()"
+          ></i>
+        </span>
+        <p-overlayPanel
+          #op2
+          [appendTo]="helpIcon2"
+        >
+          <ng-template pTemplate>
+            <div class="text-sm text-700 flex flex-column">
+              Se descartan los primeros N resultados y se registran valores a partir del resultado N+1.
+            </div>
+          </ng-template>
+        </p-overlayPanel>
+        <p-inputNumber
+          styleClass="flex flex-1"
+          id="numberOfDiscardedResults"
+          formControlName="numberOfDiscardedResults"
+          autofocus
+          [required]="true"
+          [useGrouping]="false"
+        ></p-inputNumber>
+      </div>
     </div>
 
   </p-fieldset>

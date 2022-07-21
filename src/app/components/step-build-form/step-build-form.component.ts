@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnChanges, OnD
 import { FormGroup } from '@angular/forms';
 import { filter, Observable, ReplaySubject, takeUntil, tap } from 'rxjs';
 import { ContrastTestStep, PhotocellAdjustmentStep, PreparationStep, StepBuilder } from 'src/app/models';
+import { EssayTemplateStep } from 'src/app/models/database/tables/essay-template-step.model';
 
 @Component({
   selector: 'app-step-build-form',
@@ -11,6 +12,7 @@ import { ContrastTestStep, PhotocellAdjustmentStep, PreparationStep, StepBuilder
 })
 export class StepBuildFormComponent implements OnInit, OnChanges, OnDestroy {
 
+  @Input() essayTemplateStep!: EssayTemplateStep;
   @Input() selectedIndex!: number | null;
   @Input() stepId!: number;
   @Input() actionsRawData!: any[];
@@ -32,23 +34,26 @@ export class StepBuildFormComponent implements OnInit, OnChanges, OnDestroy {
     if (changes) {
       if (changes['selectedIndex']) {
         if (changes['selectedIndex'].currentValue !== changes['selectedIndex'].previousValue) {
-          switch (this.stepId) {
-            case 3:
-              this.stepBuilder = new ContrastTestStep();
-              break;
-            case 5:
-              this.stepBuilder = new PhotocellAdjustmentStep();
-              break;
-            case 6:
-              this.stepBuilder = new PreparationStep(this.destroyed$);
-              break;
-          }
+          this.stepBuilder = this.buildStepById(this.stepId, this.essayTemplateStep);
           this.stepBuilder.buildStepForm();
           this.stepBuilder.form.patchValue(this.actionsRawData);
           this.formValueChanges$(this.stepBuilder.form).subscribe();
         }
       }
     }
+  }
+
+  buildStepById(step_id: number, essayTemplateStep: EssayTemplateStep): StepBuilder {
+    switch (step_id) {
+      case 3:
+        return new ContrastTestStep(essayTemplateStep);
+      case 5:
+        return new PhotocellAdjustmentStep(essayTemplateStep);
+      case 6:
+        return new PreparationStep(essayTemplateStep, this.destroyed$);
+    }
+
+    return new StepBuilder(essayTemplateStep, [], []);
   }
 
   formValueChanges$(form: FormGroup): Observable<any[]> {

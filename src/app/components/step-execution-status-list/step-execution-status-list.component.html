@@ -1,1 +1,29 @@
-<p>step-execution-status-list works!</p>
+<ng-container *ngFor="let step of steps; let i = index">
+  <div class="flex flex-column ml-3 mb-3 p-font-family">
+    <div
+      class="flex mb-2 pb-1 border-bottom-3 border-transparent text-400"
+      [ngClass]="{ 
+        'border-purple-500': i === activeStepIndex,
+        'text-800': i === activeStepIndex 
+      }"
+    >
+      <div>{{i+1 | number:'2.0'}}</div>
+      <div class="ml-1">{{step.essayTemplateStep.foreign.step?.name}}</div>
+    </div>
+    <ng-container *ngFor="let action of step.actions; let f = index">
+      <div
+        class="ml-5 flex text-sm pb-1 mb-1 border-bottom-2 border-transparent text-400"
+        [ngClass]="{ 
+          'border-purple-100': i === activeStepIndex && f === activeActionIndex,
+          'text-800': i === activeStepIndex && f === activeActionIndex
+        }"
+      >
+        <div>{{i+1}}.{{f+1}}</div>
+        <div class="ml-1">{{action.name}}</div>
+        <div class="ml-1">
+          ({{action.executionStatus$ | async | executionStatus}})
+        </div>
+      </div>
+    </ng-container>
+  </div>
+</ng-container>

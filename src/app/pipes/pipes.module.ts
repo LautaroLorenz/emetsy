@@ -1,9 +1,11 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DotStringAsObjectPipe } from './dot-string-as-object.pipe';
+import { ExecutionStatusPipe } from './execution-status.pipe';
 
 const Pipes = [
-  DotStringAsObjectPipe
+  DotStringAsObjectPipe,
+  ExecutionStatusPipe,
 ];
 
 @NgModule({

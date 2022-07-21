@@ -13,10 +13,15 @@
 
 <app-fill-available-space class="flex justify-content-evenly">
 
-  <div class="flex flex-column pl-3 w-4">
-    <p class="p-font-family text-lg text-700">
-      Lista de pasos
-    </p>
+  <div class="flex flex-column pt-4 pl-3 w-4">
+    <ng-container *ngIf="stepBuilders.length">
+      <app-step-execution-status-list 
+      [steps]="stepBuilders"
+      [activeStepIndex]="0"
+      [activeActionIndex]="0"
+      >
+      </app-step-execution-status-list>
+    </ng-container>
   </div>
 
   <p-divider layout="vertical"></p-divider>

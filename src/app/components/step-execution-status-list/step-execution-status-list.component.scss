@@ -1,0 +1,9 @@
+@import 'primeflex/primeflex.scss';
+
+:host {
+  @include styleclass('flex flex-column h-full overflow-auto');
+}
+
+.p-font-family {
+  font-family: var(--font-family);
+}

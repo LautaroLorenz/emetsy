@@ -1,10 +1,11 @@
+import { EssayTemplateStep } from "../../database/tables/essay-template-step.model";
 import { Action } from "../actions/action.model";
 import { PhotocellAdjustmentValuesAction } from "../actions/photocell-adjustment-values.action.model";
 import { StepBuilder } from "./step-builder.model";
 
 export class PhotocellAdjustmentStep extends StepBuilder {
 
-  constructor() {
+  constructor(essayTemplateStep: EssayTemplateStep) {
     const photocellAdjustmentValuesAction = new PhotocellAdjustmentValuesAction();
 
     const _actions: Action[] = [
@@ -15,7 +16,7 @@ export class PhotocellAdjustmentStep extends StepBuilder {
       photocellAdjustmentValuesAction,
     ];
 
-    super(_actions, _buildActions);
+    super(essayTemplateStep, _actions, _buildActions);
   }
 
 }

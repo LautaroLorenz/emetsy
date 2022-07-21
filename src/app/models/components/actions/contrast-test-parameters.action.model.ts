@@ -8,14 +8,18 @@ export class ContrastTestParametersAction implements Action {
   form!: FormGroup;
   actionEnum: ActionEnum = ActionEnum.ContrastTestParameters;
   executionStatus$ = new BehaviorSubject<ExecutionStatus>('CREATED');
+  numberOfDiscardedResults: number;
 
-  constructor() { }
+  constructor(numberOfDiscardedResults: number) {
+    this.numberOfDiscardedResults = numberOfDiscardedResults;
+  }
 
   buildForm(): FormGroup {
     this.form = new FormGroup({
       actionName: new FormControl(this.name),
       maxAllowedError: new FormControl(),
       meterPulses: new FormControl(),
+      numberOfDiscardedResults: new FormControl(this.numberOfDiscardedResults),
     });
 
     return this.form;

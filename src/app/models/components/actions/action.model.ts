@@ -1,7 +1,7 @@
 import { FormGroup } from "@angular/forms";
 import { BehaviorSubject } from "rxjs";
 
-export type ExecutionStatus = 'CREATED' | 'IN_PROGRESS' | 'COMPLETED';
+export type ExecutionStatus = 'CREATED' | 'PENDING' | 'IN_PROGRESS' | 'COMPLETED';
 
 export interface ActionComponent {
   action: Action;
@@ -20,7 +20,6 @@ export enum ActionEnum {
   PhotocellAdjustmentValues = 'PhotocellAdjustmentValues',
   EnterTestValues = 'EnterTestValues',
   ContrastTestParameters = 'ContrastTestParameters',
-  RunConfiguration = 'RunConfiguration',
   ContrastTestExecution = 'ContrastTestExecution',
   MeterIdentification = 'MeterIdentification',
   PhotocellAdjustmentExecution = 'PhotocellAdjustmentExecution',

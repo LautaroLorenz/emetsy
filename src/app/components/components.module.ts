@@ -49,7 +49,6 @@ import { SelectButtonModule } from 'primeng/selectbutton';
 import { PhaseFormGroupComponent } from './phase-form-group/phase-form-group.component';
 import { EnterTestValuesActionComponent } from './actions/enter-test-values-action/enter-test-values-action.component';
 import { ContrastTestParametersActionComponent } from './actions/contrast-test-parameters-action/contrast-test-parameters-action.component';
-import { RunConfigurationActionComponent } from './actions/run-configuration-action/run-configuration-action.component';
 import { OverlayPanelModule } from 'primeng/overlaypanel';
 import { MessagesModule } from 'primeng/messages';
 import { MessageModule } from 'primeng/message';
@@ -109,7 +108,6 @@ const EmetsyComponents = [
   PhaseFormGroupComponent,
   EnterTestValuesActionComponent,
   ContrastTestParametersActionComponent,
-  RunConfigurationActionComponent,
   UserIdentificationActionComponent,
   StepExecutionStatusListComponent,
   StepBuildFormComponent,
