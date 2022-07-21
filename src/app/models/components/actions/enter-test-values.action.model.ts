@@ -1,5 +1,6 @@
 import { FormControl, FormGroup } from "@angular/forms";
-import { Action, ActionEnum } from "./action.model";
+import { BehaviorSubject } from "rxjs";
+import { Action, ActionEnum, ExecutionStatus } from "./action.model";
 
 export class EnterTestValuesAction implements Action {
 
@@ -7,6 +8,7 @@ export class EnterTestValuesAction implements Action {
   actionEnum: ActionEnum = ActionEnum.EnterTestValues;
   testName: string;
   meterConstant: number;
+  executionStatus$ = new BehaviorSubject<ExecutionStatus>('PENDING');
 
   constructor(testName: string, meterConstant: number) { 
     this.testName = testName;

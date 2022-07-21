@@ -1,0 +1,1 @@
+export const METER_IDENTIFICATION = 'TODO:';

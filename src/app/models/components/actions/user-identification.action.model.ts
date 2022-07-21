@@ -2,18 +2,17 @@ import { FormControl, FormGroup } from "@angular/forms";
 import { BehaviorSubject } from "rxjs";
 import { Action, ActionEnum, ExecutionStatus } from "./action.model";
 
-export class ContrastTestParametersAction implements Action {
+export class UserIdentificationAction implements Action {
 
   form!: FormGroup;
-  actionEnum: ActionEnum = ActionEnum.ContrastTestParameters;
+  actionEnum: ActionEnum = ActionEnum.UserIdentification;
   executionStatus$ = new BehaviorSubject<ExecutionStatus>('PENDING');
 
   constructor() { }
 
   buildForm(): FormGroup {
     this.form = new FormGroup({
-      maxAllowedError: new FormControl(),
-      meterPulses: new FormControl(),
+      userId: new FormControl(),
     });
 
     return this.form;

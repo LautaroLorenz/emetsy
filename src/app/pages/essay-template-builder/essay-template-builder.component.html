@@ -119,6 +119,7 @@
         </div>
         <app-step-switch
           class="overflow-auto mt-2 pr-2"
+          [isBuildMode]="true"
           [selectedIndex]="selectedIndex"
           [stepId]="selectedControl?.value.step_id"
           [(actionsRawData)]="selectedControl?.value.actions_raw_data"

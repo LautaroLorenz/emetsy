@@ -41,11 +41,11 @@ import { DirectivesModule } from '../directives/directives.module';
 import { FillAvailableSpaceComponent } from './fill-available-space/fill-available-space.component';
 import { StepSelectorComponent } from './step-selector/step-selector.component';
 import { FormArrayControlsOrderListComponent } from './form-array-controls-order-list/form-array-controls-order-list.component';
-import { StepSwitchComponent } from './steps/step-switch/step-switch.component';
+import { StepSwitchComponent } from './step-switch/step-switch.component';
 import { PreparationStepComponent } from './steps/preparation-step/preparation-step.component';
 import { StandIdentificationActionComponent } from './actions/stand-identification-action/stand-identification-action.component';
 import { InputSwitchModule } from 'primeng/inputswitch';
-import { ActionSwitchListComponent } from './actions/action-switch-list/action-switch-list.component';
+import { ActionSwitchListComponent } from './action-switch-list/action-switch-list.component';
 import { PhotocellAdjustmentStepComponent } from './steps/photocell-adjustment-step/photocell-adjustment-step.component';
 import { PhotocellAdjustmentValuesActionComponent } from './actions/photocell-adjustment-values-action/photocell-adjustment-values-action.component';
 import { SelectButtonModule } from 'primeng/selectbutton';
@@ -57,6 +57,8 @@ import { RunConfigurationActionComponent } from './actions/run-configuration-act
 import { OverlayPanelModule } from 'primeng/overlaypanel';
 import { MessagesModule } from 'primeng/messages';
 import { MessageModule } from 'primeng/message';
+import { UserIdentificationActionComponent } from './actions/user-identification-action/user-identification-action.component';
+import { StepExecutionStatusListComponent } from './step-execution-status-list/step-execution-status-list.component';
 
 const PrimeNgModules = [
   MenubarModule,
@@ -117,7 +119,7 @@ const EmetsyComponents = [
 ];
 
 @NgModule({
-  declarations: [EmetsyComponents, RunConfigurationActionComponent],
+  declarations: [EmetsyComponents, RunConfigurationActionComponent, UserIdentificationActionComponent, StepExecutionStatusListComponent],
   imports: [
     CommonModule,
     PrimeNgModules,

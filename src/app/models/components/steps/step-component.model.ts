@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, Output } from "@angular/core";
 import { FormArray, FormGroup } from "@angular/forms";
 import { filter, Observable, ReplaySubject, takeUntil, tap } from "rxjs";
-import { Action } from "../actions/action.model";
+import { Action, ExecutionStatus } from "../actions/action.model";
 
 
 @Component({
@@ -11,7 +11,9 @@ export class StepComponentClass {
 
   form: FormGroup;
   actions!: Action[];
+  actionsToRender!: Action[];
 
+  @Input() isBuildMode: boolean = false;
   @Input() actionsRawData: any[] = [];
   @Output() actionsRawDataChange = new EventEmitter<any[]>();
 
@@ -39,5 +41,9 @@ export class StepComponentClass {
       filter(() => JSON.stringify(this.actionsRawData) !== JSON.stringify(this.form.getRawValue())),
       tap(() => this.actionsRawDataChange.emit(this.form.getRawValue())), // raw value to include disabled
     );
+  }
+
+  filterActionsByExecutionStatus(actions: Action[], executionsStatus: ExecutionStatus[]): Action[] {
+    return actions.filter(({ executionStatus$ }) => executionsStatus.includes(executionStatus$.value));
   }
 }

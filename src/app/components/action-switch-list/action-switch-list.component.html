@@ -25,5 +25,10 @@
       [action]="action"
       class="mb-3"
     ></app-run-configuration-action>
+    <app-user-identification-action
+      *ngSwitchCase="ActionEnum.UserIdentification"
+      [action]="action"
+      class="mb-3"
+    ></app-user-identification-action>
   </ng-container>
 </ng-container>

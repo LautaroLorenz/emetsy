@@ -9,6 +9,7 @@ import { BehaviorSubject } from 'rxjs';
 })
 export class StepSwitchComponent implements OnInit, OnChanges {
 
+  @Input() isBuildMode: boolean = false;
   @Input() selectedIndex!: number | null;
   @Input() stepId!: number;
   @Input() actionsRawData!: any[];

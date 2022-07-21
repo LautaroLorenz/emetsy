@@ -1,11 +1,13 @@
 import { FormControl, FormGroup } from "@angular/forms";
-import { Action, ActionEnum } from "./action.model";
+import { BehaviorSubject } from "rxjs";
+import { Action, ActionEnum, ExecutionStatus } from "./action.model";
 
 export class PhotocellAdjustmentValuesAction implements Action {
 
   form!: FormGroup;
   actionEnum: ActionEnum = ActionEnum.PhotocellAdjustmentValues;
   private readonly anglePhi = 0;
+  executionStatus$ = new BehaviorSubject<ExecutionStatus>('PENDING');
 
   constructor() { }
 

@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/core';
-import { StandIdentificationAction, StepComponentClass } from 'src/app/models';
+import { ExecutionStatus, StandIdentificationAction, StepComponentClass, UserIdentificationAction } from 'src/app/models';
 
 @Component({
   selector: 'app-preparation-step',
@@ -9,16 +9,29 @@ import { StandIdentificationAction, StepComponentClass } from 'src/app/models';
 })
 export class PreparationStepComponent extends StepComponentClass implements OnInit, OnDestroy {
 
+  readonly userIdentificationAction = new UserIdentificationAction();
+  readonly standIdentificationAction = new StandIdentificationAction(this.destroyed$);
+
   constructor() {
     super();
 
     this.actions = [
-      new StandIdentificationAction(this.destroyed$),
+      this.userIdentificationAction,
+      this.standIdentificationAction,
     ];
   }
 
   ngOnInit(): void {
     this.buildStepForm(this.actions);
+
+    if (this.isBuildMode) {
+      this.userIdentificationAction.executionStatus$.next('COMPLETED');
+    } else {
+      this.standIdentificationAction.executionStatus$.next('COMPLETED');
+    }
+    const includedStatus: ExecutionStatus[] = this.isBuildMode ? ['PENDING'] : ['PENDING', 'IN_PROGRESS', 'COMPLETED'];
+    this.actionsToRender = this.filterActionsByExecutionStatus(this.actions, includedStatus);
+
     this.form.patchValue(this.actionsRawData);
     this.formValueChanges().subscribe();
   }

@@ -1,5 +1,6 @@
 import { FormControl, FormGroup } from "@angular/forms";
-import { Action, ActionEnum } from "./action.model";
+import { BehaviorSubject } from "rxjs";
+import { Action, ActionEnum, ExecutionStatus } from "./action.model";
 
 export class RunConfigurationAction implements Action {
 
@@ -7,6 +8,7 @@ export class RunConfigurationAction implements Action {
   actionEnum: ActionEnum = ActionEnum.RunConfiguration;
   completionMode: number;
   numberOfDiscardedResults: number;
+  executionStatus$ = new BehaviorSubject<ExecutionStatus>('PENDING');
 
   constructor(completionMode: number, numberOfDiscardedResults: number) {
     this.completionMode = completionMode;

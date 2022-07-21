@@ -1,13 +1,14 @@
 import { FormArray, FormControl, FormGroup } from "@angular/forms";
-import { ReplaySubject, takeUntil, tap } from "rxjs";
+import { ReplaySubject, takeUntil, tap, BehaviorSubject } from "rxjs";
 import { standIdentificationValidator } from "src/app/validators";
 import { CompileParams } from "../../configuration.model";
-import { Action, ActionEnum } from "./action.model";
+import { Action, ActionEnum, ExecutionStatus } from "./action.model";
 
 export class StandIdentificationAction implements Action {
 
   form!: FormGroup;
   actionEnum: ActionEnum = ActionEnum.StandIdentification;
+  executionStatus$ = new BehaviorSubject<ExecutionStatus>('PENDING');
 
   protected readonly destroyed$: ReplaySubject<boolean> = new ReplaySubject(1);
 

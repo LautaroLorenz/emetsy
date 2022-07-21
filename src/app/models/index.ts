@@ -20,4 +20,8 @@ export * from "./components/actions/contrast-test-parameters.action.model";
 export * from "./components/actions/run-configuration.action.model";
 export * from "./components/actions/photocell-adjustment-values.action.model";
 export * from "./components/actions/stand-identification.action.model";
+export * from "./components/actions/contrast-test-execution.action.model";
+export * from "./components/actions/photocell-adjustment-execution.action.model";
+export * from "./components/actions/user-identification.action.model";
+export * from "./components/actions/meter-identification.action.model";
 export * from "./components/actions/action.model";
