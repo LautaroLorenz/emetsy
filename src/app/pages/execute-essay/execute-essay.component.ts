@@ -66,6 +66,7 @@ export class ExecuteEssayComponent implements OnInit, OnDestroy {
       switchMap((id) => this.dbServiceEssayTemplate.getTableElement$(EssayTemplateDbTableContext.tableName, id)),
       tap((essayTemplate) => this.form.get('essayTemplate')?.patchValue(essayTemplate)),
       tap(({ id }) => this.requestTableEssayTemplateSteps(id)),
+      tap(console.log),
     ).subscribe();
 
     this.dbServiceEssayTemplateStep.getTableReply$(EssayTemplateStepDbTableContext.tableName).pipe(
@@ -81,6 +82,7 @@ export class ExecuteEssayComponent implements OnInit, OnDestroy {
           actions_raw_data: JSON.parse(essayTemplateStep?.actions_raw_data?.toString() || '[]')
         }));
       })),
+      tap(() => console.log(this.form.getRawValue())),
     ).subscribe();
   }
 

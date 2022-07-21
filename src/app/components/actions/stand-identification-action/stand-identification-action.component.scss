@@ -1,9 +1,5 @@
 @import 'primeflex/primeflex.scss';
 
-:host {
-  @include styleclass('flex flex-column h-full');
-}
-
 .p-font-family {
   font-family: var(--font-family);
 }

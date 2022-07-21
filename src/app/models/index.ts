@@ -7,7 +7,6 @@ export * from "./database/tables/reactive-constant-unit.model";
 export * from "./database/tables/step.model";
 export * from "./database/tables/user.model";
 export * from "./database/relations-manager.model";
-export * from "./components/steps/step-component.model";
 export * from "./pages/abm-page.model";
 export * from "./components/abm.model";
 export * from "./database/database.model";
@@ -25,3 +24,7 @@ export * from "./components/actions/photocell-adjustment-execution.action.model"
 export * from "./components/actions/user-identification.action.model";
 export * from "./components/actions/meter-identification.action.model";
 export * from "./components/actions/action.model";
+export * from "./components/steps/step-builder.model";
+export * from "./components/steps/preparation.step.model";
+export * from "./components/steps/photocell-adjustment.step.model";
+export * from "./components/steps/contrast-test.step.model";

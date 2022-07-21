@@ -4,15 +4,17 @@ import { Action, ActionEnum, ExecutionStatus } from "./action.model";
 
 export class PhotocellAdjustmentValuesAction implements Action {
 
+  name = 'Valores para ajuste de fotocélula';
   form!: FormGroup;
   actionEnum: ActionEnum = ActionEnum.PhotocellAdjustmentValues;
   private readonly anglePhi = 0;
-  executionStatus$ = new BehaviorSubject<ExecutionStatus>('PENDING');
+  executionStatus$ = new BehaviorSubject<ExecutionStatus>('CREATED');
 
   constructor() { }
 
   buildForm(): FormGroup {
     this.form = new FormGroup({
+      actionName: new FormControl(this.name),
       phaseL1: new FormGroup({
         voltageU1: new FormControl(),
         currentI1: new FormControl(),

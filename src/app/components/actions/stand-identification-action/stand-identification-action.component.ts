@@ -13,10 +13,12 @@ import { DatabaseService } from 'src/app/services/database.service';
 export class StandIdentificationActionComponent implements ActionComponent, AfterViewInit, OnDestroy {
 
   dropdownMeterOptions: Meter[] = [];
-  readonly name = 'Identificación de puestos';
 
   @Input() action!: Action;
 
+  get name(): string {
+    return this.action.name;
+  }
   get form(): FormGroup {
     return this.action.form;
   }

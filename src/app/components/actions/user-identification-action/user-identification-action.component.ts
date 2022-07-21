@@ -10,9 +10,11 @@ import { Action, ActionComponent } from 'src/app/models';
 })
 export class UserIdentificationActionComponent implements ActionComponent {
 
-  readonly name = 'Identificación de usuario';
-
   @Input() action!: Action;
+
+  get name(): string {
+    return this.action.name;
+  }
 
   get form(): FormGroup {
     return this.action.form;

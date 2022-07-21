@@ -1,16 +1,16 @@
 import { FormGroup } from "@angular/forms";
 import { BehaviorSubject } from "rxjs";
 
-export type ExecutionStatus = 'PENDING' | 'IN_PROGRESS' | 'COMPLETED';
+export type ExecutionStatus = 'CREATED' | 'IN_PROGRESS' | 'COMPLETED';
 
 export interface ActionComponent {
   action: Action;
-  readonly name: string;
 }
 
 export interface Action {
   actionEnum: ActionEnum;
   form: FormGroup;
+  name: string;
   buildForm(): FormGroup;
   executionStatus$: BehaviorSubject<ExecutionStatus>;
 }

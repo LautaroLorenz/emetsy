@@ -10,11 +10,13 @@ import { Action, ActionComponent, CompleteModeConstants } from 'src/app/models';
 })
 export class RunConfigurationActionComponent implements ActionComponent {
 
-  readonly name = 'Configuración de la ejecución';
   readonly CompleteModeConstants = CompleteModeConstants;
 
   @Input() action!: Action;
 
+  get name(): string {
+    return this.action.name;
+  }
   get form(): FormGroup {
     return this.action.form;
   }

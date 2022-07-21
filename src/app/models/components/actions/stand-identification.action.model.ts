@@ -6,9 +6,10 @@ import { Action, ActionEnum, ExecutionStatus } from "./action.model";
 
 export class StandIdentificationAction implements Action {
 
+  name = 'Identificación de puestos';
   form!: FormGroup;
   actionEnum: ActionEnum = ActionEnum.StandIdentification;
-  executionStatus$ = new BehaviorSubject<ExecutionStatus>('PENDING');
+  executionStatus$ = new BehaviorSubject<ExecutionStatus>('CREATED');
 
   protected readonly destroyed$: ReplaySubject<boolean> = new ReplaySubject(1);
 
@@ -22,6 +23,7 @@ export class StandIdentificationAction implements Action {
 
   buildForm(): FormGroup {
     this.form = new FormGroup({
+      actionName: new FormControl(this.name),
       stands: new FormArray<FormGroup>([], standIdentificationValidator())
     });
     for (let i = 0; i < CompileParams.STANDS_LENGTH; i++) {

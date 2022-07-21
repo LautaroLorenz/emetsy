@@ -3,12 +3,13 @@ import { BehaviorSubject } from "rxjs";
 import { Action, ActionEnum, ExecutionStatus } from "./action.model";
 
 export class EnterTestValuesAction implements Action {
-
+  
+  name = 'Valores generales de la prueba';
   form!: FormGroup;
   actionEnum: ActionEnum = ActionEnum.EnterTestValues;
   testName: string;
   meterConstant: number;
-  executionStatus$ = new BehaviorSubject<ExecutionStatus>('PENDING');
+  executionStatus$ = new BehaviorSubject<ExecutionStatus>('CREATED');
 
   constructor(testName: string, meterConstant: number) { 
     this.testName = testName;
@@ -17,6 +18,7 @@ export class EnterTestValuesAction implements Action {
 
   buildForm(): FormGroup {
     this.form = new FormGroup({
+      actionName: new FormControl(this.name),
       testName: new FormControl(this.testName),
       meterConstant: new FormControl(this.meterConstant),
       phaseL1: new FormGroup({

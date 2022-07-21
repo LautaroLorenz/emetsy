@@ -9,12 +9,14 @@ import { Action, ActionComponent, MeterConstants } from 'src/app/models';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class EnterTestValuesActionComponent implements ActionComponent {
-
-  readonly name = 'Valores generales de la prueba';
+  
   readonly MeterConstants = MeterConstants;
 
   @Input() action!: Action;
 
+  get name(): string {
+    return this.action.name;
+  }
   get form(): FormGroup {
     return this.action.form;
   }
