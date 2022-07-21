@@ -10,13 +10,12 @@ import { StepBuilder } from 'src/app/models';
 export class StepExecutionStatusListComponent implements OnInit {
 
   @Input() steps!: StepBuilder[];
-  @Input() activeStepIndex!: number;
-  @Input() activeActionIndex!: number;
+  @Input() activeStepIndex: number | null = null;
+  @Input() activeActionIndex: number | null = null;
 
   constructor() { }
 
   ngOnInit(): void {
-    console.log(this.steps); // TODO: borrar esta linea
   }
 
 }

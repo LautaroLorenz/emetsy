@@ -1,4 +1,4 @@
-import { EssayTemplateStep } from "../../database/tables/essay-template-step.model";
+import { EssayTemplateStep } from "../database/tables/essay-template-step.model";
 import { Action } from "../actions/action.model";
 import { ContrastTestParametersAction } from "../actions/contrast-test-parameters.action.model";
 import { EnterTestValuesAction } from "../actions/enter-test-values.action.model";

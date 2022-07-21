@@ -20,7 +20,7 @@ export class ContrastTestParametersAction implements Action {
       maxAllowedError: new FormControl(),
       meterPulses: new FormControl(),
       numberOfDiscardedResults: new FormControl(this.numberOfDiscardedResults),
-    });
+    }, []);
 
     return this.form;
   }

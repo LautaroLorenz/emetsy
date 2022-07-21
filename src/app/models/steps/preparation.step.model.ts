@@ -1,5 +1,5 @@
 import { ReplaySubject } from "rxjs";
-import { EssayTemplateStep } from "../../database/tables/essay-template-step.model";
+import { EssayTemplateStep } from "../database/tables/essay-template-step.model";
 import { Action } from "../actions/action.model";
 import { StandIdentificationAction } from "../actions/stand-identification.action.model";
 import { UserIdentificationAction } from "../actions/user-identification.action.model";

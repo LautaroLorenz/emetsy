@@ -2,9 +2,10 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormArray, FormControl, FormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { filter, map, Observable, ReplaySubject, switchMap, takeUntil, tap } from 'rxjs';
-import { ContrastTestStep, EssayTemplate, EssayTemplateDbTableContext, PageUrlName, PhotocellAdjustmentStep, PreparationStep, RelationsManager, StepBuilder, WhereKind, WhereOperator } from 'src/app/models';
+import { Action, ContrastTestStep, EssayTemplate, EssayTemplateDbTableContext, ExecutionStatus, PageUrlName, PhotocellAdjustmentStep, PreparationStep, RelationsManager, StepBuilder, WhereKind, WhereOperator } from 'src/app/models';
 import { EssayTemplateStep, EssayTemplateStepDbTableContext } from 'src/app/models/database/tables/essay-template-step.model';
 import { DatabaseService } from 'src/app/services/database.service';
+import { ExecutionDirector } from 'src/app/services/execution-director.service';
 import { NavigationService } from 'src/app/services/navigation.service';
 
 @Component({
@@ -45,12 +46,25 @@ export class ExecuteEssayComponent implements OnInit, OnDestroy {
   get stepControls(): FormArray<FormControl> {
     return (this.form.get('essayTemplateSteps') as FormArray);
   }
+  get activeAction$(): Observable<Action | null> {
+    return this.executionDirectorService.activeAction$;
+  }  
+  get activeStepIndex$(): Observable<number | null> {
+    return this.executionDirectorService.activeStepIndex$;
+  }  
+  get activeActionIndex$(): Observable<number | null> {
+    return this.executionDirectorService.activeActionIndex$;
+  }
+  get executionStatus$(): Observable<ExecutionStatus> {
+    return this.executionDirectorService.executionStatus$;
+  }
 
   constructor(
     private readonly dbServiceEssayTemplate: DatabaseService<EssayTemplate>,
     private readonly dbServiceEssayTemplateStep: DatabaseService<EssayTemplateStep>,
     private readonly navigationService: NavigationService,
     private readonly route: ActivatedRoute,
+    private readonly executionDirectorService: ExecutionDirector,
   ) {
     this.id$ = this.route.queryParams.pipe(
       filter(({ id }) => id),
@@ -84,12 +98,19 @@ export class ExecuteEssayComponent implements OnInit, OnDestroy {
         }));
       })),
       tap(() => this.buildSteps(this.form.get('essayTemplateSteps')?.getRawValue())),
+      tap(() => this.executionDirectorService.setSteps(this.stepBuilders)),
+      tap(() => this.executionDirectorService.prepareStepsToExecute()),
+      tap(() => this.executionDirectorService.executeNext()),
     ).subscribe();
   }
 
   exit() {
     this.navigationService.back({ targetPage: PageUrlName.availableTest });
   };
+
+  executeNext(): void {
+    this.executionDirectorService.executeNext();
+  }
 
   buildSteps(essayTemplateSteps: EssayTemplateStep[]): void {
     this.stepBuilders = [];

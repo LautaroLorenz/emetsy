@@ -1,4 +1,4 @@
-import { EssayTemplateStep } from "../../database/tables/essay-template-step.model";
+import { EssayTemplateStep } from "../database/tables/essay-template-step.model";
 import { Action } from "../actions/action.model";
 import { PhotocellAdjustmentValuesAction } from "../actions/photocell-adjustment-values.action.model";
 import { StepBuilder } from "./step-builder.model";

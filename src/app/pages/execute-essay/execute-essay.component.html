@@ -6,19 +6,33 @@
   <ng-container toolbar-left>
     <div class="ml-3">{{essayName}}</div>
   </ng-container>
-  <!-- TODO: <ng-container toolbar-right>
-    <div></div>
-  </ng-container> -->
+  <ng-container toolbar-right>
+    <ng-container *ngIf="activeAction$ | async as activeAction">
+      <ng-container *ngIf="(executionStatus$ | async) === 'IN_PROGRESS'">
+        <div class="mr-3">
+          <p-button
+            label="Continuar"
+            styleClass="p-button-outlined"
+            [disabled]="activeAction?.form?.invalid || false"
+            [ngClass]="{
+              'pointer-events-none': activeAction?.form?.invalid || false
+            }"
+            (click)="executeNext()"
+          ></p-button>
+        </div>
+      </ng-container>
+    </ng-container>
+  </ng-container>
 </app-page-title>
 
 <app-fill-available-space class="flex justify-content-evenly">
 
   <div class="flex flex-column pt-4 pl-3 w-4">
     <ng-container *ngIf="stepBuilders.length">
-      <app-step-execution-status-list 
-      [steps]="stepBuilders"
-      [activeStepIndex]="0"
-      [activeActionIndex]="0"
+      <app-step-execution-status-list
+        [steps]="stepBuilders"
+        [activeStepIndex]="activeStepIndex$ | async"
+        [activeActionIndex]="activeActionIndex$ | async"
       >
       </app-step-execution-status-list>
     </ng-container>
@@ -27,7 +41,10 @@
   <p-divider layout="vertical"></p-divider>
 
   <div class="flex flex-column w-8">
-    <!-- TODO: accion en curso -->
+    <ng-container *ngIf="activeAction$ | async as activeAction">
+      <app-action-switch-list [actions]="[activeAction]">
+      </app-action-switch-list>
+    </ng-container>
   </div>
 
 </app-fill-available-space>

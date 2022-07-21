@@ -19,7 +19,6 @@
         id="maxAllowedError"
         formControlName="maxAllowedError"
         autofocus
-        [required]="true"
         [useGrouping]="false"
       ></p-inputNumber>
     </div>
@@ -35,7 +34,6 @@
         id="meterPulses"
         formControlName="meterPulses"
         autofocus
-        [required]="true"
         [useGrouping]="false"
       ></p-inputNumber>
     </div>
@@ -64,7 +62,8 @@
         >
           <ng-template pTemplate>
             <div class="text-sm text-700 flex flex-column">
-              Se descartan los primeros N resultados y se registran valores a partir del resultado N+1.
+              Se descartan los primeros N resultados y se registran valores a partir del resultado N+1.<br>
+              Dejar en 0 para no descartar ningún resultado.
             </div>
           </ng-template>
         </p-overlayPanel>
@@ -73,7 +72,6 @@
           id="numberOfDiscardedResults"
           formControlName="numberOfDiscardedResults"
           autofocus
-          [required]="true"
           [useGrouping]="false"
         ></p-inputNumber>
       </div>

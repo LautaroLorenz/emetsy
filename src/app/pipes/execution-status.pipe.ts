@@ -1,5 +1,4 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { pick } from 'dot-object';
 import { ExecutionStatus } from '../models';
 
 @Pipe({
@@ -13,7 +12,7 @@ export class ExecutionStatusPipe implements PipeTransform {
       case 'CREATED': return 'Creada';
       case 'PENDING': return 'Pendiente';
       case 'IN_PROGRESS': return 'En progreso';
-      case 'COMPLETED': return 'Completada';
+      case 'COMPLETED': return 'Completa';
     }
 
     return '';
