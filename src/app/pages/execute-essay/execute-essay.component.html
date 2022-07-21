@@ -40,7 +40,7 @@
 
   <p-divider layout="vertical"></p-divider>
 
-  <div class="flex flex-column w-8">
+  <div class="flex flex-column w-8 overflow-auto py-3 mb-4">
     <ng-container *ngIf="activeAction$ | async as activeAction">
       <app-action-switch-list [actions]="[activeAction]">
       </app-action-switch-list>

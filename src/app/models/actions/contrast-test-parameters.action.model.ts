@@ -1,4 +1,4 @@
-import { FormControl, FormGroup } from "@angular/forms";
+import { FormControl, FormGroup, Validators } from "@angular/forms";
 import { BehaviorSubject } from "rxjs";
 import { Action, ActionEnum, ExecutionStatus } from "./action.model";
 
@@ -17,8 +17,8 @@ export class ContrastTestParametersAction implements Action {
   buildForm(): FormGroup {
     this.form = new FormGroup({
       actionName: new FormControl(this.name),
-      maxAllowedError: new FormControl(),
-      meterPulses: new FormControl(),
+      maxAllowedError: new FormControl(undefined, [Validators.required]),
+      meterPulses: new FormControl(undefined, [Validators.required]),
       numberOfDiscardedResults: new FormControl(this.numberOfDiscardedResults),
     }, []);
 
