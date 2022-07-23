@@ -1,1 +1,33 @@
-<p>user-identification-action works!</p>
+<fom
+  novalidate
+  [formGroup]="form"
+>
+  <p-fieldset>
+    <ng-template pTemplate="header">
+      <span>{{name}}</span>
+    </ng-template>
+
+    <ng-container *ngIf="dropdownUserOptions.length > 0">
+      <div class="flex">
+        <div class="flex flex-1 flex-column">
+          <label
+            for="userId"
+            class="mb-2"
+          >Usuario<span class="ml-1 text-red-300">*</span>
+          </label>
+          <p-dropdown
+            styleClass="w-full"
+            id="userId"
+            [options]="dropdownUserOptions"
+            formControlName="userId"
+            optionValue="id"
+            optionLabel="label"
+            appendTo="body"
+            [autoDisplayFirst]="false"
+          ></p-dropdown>
+        </div>
+      </div>
+    </ng-container>
+
+  </p-fieldset>
+</fom>

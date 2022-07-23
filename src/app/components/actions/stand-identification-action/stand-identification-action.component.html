@@ -1,78 +1,77 @@
-  <fom
-    novalidate
-    [formGroup]="form"
-  >
-    <p-fieldset>
-      <ng-template pTemplate="header">
-        <span>{{name}}</span>
-      </ng-template>
-      <ng-container *ngIf="standArray as groupsArray">
-        <ng-container
-          *ngFor="let group of groupsArray.controls; let i = index; let last = last"
+<fom
+  novalidate
+  [formGroup]="form"
+>
+  <p-fieldset>
+    <ng-template pTemplate="header">
+      <span>{{name}}</span>
+    </ng-template>
+    <ng-container *ngIf="standArray as groupsArray">
+      <ng-container
+        *ngFor="let group of groupsArray.controls; let i = index; let last = last"
+      >
+        <div
+          [formGroup]="group"
+          class="relative p-3 mb-3"
         >
-          <div
-            [formGroup]="group"
-            class="relative p-3 mb-3"
-          >
-            <button
-              *ngIf="i===0"
-              pButton
-              pRipple
-              icon="pi pi-copy"
-              class="absolute top-0 right-0 z-2 p-button-rounded p-button-text p-button-primary p-button-sm"
-              (click)="copyToAllActive(group)"
-              pTooltip="Replicar valores del Puesto 01 en todos los puestos activos"
-              tooltipPosition="left"
-              [showDelay]="1250"
-              [disabled]="!isActive.checked()"
-            ></button>
-            <div class="relative mb-3 flex flex-1 justify-content-center">
-              <div class="absolute left-0">
-                <p-inputSwitch
-                  #isActive
-                  formControlName="isActive"
-                  [pTooltip]="isActive.checked() ? 'Desactivar puesto' : 'Activar puesto'"
-                  tooltipPosition="left"
-                  [showDelay]="1250"
-                ></p-inputSwitch>
-              </div>
-              <div>
-                <label
-                  for="meterId"
-                  class="text-lg"
-                  [ngClass]="{
-                  'text-black-alpha-40': !isActive.checked()
-                }"
-                >
-                  Puesto {{i+1|number:'2.0'}}
-                </label>
-              </div>
+          <button
+            *ngIf="i===0"
+            pButton
+            pRipple
+            icon="pi pi-copy"
+            class="absolute top-0 right-0 z-2 p-button-rounded p-button-text p-button-primary p-button-sm"
+            (click)="copyToAllActive(group)"
+            pTooltip="Replicar valores del Puesto 01 en todos los puestos activos"
+            tooltipPosition="left"
+            [showDelay]="1250"
+            [disabled]="!isActive.checked()"
+          ></button>
+          <div class="relative mb-3 flex flex-1 justify-content-center">
+            <div class="absolute left-0">
+              <p-inputSwitch
+                #isActive
+                formControlName="isActive"
+                [pTooltip]="isActive.checked() ? 'Desactivar puesto' : 'Activar puesto'"
+                tooltipPosition="left"
+                [showDelay]="1250"
+              ></p-inputSwitch>
             </div>
-            <div class="flex">
-              <div class="flex flex-1 flex-column">
-                <label
-                  for="ratedVoltage"
-                  class="mb-2"
-                  [ngClass]="{
+            <div>
+              <label
+                class="text-lg"
+                [ngClass]="{
                   'text-black-alpha-40': !isActive.checked()
                 }"
-                >Medidor<span class="ml-1 text-red-300">*</span>
-                </label>
-                <p-dropdown
-                  styleClass="w-full"
-                  id="meterId"
-                  [options]="dropdownMeterOptions"
-                  formControlName="meterId"
-                  optionValue="id"
-                  optionLabel="label"
-                  appendTo="body"
-                  [autoDisplayFirst]="false"
-                ></p-dropdown>
-              </div>
+              >
+                Puesto {{i+1|number:'2.0'}}
+              </label>
             </div>
           </div>
-          <p-divider *ngIf="!last"></p-divider>
-        </ng-container>
+          <div class="flex">
+            <div class="flex flex-1 flex-column">
+              <label
+                for="meterId"
+                class="mb-2"
+                [ngClass]="{
+                  'text-black-alpha-40': !isActive.checked()
+                }"
+              >Medidor<span class="ml-1 text-red-300">*</span>
+              </label>
+              <p-dropdown
+                styleClass="w-full"
+                id="meterId"
+                [options]="dropdownMeterOptions"
+                formControlName="meterId"
+                optionValue="id"
+                optionLabel="label"
+                appendTo="body"
+                [autoDisplayFirst]="false"
+              ></p-dropdown>
+            </div>
+          </div>
+        </div>
+        <p-divider *ngIf="!last"></p-divider>
       </ng-container>
-    </p-fieldset>
-  </fom>
+    </ng-container>
+  </p-fieldset>
+</fom>
