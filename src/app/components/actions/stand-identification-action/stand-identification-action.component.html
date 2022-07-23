@@ -47,6 +47,7 @@
               </label>
             </div>
           </div>
+
           <div class="flex">
             <div class="flex flex-1 flex-column">
               <label
@@ -55,7 +56,10 @@
                 [ngClass]="{
                   'text-black-alpha-40': !isActive.checked()
                 }"
-              >Medidor<span class="ml-1 text-red-300">*</span>
+              >Medidor<span
+                  *ngIf="isActive.checked()"
+                  class="ml-1 text-red-300"
+                >*</span>
               </label>
               <p-dropdown
                 styleClass="w-full"
@@ -69,6 +73,55 @@
               ></p-dropdown>
             </div>
           </div>
+
+          <ng-container *ngIf="!hiddenFields['serialNumber']">
+            <div class="flex flex-1 flex-column mt-3">
+              <label
+                for="serialNumber"
+                class="mb-2"
+                [ngClass]="{
+                  'text-black-alpha-40': !isActive.checked()
+                }"
+              >Número de serie<span
+                  *ngIf="isActive.checked()"
+                  class="ml-1 text-red-300"
+                >*</span>
+              </label>
+              <input
+                type="text"
+                pInputText
+                id="serialNumber"
+                formControlName="serialNumber"
+              />
+            </div>
+          </ng-container>
+
+          <ng-container *ngIf="!hiddenFields['yearOfProduction']">
+            <div class="flex flex-1 flex-column mt-3">
+              <label
+                for="yearOfProduction"
+                class="mb-2"
+                [ngClass]="{
+                  'text-black-alpha-40': !isActive.checked()
+                }"
+              >Año de fabricación<span
+                  *ngIf="isActive.checked()"
+                  class="ml-1 text-red-300"
+                >*</span>
+              </label>
+              <p-dropdown
+                styleClass="w-full"
+                id="yearOfProduction"
+                [options]="dropdownYearOfProductionOptions"
+                formControlName="yearOfProduction"
+                optionValue="id"
+                optionLabel="label"
+                appendTo="body"
+                [autoDisplayFirst]="false"
+              ></p-dropdown>
+            </div>
+          </ng-container>
+
         </div>
         <p-divider *ngIf="!last"></p-divider>
       </ng-container>

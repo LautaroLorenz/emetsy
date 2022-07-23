@@ -40,7 +40,6 @@ export class UserIdentificationActionComponent implements ActionComponent, After
       tap((rows) => this.dropdownUserOptions = rows),
       tap(() => this.form.updateValueAndValidity({ emitEvent: true })),
       tap(() => this.changeDetectorRef.detectChanges()),
-      tap(console.log)
     ).subscribe();
   }
 
