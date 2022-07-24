@@ -11,7 +11,8 @@
       <ng-container *ngIf="(executionStatus$ | async) === 'IN_PROGRESS'">
         <div class="mr-3">
           <p-button
-            label="Continuar"
+            label="Confirmar"
+            icon="pi pi-check"
             styleClass="p-button-outlined"
             [disabled]="activeAction?.form?.invalid || false"
             [ngClass]="{

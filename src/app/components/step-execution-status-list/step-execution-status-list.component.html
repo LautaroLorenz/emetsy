@@ -12,10 +12,11 @@
     </div>
     <ng-container *ngFor="let action of step.actions; let f = index">
       <div
-        class="ml-3 flex text-sm pb-1 mb-1 border-bottom-2 border-transparent text-400"
+        class="ml-3 mr-1 flex text-sm mb-1 border-bottom-2 border-transparent text-400 h-2rem align-items-center pl-2"
         [ngClass]="{ 
           'border-purple-100': i === activeStepIndex && f === activeActionIndex,
-          'text-800': i === activeStepIndex && f === activeActionIndex
+          'text-800': i === activeStepIndex && f === activeActionIndex,
+          'surface-50': i === activeStepIndex && f === activeActionIndex
         }"
       >
         <div>{{i+1}}.{{f+1}}</div>
@@ -26,7 +27,20 @@
           'text-green-500': action.executionStatus$.value === 'COMPLETED'
         }"
         >
-          ({{action.executionStatus$ | async | executionStatus}})
+          <ng-container
+            *ngIf="action.executionStatus$ | async as executionStatus"
+          >
+            <ng-container [ngSwitch]="executionStatus">
+              <ng-container *ngSwitchCase="'COMPLETED'">
+                <i class="pi pi-check-square ml-1"></i>
+              </ng-container>
+              <ng-container *ngSwitchCase="'IN_PROGRESS'">
+              </ng-container>
+              <ng-container *ngSwitchDefault>
+                ({{action.executionStatus$ | async | executionStatus}})
+              </ng-container>
+            </ng-container>
+          </ng-container>
         </div>
       </div>
     </ng-container>

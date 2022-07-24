@@ -26,3 +26,4 @@ export * from "./steps/step-builder.model";
 export * from "./steps/preparation.step.model";
 export * from "./steps/photocell-adjustment.step.model";
 export * from "./steps/contrast-test.step.model";
+export * from "./communication/command.model";

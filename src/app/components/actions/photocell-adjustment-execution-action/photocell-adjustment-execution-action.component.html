@@ -7,22 +7,24 @@
       <span>{{name}}</span>
     </ng-template>
 
-    <p-card>
-      <p-message
-        severity="{{photocellAdjustmentExecutionComplete ? 'success' : 'info'}}"
-        text="{{helpText}}"
-        styleClass="justify-content-start w-full"
-      ></p-message>
-      <ng-template pTemplate="footer">
-        <div *ngIf="!photocellAdjustmentExecutionComplete" class="flex justify-content-end">
-          <p-button
-            styleClass="p-button-outlined"
-            label="Ajuste de fotocelulas realizado"
-            (click)="completeAction()"
-          ></p-button>
-        </div>
-      </ng-template>
-    </p-card>
+    <p-message
+      severity="{{photocellAdjustmentExecutionComplete ? 'success' : 'info'}}"
+      text="{{helpText}}"
+      styleClass="justify-content-start w-full"
+    ></p-message>
+
+    
+
+    <p-divider></p-divider>
+
+    <div class="flex justify-content-end">
+      <p-button
+        styleClass="p-button-outlined"
+        label="Ajuste de fotocelulas realizado"
+        (click)="completeAction()"
+        [disabled]="photocellAdjustmentExecutionComplete"
+      ></p-button>
+    </div>
 
   </p-fieldset>
 </fom>

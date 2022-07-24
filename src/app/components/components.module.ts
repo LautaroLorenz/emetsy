@@ -56,6 +56,7 @@ import { UserIdentificationActionComponent } from './actions/user-identification
 import { StepExecutionStatusListComponent } from './step-execution-status-list/step-execution-status-list.component';
 import { StepBuildFormComponent } from './step-build-form/step-build-form.component';
 import { PhotocellAdjustmentExecutionActionComponent } from './actions/photocell-adjustment-execution-action/photocell-adjustment-execution-action.component';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
 
 const PrimeNgModules = [
   MenubarModule,
@@ -87,6 +88,7 @@ const PrimeNgModules = [
   OverlayPanelModule,
   MessagesModule,
   MessageModule,
+  ProgressSpinnerModule,
 ];
 
 const PrimeNgServices = [
