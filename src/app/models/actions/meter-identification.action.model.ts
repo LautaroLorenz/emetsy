@@ -48,6 +48,7 @@ export class StandIdentificationMinimalFieldsDecorator extends StandIdentificati
     return {
       serialNumber: true,
       yearOfProduction: true,
+      hasManufacturingInformation: false,
     };
   }
 }

@@ -18,6 +18,7 @@ export class ExecuteEssayComponent implements OnInit, OnDestroy {
   readonly id$: Observable<number>;
   readonly form: FormGroup;
 
+  showNoStepsWarning!: boolean;
   stepBuilders: StepBuilder[] = [];
   
   private readonly destroyed$: ReplaySubject<boolean> = new ReplaySubject(1);
@@ -68,7 +69,9 @@ export class ExecuteEssayComponent implements OnInit, OnDestroy {
   ) {
     this.id$ = this.route.queryParams.pipe(
       filter(({ id }) => id),
-      map(({ id }) => id)
+      map(({ id }) => id),
+      tap(() => executionDirectorService.resetState()),
+      tap(() => this.showNoStepsWarning = false),
     );
     this.form = new FormGroup({
       essayTemplate: new FormControl(),
@@ -86,6 +89,11 @@ export class ExecuteEssayComponent implements OnInit, OnDestroy {
 
     this.dbServiceEssayTemplateStep.getTableReply$(EssayTemplateStepDbTableContext.tableName).pipe(
       takeUntil(this.destroyed$),
+      tap(({ rows }) => {
+        if(rows.length === 0) {
+          this.showNoStepsWarning = true;
+        }
+      }),
       map(({ rows, relations }) => {
         const { foreignTables } = EssayTemplateStepDbTableContext;
         return RelationsManager.mergeRelationsIntoRows<EssayTemplateStep>(rows, relations, foreignTables);

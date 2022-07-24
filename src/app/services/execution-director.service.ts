@@ -13,41 +13,41 @@ export class ExecutionDirector {
   public activeAction$ = new BehaviorSubject<Action | null>(null);
   public executionStatus$ = new BehaviorSubject<ExecutionStatus>('CREATED');
 
-  private getNewState(step: StepBuilder, action: Action): ExecutionStatus {
-    if(step.buildActions.includes(action) && action.form.valid) {
-      return 'COMPLETED';
-    }
-    return 'PENDING';
-  }
-
   setSteps(steps: StepBuilder[]): void {
     this.steps = steps;
   }
 
-  prepareStepsToExecute(): void {
-    if(this.steps.length === 0) {
-      this.executionStatus$.next('COMPLETED');
-      return;
-    }
-    this.steps.forEach((step) => {
-      step.actions.forEach((action) => {
-        const newState = this.getNewState(step, action);
-        action.executionStatus$.next(newState);
-      });
-    });
+  resetState(): void {
+    this.steps = [];
     this.activeStepIndex$.next(null);
     this.activeActionIndex$.next(null);
     this.activeAction$.next(null);
-    this.executionStatus$.next('IN_PROGRESS');
+    this.executionStatus$.next('CREATED');
+  }
+
+  prepareStepsToExecute(): void {
+    this.steps.forEach(({ actions }) => {
+      actions.forEach((action) => {
+        action.executionStatus$.next(action.form.valid ? 'COMPLETED' : 'PENDING');
+      });
+    });
+    if (this.steps.some(({ actions }) => actions.some(({ executionStatus$ }) => executionStatus$.value === 'PENDING'))) {
+      this.activeStepIndex$.next(null);
+      this.activeActionIndex$.next(null);
+      this.activeAction$.next(null);
+      this.executionStatus$.next('IN_PROGRESS');
+      return;
+    }
+    this.executionStatus$.next('COMPLETED');
   }
 
   executeNext(): void {
-    if(this.executionStatus$.value === 'COMPLETED') {
+    if (this.executionStatus$.value === 'COMPLETED') {
       return;
     }
     const { value: activeStepIndex } = this.activeStepIndex$;
     const { value: activeActionIndex } = this.activeActionIndex$;
-    if(activeStepIndex === null || activeActionIndex === null) {
+    if (activeStepIndex === null || activeActionIndex === null) {
       this.activeStepIndex$.next(0);
       this.activeActionIndex$.next(0);
       this.activeAction$.next(this.steps[0].actions[0]);
@@ -57,7 +57,7 @@ export class ExecutionDirector {
     this.activeAction$.value?.executionStatus$.next('COMPLETED');
     const nextAction = this.steps[activeStepIndex].actions.find((action, index) => action.executionStatus$.value === 'PENDING' && index > activeActionIndex);
     const nextActionIndex = this.steps[activeStepIndex].actions.findIndex((action, index) => action.executionStatus$.value === 'PENDING' && index > activeActionIndex);
-    if(nextAction) {
+    if (nextAction) {
       this.activeStepIndex$.next(activeStepIndex);
       this.activeActionIndex$.next(nextActionIndex);
       this.activeAction$.next(nextAction);
@@ -66,10 +66,10 @@ export class ExecutionDirector {
     }
     const nextStep = this.steps.find((step, index) => index > activeStepIndex && step.actions.some((action) => action.executionStatus$.value === 'PENDING'));
     const nextStepIndex = this.steps.findIndex((step, index) => index > activeStepIndex && step.actions.some((action) => action.executionStatus$.value === 'PENDING'));
-    if(nextStep) {
+    if (nextStep) {
       const nextAction = this.steps[nextStepIndex].actions.find((action) => action.executionStatus$.value === 'PENDING');
       const nextActionIndex = this.steps[nextStepIndex].actions.findIndex((action) => action.executionStatus$.value === 'PENDING');
-      if(nextAction) {
+      if (nextAction) {
         this.activeStepIndex$.next(nextStepIndex);
         this.activeActionIndex$.next(nextActionIndex);
         this.activeAction$.next(nextAction);

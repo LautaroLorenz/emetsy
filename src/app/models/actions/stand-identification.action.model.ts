@@ -13,6 +13,7 @@ export class StandIdentificationAction implements Action {
   readonly hiddenFields: Record<string, boolean> = {
     serialNumber: false,
     yearOfProduction: false,
+    hasManufacturingInformation: true,
   };
 
   get standArray(): FormArray<FormGroup> {
@@ -26,36 +27,40 @@ export class StandIdentificationAction implements Action {
   buildForm(): FormGroup {
     this.form = new FormGroup({
       actionName: new FormControl(this.name),
+      hasManufacturingInformation: new FormControl(true, [Validators.required]),
       stands: new FormArray<FormGroup>([]),
     });
-    for (let i = 0; i < CompileParams.STANDS_LENGTH; i++) {      
+    for (let i = 0; i < CompileParams.STANDS_LENGTH; i++) {
       const standGroup = new FormGroup({
         isActive: new FormControl(),
         meterId: new FormControl(),
         serialNumber: new FormControl(),
         yearOfProduction: new FormControl(),
       });
-
       standGroup.get('isActive')?.valueChanges.pipe(
         takeUntil(this.destroyed$),
         tap((isActive) => {
-          if(isActive) {
+          if (isActive) {
             standGroup.get('meterId')?.setValidators(Validators.required);
-            standGroup.get('serialNumber')?.setValidators(Validators.required);
-            standGroup.get('yearOfProduction')?.setValidators(Validators.required);
             standGroup.get('meterId')?.enable();
-            standGroup.get('serialNumber')?.enable();
-            standGroup.get('yearOfProduction')?.enable();
+            if (this.form.get('hasManufacturingInformation')?.value) {
+              standGroup.get('serialNumber')?.setValidators(Validators.required);
+              standGroup.get('serialNumber')?.enable();
+              standGroup.get('yearOfProduction')?.setValidators(Validators.required);
+              standGroup.get('yearOfProduction')?.enable();
+            }
           } else {
             standGroup.get('meterId')?.disable();
-            standGroup.get('serialNumber')?.disable();
-            standGroup.get('yearOfProduction')?.disable();
             standGroup.get('meterId')?.setValidators(null);
-            standGroup.get('serialNumber')?.setValidators(null);
-            standGroup.get('yearOfProduction')?.setValidators(null);
             standGroup.get('meterId')?.reset();
-            standGroup.get('serialNumber')?.reset();
-            standGroup.get('yearOfProduction')?.reset();
+            if (this.form.get('hasManufacturingInformation')?.value) {
+              standGroup.get('serialNumber')?.disable();
+              standGroup.get('serialNumber')?.setValidators(null);
+              standGroup.get('serialNumber')?.reset();
+              standGroup.get('yearOfProduction')?.disable();
+              standGroup.get('yearOfProduction')?.setValidators(null);
+              standGroup.get('yearOfProduction')?.reset();
+            }
           }
         }),
       ).subscribe();

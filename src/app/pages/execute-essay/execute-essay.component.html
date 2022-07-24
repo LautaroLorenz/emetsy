@@ -28,7 +28,7 @@
 <app-fill-available-space class="flex justify-content-evenly">
 
   <div class="flex flex-column pt-4 pl-3 w-4">
-    <ng-container *ngIf="stepBuilders.length">
+    <ng-container *ngIf="stepBuilders.length; else noStepsTemplate">
       <app-step-execution-status-list
         [steps]="stepBuilders"
         [activeStepIndex]="activeStepIndex$ | async"
@@ -36,6 +36,13 @@
       >
       </app-step-execution-status-list>
     </ng-container>
+    <ng-template #noStepsTemplate>
+      <p-message
+        *ngIf="showNoStepsWarning"
+        severity="warn"
+        text="Primero debe modificar el template agregando pasos para ejecutar."
+      ></p-message>
+    </ng-template>
   </div>
 
   <p-divider layout="vertical"></p-divider>

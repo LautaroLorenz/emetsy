@@ -6,6 +6,31 @@
     <ng-template pTemplate="header">
       <span>{{name}}</span>
     </ng-template>
+
+    <ng-container *ngIf="!hiddenFields['hasManufacturingInformation']">
+      <div class="flex p-3">
+        <div class="flex align-items-center">
+          <p-inputSwitch
+            #hasManufacturingInformation
+            formControlName="hasManufacturingInformation"
+          ></p-inputSwitch>
+        </div>
+        <div class="ml-3">
+          <span
+            class="text-sm text-600"
+            [ngClass]="{
+            'text-black-alpha-40': !hasManufacturingInformation.checked()
+          }"
+          >
+            Al ejecutar solicitar información de fabricación de los medidores,
+            para mostrar en el reporte final.
+          </span>
+        </div>
+      </div>
+
+      <p-divider></p-divider>
+    </ng-container>
+
     <ng-container *ngIf="standArray as groupsArray">
       <ng-container
         *ngFor="let group of groupsArray.controls; let i = index; let last = last"
@@ -56,7 +81,7 @@
                 [ngClass]="{
                   'text-black-alpha-40': !isActive.checked()
                 }"
-              >Medidor<span
+              >Modelo de medidor<span
                   *ngIf="isActive.checked()"
                   class="ml-1 text-red-300"
                 >*</span>
@@ -74,52 +99,56 @@
             </div>
           </div>
 
-          <ng-container *ngIf="!hiddenFields['serialNumber']">
-            <div class="flex flex-1 flex-column mt-3">
-              <label
-                for="serialNumber"
-                class="mb-2"
-                [ngClass]="{
-                  'text-black-alpha-40': !isActive.checked()
-                }"
-              >Número de serie<span
-                  *ngIf="isActive.checked()"
-                  class="ml-1 text-red-300"
-                >*</span>
-              </label>
-              <input
-                type="text"
-                pInputText
-                id="serialNumber"
-                formControlName="serialNumber"
-              />
-            </div>
-          </ng-container>
+          <ng-container *ngIf="form.get('hasManufacturingInformation')?.value">
 
-          <ng-container *ngIf="!hiddenFields['yearOfProduction']">
-            <div class="flex flex-1 flex-column mt-3">
-              <label
-                for="yearOfProduction"
-                class="mb-2"
-                [ngClass]="{
+            <ng-container *ngIf="!hiddenFields['serialNumber']">
+              <div class="flex flex-1 flex-column mt-3">
+                <label
+                  for="serialNumber"
+                  class="mb-2"
+                  [ngClass]="{
                   'text-black-alpha-40': !isActive.checked()
                 }"
-              >Año de fabricación<span
-                  *ngIf="isActive.checked()"
-                  class="ml-1 text-red-300"
-                >*</span>
-              </label>
-              <p-dropdown
-                styleClass="w-full"
-                id="yearOfProduction"
-                [options]="dropdownYearOfProductionOptions"
-                formControlName="yearOfProduction"
-                optionValue="id"
-                optionLabel="label"
-                appendTo="body"
-                [autoDisplayFirst]="false"
-              ></p-dropdown>
-            </div>
+                >Número de serie<span
+                    *ngIf="isActive.checked()"
+                    class="ml-1 text-red-300"
+                  >*</span>
+                </label>
+                <input
+                  type="text"
+                  pInputText
+                  id="serialNumber"
+                  formControlName="serialNumber"
+                />
+              </div>
+            </ng-container>
+
+            <ng-container *ngIf="!hiddenFields['yearOfProduction']">
+              <div class="flex flex-1 flex-column mt-3">
+                <label
+                  for="yearOfProduction"
+                  class="mb-2"
+                  [ngClass]="{
+                  'text-black-alpha-40': !isActive.checked()
+                }"
+                >Año de fabricación<span
+                    *ngIf="isActive.checked()"
+                    class="ml-1 text-red-300"
+                  >*</span>
+                </label>
+                <p-dropdown
+                  styleClass="w-full"
+                  id="yearOfProduction"
+                  [options]="dropdownYearOfProductionOptions"
+                  formControlName="yearOfProduction"
+                  optionValue="id"
+                  optionLabel="label"
+                  appendTo="body"
+                  [autoDisplayFirst]="false"
+                ></p-dropdown>
+              </div>
+            </ng-container>
+            
           </ng-container>
 
         </div>
