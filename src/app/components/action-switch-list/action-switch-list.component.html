@@ -25,5 +25,10 @@
       [action]="action"
       class="mb-3"
     ></app-user-identification-action>
+    <app-photocell-adjustment-execution-action
+      *ngSwitchCase="ActionEnum.PhotocellAdjustmentExecution"
+      [action]="action"
+      class="mb-3"
+    ></app-photocell-adjustment-execution-action>
   </ng-container>
 </ng-container>

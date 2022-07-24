@@ -45,31 +45,14 @@ export class ExecutionDirector {
     if (this.executionStatus$.value === 'COMPLETED') {
       return;
     }
-    const { value: activeStepIndex } = this.activeStepIndex$;
-    const { value: activeActionIndex } = this.activeActionIndex$;
-    if (activeStepIndex === null || activeActionIndex === null) {
-      this.activeStepIndex$.next(0);
-      this.activeActionIndex$.next(0);
-      this.activeAction$.next(this.steps[0].actions[0]);
-      this.activeAction$.value?.executionStatus$.next('IN_PROGRESS');
-      return;
+    if (this.activeAction$.value) {
+      this.activeAction$.value.executionStatus$.next('COMPLETED');
     }
-    this.activeAction$.value?.executionStatus$.next('COMPLETED');
-    const nextAction = this.steps[activeStepIndex].actions.find((action, index) => action.executionStatus$.value === 'PENDING' && index > activeActionIndex);
-    const nextActionIndex = this.steps[activeStepIndex].actions.findIndex((action, index) => action.executionStatus$.value === 'PENDING' && index > activeActionIndex);
-    if (nextAction) {
-      this.activeStepIndex$.next(activeStepIndex);
-      this.activeActionIndex$.next(nextActionIndex);
-      this.activeAction$.next(nextAction);
-      this.activeAction$.value?.executionStatus$.next('IN_PROGRESS');
-      return;
-    }
-    const nextStep = this.steps.find((step, index) => index > activeStepIndex && step.actions.some((action) => action.executionStatus$.value === 'PENDING'));
-    const nextStepIndex = this.steps.findIndex((step, index) => index > activeStepIndex && step.actions.some((action) => action.executionStatus$.value === 'PENDING'));
-    if (nextStep) {
-      const nextAction = this.steps[nextStepIndex].actions.find((action) => action.executionStatus$.value === 'PENDING');
-      const nextActionIndex = this.steps[nextStepIndex].actions.findIndex((action) => action.executionStatus$.value === 'PENDING');
-      if (nextAction) {
+    const nextStepIndex = this.steps.findIndex(({ actions }) => actions.some(({ executionStatus$ }) => executionStatus$.value === 'PENDING'));
+    if (nextStepIndex !== -1) {
+      const nextAction = this.steps[nextStepIndex].actions.find(({ executionStatus$ }) => executionStatus$.value === 'PENDING');
+      const nextActionIndex = this.steps[nextStepIndex].actions.findIndex(({ executionStatus$ }) => executionStatus$.value === 'PENDING');
+      if (nextAction !== undefined) {
         this.activeStepIndex$.next(nextStepIndex);
         this.activeActionIndex$.next(nextActionIndex);
         this.activeAction$.next(nextAction);

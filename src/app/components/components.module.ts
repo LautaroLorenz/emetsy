@@ -55,6 +55,7 @@ import { MessageModule } from 'primeng/message';
 import { UserIdentificationActionComponent } from './actions/user-identification-action/user-identification-action.component';
 import { StepExecutionStatusListComponent } from './step-execution-status-list/step-execution-status-list.component';
 import { StepBuildFormComponent } from './step-build-form/step-build-form.component';
+import { PhotocellAdjustmentExecutionActionComponent } from './actions/photocell-adjustment-execution-action/photocell-adjustment-execution-action.component';
 
 const PrimeNgModules = [
   MenubarModule,
@@ -111,6 +112,7 @@ const EmetsyComponents = [
   UserIdentificationActionComponent,
   StepExecutionStatusListComponent,
   StepBuildFormComponent,
+  PhotocellAdjustmentExecutionActionComponent,
 ];
 
 @NgModule({
