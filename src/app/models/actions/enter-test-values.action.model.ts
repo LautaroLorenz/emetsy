@@ -1,4 +1,4 @@
-import { FormControl, FormGroup } from "@angular/forms";
+import { FormControl, FormGroup, Validators } from "@angular/forms";
 import { BehaviorSubject } from "rxjs";
 import { Action, ActionEnum, ExecutionStatus } from "./action.model";
 
@@ -22,19 +22,19 @@ export class EnterTestValuesAction implements Action {
       testName: new FormControl(this.testName),
       meterConstant: new FormControl(this.meterConstant),
       phaseL1: new FormGroup({
-        voltageU1: new FormControl(),
-        currentI1: new FormControl(),
-        anglePhi1: new FormControl(),
+        voltageU1: new FormControl(undefined, [Validators.required]),
+        currentI1: new FormControl(undefined, [Validators.required]),
+        anglePhi1: new FormControl(undefined, [Validators.required]),
       }),
       phaseL2: new FormGroup({
-        voltageU2: new FormControl(),
-        currentI2: new FormControl(),
-        anglePhi2: new FormControl(),
+        voltageU2: new FormControl(undefined, [Validators.required]),
+        currentI2: new FormControl(undefined, [Validators.required]),
+        anglePhi2: new FormControl(undefined, [Validators.required]),
       }),
       phaseL3: new FormGroup({
-        voltageU3: new FormControl(),
-        currentI3: new FormControl(),
-        anglePhi3: new FormControl(),
+        voltageU3: new FormControl(undefined, [Validators.required]),
+        currentI3: new FormControl(undefined, [Validators.required]),
+        anglePhi3: new FormControl(undefined, [Validators.required]),
       }),
     });
     

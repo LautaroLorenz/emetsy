@@ -15,7 +15,7 @@ export class PhotocellAdjustmentExecutionActionComponent implements ActionCompon
   get helpText(): string {
     return !this.photocellAdjustmentExecutionComplete
       ? 'Realice el ajuste de fotocélulas y luego indique en el software cuando el ajuste fue realizado.'
-      : 'Ya puede continuar.'
+      : 'Ajuste de fotocélulas completado, ya puede continuar.'
   }
   get photocellAdjustmentExecutionComplete(): boolean {
     return this.form.get('photocellAdjustmentExecutionComplete')?.value;

@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormArray, FormControl, FormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { filter, map, Observable, ReplaySubject, switchMap, takeUntil, tap } from 'rxjs';
+import { filter, from, map, Observable, of, ReplaySubject, switchMap, takeUntil, takeWhile, tap } from 'rxjs';
 import { Action, ContrastTestStep, EssayTemplate, EssayTemplateDbTableContext, ExecutionStatus, PageUrlName, PhotocellAdjustmentStep, PreparationStep, RelationsManager, StepBuilder, WhereKind, WhereOperator } from 'src/app/models';
 import { EssayTemplateStep, EssayTemplateStepDbTableContext } from 'src/app/models/database/tables/essay-template-step.model';
 import { DatabaseService } from 'src/app/services/database.service';
@@ -20,7 +20,7 @@ export class ExecuteEssayComponent implements OnInit, OnDestroy {
 
   showNoStepsWarning!: boolean;
   stepBuilders: StepBuilder[] = [];
-  
+
   private readonly destroyed$: ReplaySubject<boolean> = new ReplaySubject(1);
   private readonly requestTableEssayTemplateSteps = (essayTemplateId: number): void => {
     const { foreignTables } = EssayTemplateStepDbTableContext;
@@ -49,10 +49,10 @@ export class ExecuteEssayComponent implements OnInit, OnDestroy {
   }
   get activeAction$(): Observable<Action | null> {
     return this.executionDirectorService.activeAction$;
-  }  
+  }
   get activeStepIndex$(): Observable<number | null> {
     return this.executionDirectorService.activeStepIndex$;
-  }  
+  }
   get activeActionIndex$(): Observable<number | null> {
     return this.executionDirectorService.activeActionIndex$;
   }
@@ -79,6 +79,35 @@ export class ExecuteEssayComponent implements OnInit, OnDestroy {
     });
   }
 
+  private buildStepById(step_id: number, essayTemplateStep: EssayTemplateStep): StepBuilder {
+    switch (step_id) {
+      case 3:
+        return new ContrastTestStep(essayTemplateStep);
+      case 5:
+        return new PhotocellAdjustmentStep(essayTemplateStep);
+      case 6:
+        return new PreparationStep(essayTemplateStep, this.destroyed$);
+    }
+
+    return new StepBuilder(essayTemplateStep, [], []);
+  }
+
+  private buildSteps(essayTemplateSteps: EssayTemplateStep[]): void {
+    this.stepBuilders = [];
+    essayTemplateSteps.forEach((essayTemplateStep) => {
+      const newStep: StepBuilder = this.buildStepById(essayTemplateStep.step_id, essayTemplateStep);
+      newStep.buildStepForm();
+      newStep.form.patchValue(essayTemplateStep.actions_raw_data);
+      this.stepBuilders.push(newStep);
+    });
+  }
+
+  private initExecution(): void {
+    this.executionDirectorService.setSteps(this.stepBuilders);
+    this.executionDirectorService.prepareStepsToExecute();
+    this.executionDirectorService.executeNext();
+  }
+
   ngOnInit(): void {
     this.id$.pipe(
       takeUntil(this.destroyed$),
@@ -90,7 +119,7 @@ export class ExecuteEssayComponent implements OnInit, OnDestroy {
     this.dbServiceEssayTemplateStep.getTableReply$(EssayTemplateStepDbTableContext.tableName).pipe(
       takeUntil(this.destroyed$),
       tap(({ rows }) => {
-        if(rows.length === 0) {
+        if (rows.length === 0) {
           this.showNoStepsWarning = true;
         }
       }),
@@ -106,9 +135,7 @@ export class ExecuteEssayComponent implements OnInit, OnDestroy {
         }));
       })),
       tap(() => this.buildSteps(this.form.get('essayTemplateSteps')?.getRawValue())),
-      tap(() => this.executionDirectorService.setSteps(this.stepBuilders)),
-      tap(() => this.executionDirectorService.prepareStepsToExecute()),
-      tap(() => this.executionDirectorService.executeNext()),
+      tap(() => this.initExecution()),
     ).subscribe();
   }
 
@@ -118,29 +145,6 @@ export class ExecuteEssayComponent implements OnInit, OnDestroy {
 
   executeNext(): void {
     this.executionDirectorService.executeNext();
-  }
-
-  buildSteps(essayTemplateSteps: EssayTemplateStep[]): void {
-    this.stepBuilders = [];
-    essayTemplateSteps.forEach((essayTemplateStep) => {
-      const newStep: StepBuilder = this.buildStepById(essayTemplateStep.step_id, essayTemplateStep);
-      newStep.buildStepForm();
-      newStep.form.patchValue(essayTemplateStep.actions_raw_data);
-      this.stepBuilders.push(newStep);
-    });
-  }
-
-  buildStepById(step_id: number, essayTemplateStep: EssayTemplateStep): StepBuilder {
-    switch (step_id) {
-      case 3:
-        return new ContrastTestStep(essayTemplateStep);
-      case 5:
-        return new PhotocellAdjustmentStep(essayTemplateStep);
-      case 6:
-        return new PreparationStep(essayTemplateStep, this.destroyed$);
-    }
-
-    return new StepBuilder(essayTemplateStep, [], []);
   }
 
   ngOnDestroy() {
