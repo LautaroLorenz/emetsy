@@ -34,4 +34,8 @@ export class PhotocellAdjustmentValuesAction implements Action {
 
     return this.form;
   }
+
+  getPhase(phaseName: 'L1' | 'L2' | 'L3') {
+    return this.form.get(`phase${phaseName}`)?.value;
+  }
 }

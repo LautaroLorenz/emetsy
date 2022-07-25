@@ -1,6 +1,7 @@
 import { FormControl, FormGroup, Validators } from "@angular/forms";
 import { BehaviorSubject } from "rxjs";
 import { Action, ActionEnum, ExecutionStatus } from "./action.model";
+import { PhotocellAdjustmentValuesAction } from "./photocell-adjustment-values.action.model";
 
 export class PhotocellAdjustmentExecutionAction implements Action {
 
@@ -8,8 +9,13 @@ export class PhotocellAdjustmentExecutionAction implements Action {
   form!: FormGroup;
   actionEnum: ActionEnum = ActionEnum.PhotocellAdjustmentExecution;
   executionStatus$ = new BehaviorSubject<ExecutionStatus>('CREATED');
+  readonly photocellAdjustmentValuesAction: PhotocellAdjustmentValuesAction;
 
-  constructor() { }
+  constructor(
+    photocellAdjustmentValuesAction: PhotocellAdjustmentValuesAction
+  ) {
+    this.photocellAdjustmentValuesAction = photocellAdjustmentValuesAction;
+  }
 
   buildForm(): FormGroup {
     this.form = new FormGroup({

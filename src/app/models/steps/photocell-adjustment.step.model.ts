@@ -8,7 +8,7 @@ export class PhotocellAdjustmentStep extends StepBuilder {
 
   constructor(essayTemplateStep: EssayTemplateStep) {
     const photocellAdjustmentValuesAction = new PhotocellAdjustmentValuesAction();
-    const photocellAdjustmentExecutionAction = new PhotocellAdjustmentExecutionAction();
+    const photocellAdjustmentExecutionAction = new PhotocellAdjustmentExecutionAction(photocellAdjustmentValuesAction);
 
     const _actions: Action[] = [
       photocellAdjustmentValuesAction,
