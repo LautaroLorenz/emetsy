@@ -1,7 +1,7 @@
 import { Component, HostListener, OnDestroy, OnInit } from '@angular/core';
 import { FormArray, FormControl, FormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { filter, map, Observable, of, ReplaySubject, switchMap, takeUntil, tap } from 'rxjs';
+import { delay, filter, map, Observable, of, ReplaySubject, switchMap, takeUntil, tap } from 'rxjs';
 import { ComponentCanDeactivate } from 'src/app/guards/pending-changes.guard';
 import { Action, ContrastTestStep, EssayTemplate, EssayTemplateDbTableContext, ExecutionStatus, GeneratorStatusEnum, PageUrlName, PhotocellAdjustmentStep, PreparationStep, RelationsManager, ResponseStatusEnum, StepBuilder, WhereKind, WhereOperator } from 'src/app/models';
 import { EssayTemplateStep, EssayTemplateStepDbTableContext } from 'src/app/models/database/tables/essay-template-step.model';
@@ -173,7 +173,7 @@ export class ExecuteEssayComponent implements OnInit, OnDestroy, ComponentCanDea
                 if (status !== ResponseStatusEnum.ACK) {
                   return of(false);
                 }
-                return of(true);
+                return of(true).pipe(delay(1000));
               })
             );
         }
