@@ -1,53 +1,66 @@
 <div class="p-font-family">
-  <div class="text-xl mb-2">Generador</div>
+  <div class="text-xl mb-2 flex flex-1 justify-content-between">
+    <span>Generador</span>
+    <ng-container *ngIf="sendAndWaitInProgress$ | async">
+      <app-loading-dots text="Cargando"></app-loading-dots>
+    </ng-container>
+  </div>
 
-  <ng-container *ngIf="(generatorPostStatus$ | async) as generatorPostStatus">
-    <div class="flex align-items-center">
-      <div class="mr-2">Estado de la comunicación:</div>
-      <ng-container [ngSwitch]="generatorPostStatus">
-        <ng-container *ngSwitchCase="'UNKNOW'">
-          <span class="text-500">Desconocida</span>
+  <div class="flex align-items-center">
+    <div class="mr-2">Parámetros de trabajo:</div>
+    <ng-container *ngIf="(workingParamsStatus$ | async) as workingParamsStatus">
+      <ng-container [ngSwitch]="workingParamsStatus">
+        <ng-container *ngSwitchCase="WorkingParamsStatusEnum.UNKNOW">
+          <span class="text-500">Estado desconocido</span>
         </ng-container>
-        <ng-container *ngSwitchCase="'WAITING_RESPONSE'">
-          <span class="text-500">Esperando respuesta...</span>
+        <ng-container
+          *ngSwitchCase="WorkingParamsStatusEnum.REQUEST_IN_PROGRESS"
+        >
+          <span class="text-yellow-600">Esperando respuesta...</span>
         </ng-container>
-        <ng-container *ngSwitchCase="'TIMEOUT'">
-          <span class="text-red-500">No se pudo establecer</span>
+        <ng-container
+          *ngSwitchCase="WorkingParamsStatusEnum.PARAMETERS_SET_CORRECTLY"
+        >
+          <span class="text-green-500">Configurados</span>
         </ng-container>
-        <ng-container *ngSwitchCase="'ACK'">
-          <span class="text-green-500">Establecida</span>
+        <ng-container
+          *ngSwitchCase="WorkingParamsStatusEnum.PARAMETERS_SET_ERROR"
+        >
+          <span class="text-red-500">No se pudieron configurar</span>
         </ng-container>
-        <ng-container *ngSwitchCase="'ERROR'">
-          <div class="flex align-items-center">
-            <span class="text-red-500">
-              ERROR
-              <ng-container
-                *ngIf="generatorErrorCode$ | async as generatorErrorCode"
-              >
-                {{generatorErrorCode}}
-              </ng-container>
-            </span>
-          </div>
+        <ng-container
+          *ngSwitchCase="WorkingParamsStatusEnum.PARAMETERS_TURN_OFF"
+        >
+          <span class="text-500">Apagados</span>
         </ng-container>
       </ng-container>
-    </div>
-  </ng-container>
+    </ng-container>
+  </div>
 
-  <ng-container *ngIf="(generatorStatus$ | async) as generatorStatus">
-    <div class="flex align-items-center">
-      <div class="mr-2">Estado del generador:</div>
+  <div class="flex align-items-center">
+    <div class="mr-2">Estado del generador:</div>
+    <ng-container *ngIf="(generatorStatus$ | async) as generatorStatus">
       <ng-container [ngSwitch]="generatorStatus">
-        <ng-container *ngSwitchCase="'UNKNOW'">
-          <span class="text-500">Desconocido</span>
+        <ng-container *ngSwitchCase="GeneratorStatusEnum.UNKNOW">
+          <span class="text-500">Estado desconocido</span>
         </ng-container>
-        <ng-container *ngSwitchCase="'ON'">
-          <span class="text-green-500">Encendido</span>
+        <ng-container *ngSwitchCase="GeneratorStatusEnum.REQUEST_IN_PROGRESS">
+          <span class="text-yellow-600">Esperando respuesta...</span>
         </ng-container>
-        <ng-container *ngSwitchCase="'OFF'">
+        <ng-container *ngSwitchCase="GeneratorStatusEnum.WORKING">
+          <span class="text-green-500">Funcionando</span>
+        </ng-container>
+        <ng-container *ngSwitchCase="GeneratorStatusEnum.TURN_OFF">
           <span class="text-500">Apagado</span>
         </ng-container>
+        <ng-container *ngSwitchCase="GeneratorStatusEnum.TIMEOUT">
+          <span class="text-red-500">No responde</span>
+        </ng-container>
+        <ng-container *ngSwitchCase="GeneratorStatusEnum.ERROR">
+          <span class="text-red-500">ERROR {{errorCode$ | async}}</span>
+        </ng-container>
       </ng-container>
-    </div>
-  </ng-container>
+    </ng-container>
+  </div>
 
 </div>

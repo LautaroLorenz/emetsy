@@ -1,13 +1,14 @@
 import { Component, HostListener, OnDestroy, OnInit } from '@angular/core';
 import { FormArray, FormControl, FormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { filter, map, Observable, of, ReplaySubject, switchMap, takeUntil, tap } from 'rxjs';
+import { filter,  map, Observable, of, ReplaySubject, switchMap, takeUntil, tap } from 'rxjs';
 import { ComponentCanDeactivate } from 'src/app/guards/pending-changes.guard';
-import { Action, ContrastTestStep, EssayTemplate, EssayTemplateDbTableContext, ExecutionStatus, PageUrlName, PhotocellAdjustmentStep, PreparationStep, RelationsManager, StepBuilder, WhereKind, WhereOperator } from 'src/app/models';
+import { Action, ContrastTestStep, EssayTemplate, EssayTemplateDbTableContext, ExecutionStatus, GeneratorStatusEnum, PageUrlName, PhotocellAdjustmentStep, PreparationStep, RelationsManager, ResponseStatusEnum, StepBuilder, WhereKind, WhereOperator } from 'src/app/models';
 import { EssayTemplateStep, EssayTemplateStepDbTableContext } from 'src/app/models/database/tables/essay-template-step.model';
 import { DatabaseService } from 'src/app/services/database.service';
 import { ExecutionDirector } from 'src/app/services/execution-director.service';
 import { GeneratorService } from 'src/app/services/generator.service';
+import { MessagesService } from 'src/app/services/messages.service';
 import { NavigationService } from 'src/app/services/navigation.service';
 
 @Component({
@@ -63,6 +64,7 @@ export class ExecuteEssayComponent implements OnInit, OnDestroy, ComponentCanDea
   }
 
   constructor(
+    private readonly messagesService: MessagesService,
     private readonly dbServiceEssayTemplate: DatabaseService<EssayTemplate>,
     private readonly dbServiceEssayTemplateStep: DatabaseService<EssayTemplateStep>,
     private readonly navigationService: NavigationService,
@@ -152,17 +154,29 @@ export class ExecuteEssayComponent implements OnInit, OnDestroy, ComponentCanDea
 
   @HostListener('window:beforeunload')
   canDeactivate(): Observable<boolean> {
-    return of(this.generatorService.deviceStatus$.value).pipe(
+    return of(this.generatorService.generatorStatus$.value).pipe(
       switchMap((status) => {
-        if (status === 'ON') {
-          return this.generatorService.turnOffSignals$().pipe(
-            map((status) => status === 'ACK'),
-            tap(() => this.generatorService.stop()),
-          );
+        switch (status) {
+          case GeneratorStatusEnum.TURN_OFF:
+            return of(true);
+          case GeneratorStatusEnum.REQUEST_IN_PROGRESS:
+            this.messagesService.warn('Hay una operación con el hardware en curso. Aguarde un momento para que finalice y vuelva a intentar.');
+            return of(false);
+          case GeneratorStatusEnum.ERROR:
+          case GeneratorStatusEnum.TIMEOUT:
+          case GeneratorStatusEnum.UNKNOW:
+          case GeneratorStatusEnum.WORKING:
+            return this.generatorService.turnOffSignals$().pipe(
+              switchMap((status) => {
+                if (status !== ResponseStatusEnum.ACK) {
+                  return of(false);
+                }
+                return of(true);
+              })
+            );
         }
-        return of(true);
       }),
-    )
+    );
   }
 
   ngOnDestroy() {

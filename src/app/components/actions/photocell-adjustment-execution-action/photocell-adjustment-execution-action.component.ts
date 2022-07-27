@@ -1,7 +1,7 @@
 import { AfterViewInit, ChangeDetectionStrategy, Component, Input, OnDestroy } from '@angular/core';
 import { FormGroup } from '@angular/forms';
-import { debounceTime, delay, filter, Observable, ReplaySubject, switchMap, take, takeUntil, takeWhile, tap } from 'rxjs';
-import { Action, ActionComponent, DeviceGetStatus, PhotocellAdjustmentExecutionAction, PhotocellAdjustmentValuesAction, PROTOCOL } from 'src/app/models';
+import { BehaviorSubject, filter, ReplaySubject, switchMap, take, takeUntil, takeWhile, tap } from 'rxjs';
+import { Action, ActionComponent, PhotocellAdjustmentExecutionAction, PhotocellAdjustmentValuesAction, PROTOCOL, ResponseStatusEnum } from 'src/app/models';
 import { GeneratorService } from 'src/app/services/generator.service';
 import { UsbHandlerService } from 'src/app/services/usb-handler.service';
 
@@ -14,6 +14,8 @@ import { UsbHandlerService } from 'src/app/services/usb-handler.service';
 export class PhotocellAdjustmentExecutionActionComponent implements ActionComponent, AfterViewInit, OnDestroy {
 
   @Input() action!: Action;
+
+  readonly initialized$: BehaviorSubject<boolean | null> = new BehaviorSubject<boolean | null>(null);
 
   get helpText(): string {
     return !this.photocellAdjustmentExecutionComplete
@@ -32,9 +34,6 @@ export class PhotocellAdjustmentExecutionActionComponent implements ActionCompon
   get photocellAdjustmentValuesAction(): PhotocellAdjustmentValuesAction {
     return (this.action as PhotocellAdjustmentExecutionAction).photocellAdjustmentValuesAction;
   }
-  get generatorHasError(): boolean {
-    return ['ERROR', 'TIMEOUT'].includes(this.generatorService.devicePostStatus$.value);
-  }
   get connected(): boolean {
     return this.usbHandlerService.connected$.value;
   }
@@ -42,8 +41,7 @@ export class PhotocellAdjustmentExecutionActionComponent implements ActionCompon
   completeAction(): void {
     this.generatorService.turnOffSignals$().pipe(
       take(1),
-      filter((status) => status === 'ACK'),
-      tap(() => this.generatorService.stop()),
+      filter((status) => status === ResponseStatusEnum.ACK),
       tap(() => this.form.get('photocellAdjustmentExecutionComplete')?.setValue(true)),
     ).subscribe();
   }
@@ -70,49 +68,38 @@ export class PhotocellAdjustmentExecutionActionComponent implements ActionCompon
      */
   }
 
-  private setGeneratorWorkingParams$(): Observable<DeviceGetStatus> {
+  ngAfterViewInit(): void {
     const phaseL1 = this.photocellAdjustmentValuesAction.getPhase('L1');
     const phaseL2 = this.photocellAdjustmentValuesAction.getPhase('L2');
     const phaseL3 = this.photocellAdjustmentValuesAction.getPhase('L3');
-    return this.generatorService.setWorkingParams$(
-      phaseL1.voltageU1,
-      phaseL2.voltageU2,
-      phaseL3.voltageU3,
-      phaseL1.currentI1,
-      phaseL2.currentI2,
-      phaseL3.currentI3,
-      phaseL1.anglePhi1,
-      phaseL2.anglePhi2,
-      phaseL3.anglePhi3,
-    );
-  }
 
-  private startGeneratorCheckStatusLoop(): void {
-    this.generatorService.getStatus$().pipe(
-      delay(PROTOCOL.TIME.LOOP.CHECK_DEVICE_STATUS),
-      takeWhile(() => this.generatorService.deviceStatus$.value === 'ON'),
-      take(1),
-      filter((status) => status === 'ACK'),
-      tap(() => this.startGeneratorCheckStatusLoop()),
-    ).subscribe();
-    return;
-  }
-
-  ngAfterViewInit(): void {
     this.usbHandlerService.connected$.pipe(
       takeUntil(this.destroyed$),
+      takeWhile(() => !this.photocellAdjustmentExecutionComplete),
+      tap(() => {
+        this.initialized$.next(false);
+        this.generatorService.clearStatus();
+      }),
       filter((isConnected) => isConnected),
-      tap(() => this.generatorService.start()),
-      switchMap(() => this.setGeneratorWorkingParams$().pipe(
-        take(1),
-        filter((status) => status === 'ACK'),
-        tap(() => this.startGeneratorCheckStatusLoop()),
+      switchMap(() => this.generatorService.setWorkingParams$(
+        phaseL1.voltageU1,
+        phaseL2.voltageU2,
+        phaseL3.voltageU3,
+        phaseL1.currentI1,
+        phaseL2.currentI2,
+        phaseL3.currentI3,
+        phaseL1.anglePhi1,
+        phaseL2.anglePhi2,
+        phaseL3.anglePhi3,
+      ).pipe(
+        switchMap(() => this.generatorService.getStatus$(PROTOCOL.TIME.CHECK_STATUS_DELAY))
       )),
+      filter(status => status === ResponseStatusEnum.ACK),
+      tap(() => this.initialized$.next(true)),
     ).subscribe();
   }
 
   ngOnDestroy(): void {
-    this.generatorService.stop();
     this.destroyed$.next(true);
     this.destroyed$.complete();
   }

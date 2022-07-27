@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { Observable } from 'rxjs';
-import { DevicePostStatus, DeviceStatus } from 'src/app/models';
+import { GeneratorStatus, GeneratorStatusEnum, WorkingParametersStatus, WorkingParamsStatusEnum } from 'src/app/models';
 import { GeneratorService } from 'src/app/services/generator.service';
 
 @Component({
@@ -11,13 +11,22 @@ import { GeneratorService } from 'src/app/services/generator.service';
 })
 export class GeneratorComponent {
 
-  get generatorPostStatus$(): Observable<DevicePostStatus> {
-    return this.generatorService.devicePostStatus$;
-  }  
-  get generatorStatus$(): Observable<DeviceStatus> {
-    return this.generatorService.deviceStatus$;
-  }  
-  get generatorErrorCode$(): Observable<number | null> {
+  readonly WorkingParamsStatusEnum = WorkingParamsStatusEnum;
+  readonly GeneratorStatusEnum = GeneratorStatusEnum;
+
+  get sendAndWaitInProgress$(): Observable<boolean> {
+    return this.generatorService.sendAndWaitInProgress$;
+  }
+
+  get workingParamsStatus$(): Observable<WorkingParametersStatus> {
+    return this.generatorService.workingParamsStatus$;
+  }
+
+  get generatorStatus$(): Observable<GeneratorStatus> {
+    return this.generatorService.generatorStatus$;
+  }
+
+  get errorCode$(): Observable<number | null> {
     return this.generatorService.errorCode$;
   }
 

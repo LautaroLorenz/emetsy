@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { BehaviorSubject, first, from, Observable, Subject, take, tap } from "rxjs";
+import { BehaviorSubject, first, from, Observable, of, Subject, switchMap, take, tap } from "rxjs";
 import { Command, CompileParams, PROTOCOL } from "../models";
 import { IpcService } from "./ipc.service";
 import { MessagesService } from "./messages.service";
@@ -48,13 +48,14 @@ export class UsbHandlerService {
     this.checkingConnectionLoopTimeout = setTimeout(() => {
       this.isConnected().pipe(
         first(),
-        tap((isConnected) => {
+        switchMap((isConnected) => {
           if (isConnected !== this.connected$.value) {
             this.connected$.next(isConnected);
             if (!isConnected) {
-              this.disconnect().pipe(take(1)).subscribe();
+              return this.disconnect$().pipe(take(1));
             }
           }
+          return of(true);
         }),
         tap(() => this.startChekingConnectionLoop(false)),
       ).subscribe();
@@ -109,9 +110,14 @@ export class UsbHandlerService {
       tap((coludBeSent) => {
         if (!coludBeSent) {
           this.messagesService.error('Error de comunicación con el hardware.');
-          this.disconnect();
         }
       }),
+      switchMap((coludBeSent) => {
+        if(coludBeSent) {
+          return of(true);
+        }
+        return this.disconnect$().pipe(take(1));
+      })
     );
   }
 
@@ -150,7 +156,7 @@ export class UsbHandlerService {
     }
   }
 
-  connect(): Observable<boolean> {
+  connect$(): Observable<boolean> {
     return from(this.ipcService.invoke('open-usb-serial-port', {
       productId: this.productId,
       vendorId: this.vendorId
@@ -175,7 +181,7 @@ export class UsbHandlerService {
     );
   }
 
-  disconnect(): Observable<boolean> {
+  disconnect$(): Observable<boolean> {
     return from(this.ipcService.invoke('close-usb-serial-port')).pipe(
       tap((isClose) => {
         if (!isClose) {

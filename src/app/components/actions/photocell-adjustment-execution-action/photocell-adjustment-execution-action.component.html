@@ -26,9 +26,9 @@
         styleClass="p-button-outlined"
         label="Ajuste de fotocelulas realizado"
         (click)="completeAction()"
-        [disabled]="photocellAdjustmentExecutionComplete || generatorHasError || !connected"
+        [disabled]="photocellAdjustmentExecutionComplete || !connected || !initialized$.value"
         [ngClass]="{
-          'pointer-events-none': photocellAdjustmentExecutionComplete || generatorHasError || !connected
+          'pointer-events-none': photocellAdjustmentExecutionComplete || !connected || !initialized$.value
         }"
       ></p-button>
     </div>

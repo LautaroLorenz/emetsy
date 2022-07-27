@@ -23,13 +23,13 @@ export class ConnectionStatusComponent implements OnInit, OnDestroy {
   }
 
   connect(): void {
-    this.usbHandlerService.connect().pipe(
+    this.usbHandlerService.connect$().pipe(
       take(1),
     ).subscribe();
   }
 
   ngOnDestroy(): void {
-    this.usbHandlerService.disconnect().pipe(
+    this.usbHandlerService.disconnect$().pipe(
       take(1),
     ).subscribe();
   }

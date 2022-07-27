@@ -59,6 +59,7 @@ import { PhotocellAdjustmentExecutionActionComponent } from './actions/photocell
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { GeneratorComponent } from './generator/generator.component';
 import { ConnectionStatusComponent } from './connection-status/connection-status.component';
+import { LoadingDotsComponent } from './loading-dots/loading-dots.component';
 
 const PrimeNgModules = [
   MenubarModule,
@@ -119,6 +120,7 @@ const EmetsyComponents = [
   PhotocellAdjustmentExecutionActionComponent,
   GeneratorComponent,
   ConnectionStatusComponent,
+  LoadingDotsComponent,
 ];
 
 @NgModule({

@@ -29,4 +29,4 @@ export * from "./steps/photocell-adjustment.step.model";
 export * from "./steps/contrast-test.step.model";
 export * from "./protocol/command.model";
 export * from "./protocol/protocol.model";
-export * from "./protocol/device.model";
+export * from "./protocol/generator.model";
