@@ -1,6 +1,6 @@
 import { DecimalPipe } from "@angular/common";
 import { Injectable } from "@angular/core";
-import { BehaviorSubject, delay, filter, map, Observable, of, switchMap, take, tap, timeout } from "rxjs";
+import { BehaviorSubject, delay, map, Observable, of, switchMap } from "rxjs";
 import { Command, CommandManager, WorkingParametersStatus, WorkingParamsStatusEnum, PROTOCOL, ResponseStatus, ResponseStatusEnum, GeneratorStatus, GeneratorStatusEnum } from "../models";
 import { MessagesService } from "./messages.service";
 import { UsbHandlerService } from "./usb-handler.service";
@@ -11,7 +11,6 @@ import { UsbHandlerService } from "./usb-handler.service";
 export class GeneratorService {
 
   readonly errorCode$: BehaviorSubject<number | null>;
-  readonly sendAndWaitInProgress$: BehaviorSubject<boolean>;
   readonly workingParamsStatus$: BehaviorSubject<WorkingParametersStatus>;
   readonly generatorStatus$: BehaviorSubject<GeneratorStatus>;
 
@@ -24,27 +23,10 @@ export class GeneratorService {
     private readonly messagesService: MessagesService,
     private readonly decimalPipe: DecimalPipe,
   ) {
-    this.commandManager = new CommandManager(this.deviceFrom, this.deviceTo);
     this.errorCode$ = new BehaviorSubject<number | null>(null);
-    this.sendAndWaitInProgress$ = new BehaviorSubject<boolean>(false);
+    this.commandManager = new CommandManager(this.deviceFrom, this.deviceTo);
     this.workingParamsStatus$ = new BehaviorSubject<WorkingParametersStatus>(WorkingParamsStatusEnum.UNKNOW);
     this.generatorStatus$ = new BehaviorSubject<GeneratorStatus>(GeneratorStatusEnum.UNKNOW);
-  }
-
-  private isAck(command: Command): boolean {
-    const blocks = command.split(PROTOCOL.COMMAND.DIVIDER);
-    return blocks.some((block) => block.includes('ACK'));
-  }
-
-  private isError(command: Command): boolean {
-    const blocks = command.split(PROTOCOL.COMMAND.DIVIDER);
-    return blocks.some((block) => block.includes('ERR'));
-  }
-
-  private getErrorCode(command: Command): number {
-    const blocks = command.split(PROTOCOL.COMMAND.DIVIDER);
-    const errorBlock = blocks.find((block) => block.includes('ERR'));
-    return Number(errorBlock?.match(/\d/g)?.join(""));
   }
 
   private voltageTemplate(voltage: number): string {
@@ -59,39 +41,8 @@ export class GeneratorService {
     return `xxxx+${this.decimalPipe.transform(angle, '3.0')?.replace(/,/g, '')}`;
   }
 
-  private sendAndWaitAsync$(command: Command): Observable<ResponseStatus> {
-    return of(this.sendAndWaitInProgress$.next(true)).pipe(
-      take(1),
-      tap(() => this.usbHandlerService.send(command)),
-      switchMap(() => this.usbHandlerService.getCommand$.pipe(
-        filter((command) => this.commandManager.isForMe(command)),
-        take(1),
-        tap(() => this.errorCode$.next(null)),
-        timeout({
-          each: PROTOCOL.TIME.WAITING_RESPONSE_TIMEOUT,
-          with: () => of(ResponseStatusEnum.TIMEOUT),
-        }),
-        map((command) => {
-          if (this.isAck(command)) {
-            return ResponseStatusEnum.ACK;
-          }
-          if (this.isError(command)) {
-            this.errorCode$.next(this.getErrorCode(command));
-            return ResponseStatusEnum.ERROR;
-          }
-          if (command === ResponseStatusEnum.TIMEOUT) {
-            return ResponseStatusEnum.TIMEOUT;
-          }
-          return ResponseStatusEnum.UNKNOW;
-        }),
-        tap(() => this.sendAndWaitInProgress$.next(false)),
-      )),
-    );
-  }
-
   clearStatus(): void {
     this.errorCode$.next(null);
-    this.sendAndWaitInProgress$.next(false);
     this.workingParamsStatus$.next(WorkingParamsStatusEnum.UNKNOW);
     this.generatorStatus$.next(GeneratorStatusEnum.UNKNOW);
   }
@@ -120,8 +71,9 @@ export class GeneratorService {
       this.angleTemplate(anglePhi3),
     );
     return of(this.workingParamsStatus$.next(WorkingParamsStatusEnum.REQUEST_IN_PROGRESS)).pipe(
-      switchMap(() => this.sendAndWaitAsync$(command).pipe(
-        tap((status) => {
+      switchMap(() => this.usbHandlerService.sendAndWaitAsync$(command, this.commandManager).pipe(
+        map(({ status, errorCode }) => {
+          this.errorCode$.next(errorCode);
           switch (status) {
             case ResponseStatusEnum.ACK:
               this.workingParamsStatus$.next(WorkingParamsStatusEnum.PARAMETERS_SET_CORRECTLY);
@@ -133,6 +85,7 @@ export class GeneratorService {
               this.messagesService.error('No se pudo configurar los parámetros de trabajo del generador.');
               break;
           }
+          return status;
         })
       ))
     );
@@ -142,8 +95,9 @@ export class GeneratorService {
     const command: Command = this.commandManager.build(PROTOCOL.DEVICE.GENERATOR.COMMAND.STATUS);
     return of(this.generatorStatus$.next(GeneratorStatusEnum.REQUEST_IN_PROGRESS)).pipe(
       delay(delayTime),
-      switchMap(() => this.sendAndWaitAsync$(command).pipe(
-        tap((status) => {
+      switchMap(() => this.usbHandlerService.sendAndWaitAsync$(command, this.commandManager).pipe(
+        map(({ status, errorCode }) => {
+          this.errorCode$.next(errorCode);
           switch (status) {
             case ResponseStatusEnum.ACK:
               this.generatorStatus$.next(GeneratorStatusEnum.WORKING);
@@ -157,15 +111,16 @@ export class GeneratorService {
               this.messagesService.error('No se pudo obtener el estado del generador.');
               break;
           }
-        })
+          return status;
+        }),
       ))
     );
   }
 
   turnOffSignals$(): Observable<ResponseStatus> {
     const command: Command = this.commandManager.build(PROTOCOL.DEVICE.GENERATOR.COMMAND.STOP);
-    return this.sendAndWaitAsync$(command).pipe(
-      switchMap((status) => {
+    return this.usbHandlerService.sendAndWaitAsync$(command, this.commandManager).pipe(
+      switchMap(({ status }) => {
         switch (status) {
           case ResponseStatusEnum.ACK:
             this.clearStatus();

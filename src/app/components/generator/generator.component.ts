@@ -14,10 +14,6 @@ export class GeneratorComponent {
   readonly WorkingParamsStatusEnum = WorkingParamsStatusEnum;
   readonly GeneratorStatusEnum = GeneratorStatusEnum;
 
-  get sendAndWaitInProgress$(): Observable<boolean> {
-    return this.generatorService.sendAndWaitInProgress$;
-  }
-
   get workingParamsStatus$(): Observable<WorkingParametersStatus> {
     return this.generatorService.workingParamsStatus$;
   }
@@ -27,7 +23,7 @@ export class GeneratorComponent {
   }
 
   get errorCode$(): Observable<number | null> {
-    return this.generatorService.errorCode$;
+    return this.generatorService.errorCode$;    
   }
 
   constructor(

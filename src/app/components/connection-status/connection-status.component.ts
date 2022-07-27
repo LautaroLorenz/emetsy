@@ -14,6 +14,10 @@ export class ConnectionStatusComponent implements OnInit, OnDestroy {
     return this.usbHandlerService.connected$;
   }
 
+  get sendAndWaitInProgress$(): Observable<boolean> {
+    return this.usbHandlerService.sendAndWaitInProgress$;
+  }
+
   constructor(
     private readonly usbHandlerService: UsbHandlerService,
   ) { }

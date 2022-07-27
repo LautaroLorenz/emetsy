@@ -1,6 +1,12 @@
 <div class="p-font-family">
 
-  <div class="text-xl mb-2">Conexión</div>
+
+  <div class="text-xl mb-2 flex flex-1 justify-content-between">
+    <div class="text-xl mb-2">Conexión</div>
+    <ng-container *ngIf="sendAndWaitInProgress$ | async">
+      <app-loading-dots text="Transmitiendo"></app-loading-dots>
+    </ng-container>
+  </div>
 
   <div class="flex align-items-center">
     <div class="flex">Estado de la conexión USB:</div>
