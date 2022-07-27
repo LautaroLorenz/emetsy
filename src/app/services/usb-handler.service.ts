@@ -226,7 +226,7 @@ export class UsbHandlerService {
     );
   }
 
-  sendAndWaitAsync$(command: Command, commandManager: CommandManager): Observable<{status: ResponseStatus, errorCode: number | null}> {
+  sendAndWaitAsync$(command: Command, commandManager: CommandManager): Observable<{ status: ResponseStatus, errorCode: number | null }> {
     return of(this.sendAndWaitInProgress$.next(true)).pipe(
       take(1),
       tap(() => this.send(command)),
@@ -245,7 +245,7 @@ export class UsbHandlerService {
           } else if (this.isError(command)) {
             errorCode = this.getErrorCode(command);
             status = ResponseStatusEnum.ERROR;
-          } else  if (command === ResponseStatusEnum.TIMEOUT) {
+          } else if (command === ResponseStatusEnum.TIMEOUT) {
             status = ResponseStatusEnum.TIMEOUT;
           } else {
             status = ResponseStatusEnum.UNKNOW;

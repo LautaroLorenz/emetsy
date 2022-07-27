@@ -10,6 +10,8 @@ export type WorkingParametersStatus = WorkingParamsStatusEnum;
 export enum GeneratorStatusEnum {
   UNKNOW = 'UNKNOW',
   REQUEST_IN_PROGRESS = 'REQUEST_IN_PROGRESS',
+  WAITING_FOR_STABILIZATION = 'WAITING_FOR_STABILIZATION', 
+  STABILIZED = 'STABILIZED', 
   WORKING = 'WORKING',
   TIMEOUT = 'TIMEOUT',
   ERROR = 'ERROR',

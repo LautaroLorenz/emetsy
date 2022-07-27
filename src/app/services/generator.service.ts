@@ -1,6 +1,6 @@
 import { DecimalPipe } from "@angular/common";
 import { Injectable } from "@angular/core";
-import { BehaviorSubject, delay, map, Observable, of, switchMap } from "rxjs";
+import { BehaviorSubject, delay, map, Observable, of, switchMap, tap } from "rxjs";
 import { Command, CommandManager, WorkingParametersStatus, WorkingParamsStatusEnum, PROTOCOL, ResponseStatus, ResponseStatusEnum, GeneratorStatus, GeneratorStatusEnum } from "../models";
 import { MessagesService } from "./messages.service";
 import { UsbHandlerService } from "./usb-handler.service";
@@ -87,14 +87,24 @@ export class GeneratorService {
           }
           return status;
         })
-      ))
+      )),
+      switchMap((status) => {
+        switch (status) {
+          case ResponseStatusEnum.ACK:
+            this.generatorStatus$.next(GeneratorStatusEnum.WAITING_FOR_STABILIZATION);
+            return of(status).pipe(
+              delay(PROTOCOL.TIME.WAIT_STABILIZATION),
+              tap(() => this.generatorStatus$.next(GeneratorStatusEnum.STABILIZED))
+            );
+        }
+        return of(status);
+      }),
     );
   }
 
-  getStatus$(delayTime: number): Observable<ResponseStatus> {
+  getStatus$(): Observable<ResponseStatus> {
     const command: Command = this.commandManager.build(PROTOCOL.DEVICE.GENERATOR.COMMAND.STATUS);
     return of(this.generatorStatus$.next(GeneratorStatusEnum.REQUEST_IN_PROGRESS)).pipe(
-      delay(delayTime),
       switchMap(() => this.usbHandlerService.sendAndWaitAsync$(command, this.commandManager).pipe(
         map(({ status, errorCode }) => {
           this.errorCode$.next(errorCode);
@@ -119,21 +129,23 @@ export class GeneratorService {
 
   turnOffSignals$(): Observable<ResponseStatus> {
     const command: Command = this.commandManager.build(PROTOCOL.DEVICE.GENERATOR.COMMAND.STOP);
-    return this.usbHandlerService.sendAndWaitAsync$(command, this.commandManager).pipe(
-      switchMap(({ status }) => {
-        switch (status) {
-          case ResponseStatusEnum.ACK:
-            this.clearStatus();
-            this.workingParamsStatus$.next(WorkingParamsStatusEnum.PARAMETERS_TURN_OFF);
-            this.generatorStatus$.next(GeneratorStatusEnum.TURN_OFF);
-            return of(status);
-          case ResponseStatusEnum.ERROR:
-          case ResponseStatusEnum.TIMEOUT:
-          case ResponseStatusEnum.UNKNOW:
-            this.messagesService.error('No se pudo apagar el generador.');
-            return this.getStatus$(0);
-        }
-      })
+    return of(this.generatorStatus$.next(GeneratorStatusEnum.REQUEST_IN_PROGRESS)).pipe(
+      switchMap(() => this.usbHandlerService.sendAndWaitAsync$(command, this.commandManager).pipe(
+        switchMap(({ status }) => {
+          switch (status) {
+            case ResponseStatusEnum.ACK:
+              this.clearStatus();
+              this.workingParamsStatus$.next(WorkingParamsStatusEnum.PARAMETERS_TURN_OFF);
+              this.generatorStatus$.next(GeneratorStatusEnum.TURN_OFF);
+              return of(status);
+            case ResponseStatusEnum.ERROR:
+            case ResponseStatusEnum.TIMEOUT:
+            case ResponseStatusEnum.UNKNOW:
+              this.messagesService.error('No se pudo apagar el generador.');
+              return this.getStatus$();
+          }
+        })
+      ))
     );
   }
 }

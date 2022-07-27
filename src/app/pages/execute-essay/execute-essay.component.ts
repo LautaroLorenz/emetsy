@@ -1,7 +1,7 @@
 import { Component, HostListener, OnDestroy, OnInit } from '@angular/core';
 import { FormArray, FormControl, FormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { filter,  map, Observable, of, ReplaySubject, switchMap, takeUntil, tap } from 'rxjs';
+import { filter, map, Observable, of, ReplaySubject, switchMap, takeUntil, tap } from 'rxjs';
 import { ComponentCanDeactivate } from 'src/app/guards/pending-changes.guard';
 import { Action, ContrastTestStep, EssayTemplate, EssayTemplateDbTableContext, ExecutionStatus, GeneratorStatusEnum, PageUrlName, PhotocellAdjustmentStep, PreparationStep, RelationsManager, ResponseStatusEnum, StepBuilder, WhereKind, WhereOperator } from 'src/app/models';
 import { EssayTemplateStep, EssayTemplateStepDbTableContext } from 'src/app/models/database/tables/essay-template-step.model';
@@ -160,6 +160,8 @@ export class ExecuteEssayComponent implements OnInit, OnDestroy, ComponentCanDea
           case GeneratorStatusEnum.TURN_OFF:
             return of(true);
           case GeneratorStatusEnum.REQUEST_IN_PROGRESS:
+          case GeneratorStatusEnum.WAITING_FOR_STABILIZATION:
+          case GeneratorStatusEnum.STABILIZED:
             this.messagesService.warn('Hay una operación con el hardware en curso. Aguarde un momento para que finalice y vuelva a intentar.');
             return of(false);
           case GeneratorStatusEnum.ERROR:

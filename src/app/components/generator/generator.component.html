@@ -41,6 +41,12 @@
         <ng-container *ngSwitchCase="GeneratorStatusEnum.UNKNOW">
           <span class="text-500">Estado desconocido</span>
         </ng-container>
+        <ng-container *ngSwitchCase="GeneratorStatusEnum.WAITING_FOR_STABILIZATION">
+          <span class="text-yellow-600">Estabilizando...</span>
+        </ng-container>
+        <ng-container *ngSwitchCase="GeneratorStatusEnum.STABILIZED">
+          <span class="text-yellow-600">Estabilizado</span>
+        </ng-container>
         <ng-container *ngSwitchCase="GeneratorStatusEnum.REQUEST_IN_PROGRESS">
           <span class="text-yellow-600">Esperando respuesta...</span>
         </ng-container>

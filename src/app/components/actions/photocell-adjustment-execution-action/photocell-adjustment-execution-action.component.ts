@@ -92,7 +92,7 @@ export class PhotocellAdjustmentExecutionActionComponent implements ActionCompon
         phaseL2.anglePhi2,
         phaseL3.anglePhi3,
       ).pipe(
-        switchMap(() => this.generatorService.getStatus$(PROTOCOL.TIME.CHECK_STATUS_DELAY))
+        switchMap(() => this.generatorService.getStatus$())
       )),
       filter(status => status === ResponseStatusEnum.ACK),
       tap(() => this.initialized$.next(true)),

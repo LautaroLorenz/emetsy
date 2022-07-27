@@ -15,7 +15,7 @@ export const PROTOCOL = {
       CHECK_DEVICE_STATUS: 2000,
     },
     WAITING_RESPONSE_TIMEOUT: 5000,
-    CHECK_STATUS_DELAY: 2000,
+    WAIT_STABILIZATION: 2000,
   },
   COMMAND: {
     DIVIDER: '| ',
@@ -33,6 +33,10 @@ export const PROTOCOL = {
         STOP: 'STP00000',
         START: 'MAR00000',
       }
+    },
+    STANDARD: {
+      NAME: 'PTR',
+
     }
   }
 };
