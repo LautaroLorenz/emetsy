@@ -59,7 +59,8 @@ const routes: Routes = [
   },
   {
     path: PageUrlName.executeEssay,
-    component: ExecuteEssayComponent
+    component: ExecuteEssayComponent,
+    canDeactivate: [PendingChangesGuard]
   },
 ];
 

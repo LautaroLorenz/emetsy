@@ -10,35 +10,26 @@
     <p-message
       severity="{{photocellAdjustmentExecutionComplete ? 'success' : 'info'}}"
       text="{{helpText}}"
-      styleClass="justify-content-start w-full mb-5"
+      styleClass="justify-content-start w-full mb-3"
     ></p-message>
 
-    <p-button
-      styleClass="p-button-success"
-      label="Encender Generador"
-      (click)="test1()"
-    ></p-button>
+    <div class="border border-1 border-200 p-4 mb-4 border-round">
+      <app-connection-status></app-connection-status>
 
-    <p-button
-      styleClass="p-button-warning ml-4"
-      label="Obtener estado"
-      (click)="test3()"
-    ></p-button>
+      <p-divider></p-divider>
 
-    <p-button
-      styleClass="p-button-danger ml-4"
-      label="Apagar Generador"
-      (click)="test2()"
-    ></p-button>
-
-    <p-divider></p-divider>
+      <app-generator></app-generator>
+    </div>
 
     <div class="flex justify-content-end">
       <p-button
         styleClass="p-button-outlined"
         label="Ajuste de fotocelulas realizado"
         (click)="completeAction()"
-        [disabled]="photocellAdjustmentExecutionComplete"
+        [disabled]="photocellAdjustmentExecutionComplete || generatorHasError || !connected"
+        [ngClass]="{
+          'pointer-events-none': photocellAdjustmentExecutionComplete || generatorHasError || !connected
+        }"
       ></p-button>
     </div>
 

@@ -1,6 +1,6 @@
 import { FormArray, FormControl, FormGroup, Validators } from "@angular/forms";
 import { ReplaySubject, takeUntil, tap, BehaviorSubject } from "rxjs";
-import { CompileParams } from "../configuration.model";
+import { CompileParams } from "../compile-params.model";
 import { Action, ActionEnum, ExecutionStatus } from "./action.model";
 
 export class StandIdentificationAction implements Action {

@@ -2,7 +2,7 @@ import { PROTOCOL } from "./protocol.model";
 
 export type Command = string;
 
-export class CommandBuilder {
+export class CommandManager {
   private divider = PROTOCOL.COMMAND.DIVIDER;
   private start = PROTOCOL.COMMAND.START;
   private end = PROTOCOL.COMMAND.END;
@@ -23,12 +23,24 @@ export class CommandBuilder {
     commandBlocks.push(this.start);
     commandBlocks.push(this.deviceFrom);
     commandBlocks.push(this.deviceTo);
-    for(const arg of args) {
+    for (const arg of args) {
       commandBlocks.push(arg);
     }
     commandBlocks.push(this.end);
     const checkSum = this.calculateChecksum(commandBlocks.join(this.divider));
     commandBlocks.push(checkSum);
     return commandBlocks.join(this.divider);
+  }
+
+  /**
+   * TODO: validar checksum
+   */
+  isValid(command: Command): boolean {
+    return true;
+  }
+
+  isForMe(command: Command): boolean {
+    const blocks = command.split(PROTOCOL.COMMAND.DIVIDER);
+    return blocks.some((block) => block === this.deviceFrom);
   }
 }

@@ -1,18 +1,20 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, HostListener, OnDestroy, OnInit } from '@angular/core';
 import { FormArray, FormControl, FormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { filter, from, map, Observable, of, ReplaySubject, switchMap, takeUntil, takeWhile, tap } from 'rxjs';
+import { filter, map, Observable, of, ReplaySubject, switchMap, takeUntil, tap } from 'rxjs';
+import { ComponentCanDeactivate } from 'src/app/guards/pending-changes.guard';
 import { Action, ContrastTestStep, EssayTemplate, EssayTemplateDbTableContext, ExecutionStatus, PageUrlName, PhotocellAdjustmentStep, PreparationStep, RelationsManager, StepBuilder, WhereKind, WhereOperator } from 'src/app/models';
 import { EssayTemplateStep, EssayTemplateStepDbTableContext } from 'src/app/models/database/tables/essay-template-step.model';
 import { DatabaseService } from 'src/app/services/database.service';
 import { ExecutionDirector } from 'src/app/services/execution-director.service';
+import { GeneratorService } from 'src/app/services/generator.service';
 import { NavigationService } from 'src/app/services/navigation.service';
 
 @Component({
   templateUrl: './execute-essay.component.html',
   styleUrls: ['./execute-essay.component.scss']
 })
-export class ExecuteEssayComponent implements OnInit, OnDestroy {
+export class ExecuteEssayComponent implements OnInit, OnDestroy, ComponentCanDeactivate {
 
   readonly title: string = 'Ensayo';
   readonly id$: Observable<number>;
@@ -66,6 +68,7 @@ export class ExecuteEssayComponent implements OnInit, OnDestroy {
     private readonly navigationService: NavigationService,
     private readonly route: ActivatedRoute,
     private readonly executionDirectorService: ExecutionDirector,
+    private readonly generatorService: GeneratorService,
   ) {
     this.id$ = this.route.queryParams.pipe(
       filter(({ id }) => id),
@@ -145,6 +148,21 @@ export class ExecuteEssayComponent implements OnInit, OnDestroy {
 
   executeNext(): void {
     this.executionDirectorService.executeNext();
+  }
+
+  @HostListener('window:beforeunload')
+  canDeactivate(): Observable<boolean> {
+    return of(this.generatorService.deviceStatus$.value).pipe(
+      switchMap((status) => {
+        if (status === 'ON') {
+          return this.generatorService.turnOffSignals$().pipe(
+            map((status) => status === 'ACK'),
+            tap(() => this.generatorService.stop()),
+          );
+        }
+        return of(true);
+      }),
+    )
   }
 
   ngOnDestroy() {

@@ -57,6 +57,8 @@ import { StepExecutionStatusListComponent } from './step-execution-status-list/s
 import { StepBuildFormComponent } from './step-build-form/step-build-form.component';
 import { PhotocellAdjustmentExecutionActionComponent } from './actions/photocell-adjustment-execution-action/photocell-adjustment-execution-action.component';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
+import { GeneratorComponent } from './generator/generator.component';
+import { ConnectionStatusComponent } from './connection-status/connection-status.component';
 
 const PrimeNgModules = [
   MenubarModule,
@@ -115,6 +117,8 @@ const EmetsyComponents = [
   StepExecutionStatusListComponent,
   StepBuildFormComponent,
   PhotocellAdjustmentExecutionActionComponent,
+  GeneratorComponent,
+  ConnectionStatusComponent,
 ];
 
 @NgModule({

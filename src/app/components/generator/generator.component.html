@@ -1,0 +1,53 @@
+<div class="p-font-family">
+  <div class="text-xl mb-2">Generador</div>
+
+  <ng-container *ngIf="(generatorPostStatus$ | async) as generatorPostStatus">
+    <div class="flex align-items-center">
+      <div class="mr-2">Estado de la comunicación:</div>
+      <ng-container [ngSwitch]="generatorPostStatus">
+        <ng-container *ngSwitchCase="'UNKNOW'">
+          <span class="text-500">Desconocida</span>
+        </ng-container>
+        <ng-container *ngSwitchCase="'WAITING_RESPONSE'">
+          <span class="text-500">Esperando respuesta...</span>
+        </ng-container>
+        <ng-container *ngSwitchCase="'TIMEOUT'">
+          <span class="text-red-500">No se pudo establecer</span>
+        </ng-container>
+        <ng-container *ngSwitchCase="'ACK'">
+          <span class="text-green-500">Establecida</span>
+        </ng-container>
+        <ng-container *ngSwitchCase="'ERROR'">
+          <div class="flex align-items-center">
+            <span class="text-red-500">
+              ERROR
+              <ng-container
+                *ngIf="generatorErrorCode$ | async as generatorErrorCode"
+              >
+                {{generatorErrorCode}}
+              </ng-container>
+            </span>
+          </div>
+        </ng-container>
+      </ng-container>
+    </div>
+  </ng-container>
+
+  <ng-container *ngIf="(generatorStatus$ | async) as generatorStatus">
+    <div class="flex align-items-center">
+      <div class="mr-2">Estado del generador:</div>
+      <ng-container [ngSwitch]="generatorStatus">
+        <ng-container *ngSwitchCase="'UNKNOW'">
+          <span class="text-500">Desconocido</span>
+        </ng-container>
+        <ng-container *ngSwitchCase="'ON'">
+          <span class="text-green-500">Encendido</span>
+        </ng-container>
+        <ng-container *ngSwitchCase="'OFF'">
+          <span class="text-500">Apagado</span>
+        </ng-container>
+      </ng-container>
+    </div>
+  </ng-container>
+
+</div>
