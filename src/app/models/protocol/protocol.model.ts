@@ -10,11 +10,11 @@ export const PROTOCOL = {
   TIME: {
     LOOP: {
       CHECK_IS_CONNECTED: 2000,
-      GET_COMMAND: 250,
-      POST_COMMAND: 500,
-      CHECK_DEVICE_STATUS: 2000,
+      GET_COMMAND: 150,
+      POST_COMMAND: 300,
+      STATUS_REPORTING: 850, // debe ser mayor a WAITING_RESPONSE_TIMEOUT o genera un nuevo llamado antes de romper por timeout.
     },
-    WAITING_RESPONSE_TIMEOUT: 5000,
+    WAITING_RESPONSE_TIMEOUT: 750,
     WAIT_STABILIZATION: 2000,
   },
   COMMAND: {
@@ -34,9 +34,13 @@ export const PROTOCOL = {
         START: 'MAR00000',
       }
     },
-    STANDARD: {
-      NAME: 'PTR',
-
+    PATTERN: {
+      NAME: 'PAT',
+      COMMAND: {
+        STATUS: 'STD00000',
+        STOP: 'STP00000',
+        START: 'MAR00000',
+      }
     }
   }
 };

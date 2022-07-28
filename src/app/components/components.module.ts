@@ -60,6 +60,8 @@ import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { GeneratorComponent } from './generator/generator.component';
 import { ConnectionStatusComponent } from './connection-status/connection-status.component';
 import { LoadingDotsComponent } from './loading-dots/loading-dots.component';
+import { PatternComponent } from './pattern/pattern.component';
+import { PhasesComponent } from './phases/phases.component';
 
 const PrimeNgModules = [
   MenubarModule,
@@ -121,6 +123,8 @@ const EmetsyComponents = [
   GeneratorComponent,
   ConnectionStatusComponent,
   LoadingDotsComponent,
+  PatternComponent,
+  PhasesComponent,
 ];
 
 @NgModule({

@@ -176,6 +176,17 @@ export class UsbHandlerService {
     return blocks.some((block) => block.includes('ERR'));
   }
 
+  private hasParams(command: Command): boolean {
+    return !this.isAck(command) && !this.isError(command);
+  }
+
+  private getParams(command: Command, commandManager: CommandManager): string[] {
+    const blocks = command.split(PROTOCOL.COMMAND.DIVIDER);
+    const deviceToIndex = blocks.indexOf(commandManager.deviceFrom);
+    const endIndex = blocks.indexOf(commandManager.end);
+    return blocks.slice(deviceToIndex + 1, endIndex);
+  }
+
   private getErrorCode(command: Command): number {
     const blocks = command.split(PROTOCOL.COMMAND.DIVIDER);
     const errorBlock = blocks.find((block) => block.includes('ERR'));
@@ -226,11 +237,16 @@ export class UsbHandlerService {
     );
   }
 
-  sendAndWaitAsync$(command: Command, commandManager: CommandManager): Observable<{ status: ResponseStatus, errorCode: number | null }> {
+  sendAndWaitAsync$(command: Command, commandManager: CommandManager): Observable<{
+    status: ResponseStatus,
+    errorCode: number | null
+    params: string[]
+  }> {
     return of(this.sendAndWaitInProgress$.next(true)).pipe(
       take(1),
       tap(() => this.send(command)),
       switchMap(() => this.getCommand$.pipe(
+        filter((command) => commandManager.isValid(command)),
         filter((command) => commandManager.isForMe(command)),
         take(1),
         timeout({
@@ -240,6 +256,7 @@ export class UsbHandlerService {
         map((command) => {
           let status: ResponseStatus;
           let errorCode: number | null = null;
+          let params: string[] = [];
           if (this.isAck(command)) {
             status = ResponseStatusEnum.ACK;
           } else if (this.isError(command)) {
@@ -247,12 +264,16 @@ export class UsbHandlerService {
             status = ResponseStatusEnum.ERROR;
           } else if (command === ResponseStatusEnum.TIMEOUT) {
             status = ResponseStatusEnum.TIMEOUT;
+          } else if (this.hasParams(command)) {
+            params = this.getParams(command, commandManager);
+            status = ResponseStatusEnum.ACK;
           } else {
             status = ResponseStatusEnum.UNKNOW;
           }
           return {
             status,
-            errorCode
+            errorCode,
+            params
           };
         }),
         tap(() => this.sendAndWaitInProgress$.next(false)),

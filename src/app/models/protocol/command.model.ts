@@ -3,11 +3,11 @@ import { PROTOCOL } from "./protocol.model";
 export type Command = string;
 
 export class CommandManager {
-  private divider = PROTOCOL.COMMAND.DIVIDER;
-  private start = PROTOCOL.COMMAND.START;
-  private end = PROTOCOL.COMMAND.END;
-  private deviceFrom: string;
-  private deviceTo: string;
+  readonly divider = PROTOCOL.COMMAND.DIVIDER;
+  readonly start = PROTOCOL.COMMAND.START;
+  readonly end = PROTOCOL.COMMAND.END;
+  readonly deviceFrom: string;
+  readonly deviceTo: string;
 
   constructor(deviceFrom: string, deviceTo: string) {
     this.deviceFrom = deviceFrom;
@@ -30,6 +30,28 @@ export class CommandManager {
     const checkSum = this.calculateChecksum(commandBlocks.join(this.divider));
     commandBlocks.push(checkSum);
     return commandBlocks.join(this.divider);
+  }
+
+  formatNumber(value: number, start: string, zeros: number, withSignal: boolean): string {
+    const formated = ''.concat(start);
+    let stringValue = (value < 0 ? -value : value).toString();
+    while (stringValue.length < zeros) {
+      stringValue = '0'.concat(stringValue);
+    }
+    const signal = withSignal ? ((value < 0) ? '-' : '+') : '';
+    return formated.concat(signal).concat(stringValue);
+  }
+
+  formatString(value: string, zeros: number, commaDigits: number): number {
+    if(value === undefined) {
+      return 0;
+    }
+    const noZerosValue = value.slice(zeros);
+    const digits = noZerosValue.slice(0, -commaDigits);
+    const commas = noZerosValue.slice(-commaDigits);
+    const resultAsString = digits.concat('.').concat(commas);
+    const result = Number(resultAsString);
+    return isNaN(result) ? 0 : result;
   }
 
   /**

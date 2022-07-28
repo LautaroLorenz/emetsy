@@ -1,8 +1,9 @@
 import { AfterViewInit, ChangeDetectionStrategy, Component, Input, OnDestroy } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { BehaviorSubject, filter, ReplaySubject, switchMap, take, takeUntil, takeWhile, tap } from 'rxjs';
-import { Action, ActionComponent, PhotocellAdjustmentExecutionAction, PhotocellAdjustmentValuesAction, PROTOCOL, ResponseStatusEnum } from 'src/app/models';
+import { Action, ActionComponent, Phases, PhotocellAdjustmentExecutionAction, PhotocellAdjustmentValuesAction, ResponseStatusEnum } from 'src/app/models';
 import { GeneratorService } from 'src/app/services/generator.service';
+import { PatternService } from 'src/app/services/pattern.service';
 import { UsbHandlerService } from 'src/app/services/usb-handler.service';
 
 @Component({
@@ -38,9 +39,14 @@ export class PhotocellAdjustmentExecutionActionComponent implements ActionCompon
     return this.usbHandlerService.connected$.value;
   }
 
+  /**
+   * TODO: crear un botón rojo que apague todo.
+   */
   completeAction(): void {
     this.generatorService.turnOffSignals$().pipe(
       take(1),
+      filter((status) => status === ResponseStatusEnum.ACK),
+      switchMap(() => this.patternService.turnOffSignals$()),
       filter((status) => status === ResponseStatusEnum.ACK),
       tap(() => this.form.get('photocellAdjustmentExecutionComplete')?.setValue(true)),
     ).subscribe();
@@ -51,27 +57,11 @@ export class PhotocellAdjustmentExecutionActionComponent implements ActionCompon
   constructor(
     private readonly usbHandlerService: UsbHandlerService,
     private readonly generatorService: GeneratorService,
-  ) {
-    /**
-     * TODO: GENERADOR
-     * --------------------------------------
-     * conectar con el hardware (si no está conectado) - OK
-     * enviar start
-     * esperar 2s
-     * consultar estado
-     * --------------------------------------
-     * Será necesario iniciar el patrón para poder hacer lo siguiente:
-     *  - iniciar loop 0.5s, consultando valores al patrón.
-     * --------------------------------------
-     * la acción se completa una vez que se apaga el generador y el patrón
-     * --------------------------------------
-     */
-  }
+    private readonly patternService: PatternService,
+  ) { }
 
   ngAfterViewInit(): void {
-    const phaseL1 = this.photocellAdjustmentValuesAction.getPhase('L1');
-    const phaseL2 = this.photocellAdjustmentValuesAction.getPhase('L2');
-    const phaseL3 = this.photocellAdjustmentValuesAction.getPhase('L3');
+    const phases: Phases = this.photocellAdjustmentValuesAction.getPhases();
 
     this.usbHandlerService.connected$.pipe(
       takeUntil(this.destroyed$),
@@ -79,20 +69,15 @@ export class PhotocellAdjustmentExecutionActionComponent implements ActionCompon
       tap(() => {
         this.initialized$.next(false);
         this.generatorService.clearStatus();
+        this.patternService.clearStatus();
       }),
       filter((isConnected) => isConnected),
-      switchMap(() => this.generatorService.setWorkingParams$(
-        phaseL1.voltageU1,
-        phaseL2.voltageU2,
-        phaseL3.voltageU3,
-        phaseL1.currentI1,
-        phaseL2.currentI2,
-        phaseL3.currentI3,
-        phaseL1.anglePhi1,
-        phaseL2.anglePhi2,
-        phaseL3.anglePhi3,
-      ).pipe(
-        switchMap(() => this.generatorService.getStatus$())
+      switchMap(() => this.generatorService.setWorkingParams$(phases).pipe(
+        switchMap(() => this.generatorService.getStatus$()),
+      )),
+      filter(status => status === ResponseStatusEnum.ACK),
+      switchMap(() => this.patternService.setWorkingParams$(phases).pipe(
+        switchMap(() => this.patternService.startReportingLoop$()),
       )),
       filter(status => status === ResponseStatusEnum.ACK),
       tap(() => this.initialized$.next(true)),

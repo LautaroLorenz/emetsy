@@ -30,3 +30,5 @@ export * from "./steps/contrast-test.step.model";
 export * from "./protocol/command.model";
 export * from "./protocol/protocol.model";
 export * from "./protocol/generator.model";
+export * from "./protocol/pattern.model";
+export * from "./protocol/working-parameters.model";

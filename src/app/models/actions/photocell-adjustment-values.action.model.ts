@@ -1,5 +1,6 @@
 import { FormControl, FormGroup, Validators } from "@angular/forms";
 import { BehaviorSubject } from "rxjs";
+import { Phases } from "../components/phase.model";
 import { Action, ActionEnum, ExecutionStatus } from "./action.model";
 
 export class PhotocellAdjustmentValuesAction implements Action {
@@ -35,7 +36,11 @@ export class PhotocellAdjustmentValuesAction implements Action {
     return this.form;
   }
 
-  getPhase(phaseName: 'L1' | 'L2' | 'L3') {
-    return this.form.get(`phase${phaseName}`)?.value;
+  getPhases(): Phases {
+    return {
+      phaseL1: this.form.get('phaseL1')?.value,
+      phaseL2: this.form.get('phaseL2')?.value,
+      phaseL3: this.form.get('phaseL3')?.value,
+    };
   }
 }
