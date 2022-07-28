@@ -10,9 +10,9 @@ export const PROTOCOL = {
   TIME: {
     LOOP: {
       CHECK_IS_CONNECTED: 2000,
-      GET_COMMAND: 150,
-      POST_COMMAND: 300,
-      STATUS_REPORTING: 500, // debe ser mayor a WAITING_RESPONSE_TIMEOUT o genera un nuevo llamado antes de romper por timeout.
+      GET_COMMAND: 250,
+      POST_COMMAND: 500,
+      STATUS_REPORTING: 750,
     },
     WAITING_RESPONSE_TIMEOUT: 3000,
     WAIT_STABILIZATION: 2000,

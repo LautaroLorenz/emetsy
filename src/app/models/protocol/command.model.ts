@@ -63,6 +63,6 @@ export class CommandManager {
 
   isForMe(command: Command): boolean {
     const blocks = command.split(PROTOCOL.COMMAND.DIVIDER);
-    return blocks.some((block) => block === this.deviceFrom);
+    return blocks.some((block) => block === this.deviceTo);
   }
 }

@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { Observable } from 'rxjs';
-import { PatternStatus, PatternStatusEnum, Phases, WorkingParametersStatus, WorkingParamsStatusEnum } from 'src/app/models';
+import { PatternStatus, PatternStatusEnum, Phases, WorkingParamsStatus, WorkingParamsStatusEnum } from 'src/app/models';
 import { PatternService } from 'src/app/services/pattern.service';
 
 @Component({
@@ -14,7 +14,7 @@ export class PatternComponent {
   readonly WorkingParamsStatusEnum = WorkingParamsStatusEnum;
   readonly PatternStatusEnum = PatternStatusEnum;
 
-  get workingParamsStatus$(): Observable<WorkingParametersStatus> {
+  get workingParamsStatus$(): Observable<WorkingParamsStatus> {
     return this.patternService.workingParamsStatus$;
   }
 

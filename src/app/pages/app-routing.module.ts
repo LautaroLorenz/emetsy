@@ -12,6 +12,7 @@ import { BrandsComponent } from './brands/brands.component';
 import { EssayTemplateBuilderComponent } from './essay-template-builder/essay-template-builder.component';
 import { ExecuteEssayComponent } from './execute-essay/execute-essay.component';
 import { PendingChangesGuard } from '../guards/pending-changes.guard';
+import { DevicesTurnOffGuard } from '../guards/devices-turn-off.guard';
 
 const routes: Routes = [
   {
@@ -60,7 +61,7 @@ const routes: Routes = [
   {
     path: PageUrlName.executeEssay,
     component: ExecuteEssayComponent,
-    canDeactivate: [PendingChangesGuard]
+    canDeactivate: [DevicesTurnOffGuard]
   },
 ];
 

@@ -62,6 +62,7 @@ import { ConnectionStatusComponent } from './connection-status/connection-status
 import { LoadingDotsComponent } from './loading-dots/loading-dots.component';
 import { PatternComponent } from './pattern/pattern.component';
 import { PhasesComponent } from './phases/phases.component';
+import { WorkingParametersStatusComponent } from './working-parameters-status/working-parameters-status.component';
 
 const PrimeNgModules = [
   MenubarModule,
@@ -125,6 +126,7 @@ const EmetsyComponents = [
   LoadingDotsComponent,
   PatternComponent,
   PhasesComponent,
+  WorkingParametersStatusComponent,
 ];
 
 @NgModule({

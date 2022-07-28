@@ -1,22 +1,18 @@
-import { Component, HostListener, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormArray, FormControl, FormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { filter, map, Observable, of, ReplaySubject, switchMap, takeUntil, tap } from 'rxjs';
-import { ComponentCanDeactivate } from 'src/app/guards/pending-changes.guard';
+import { filter, map, Observable, ReplaySubject, switchMap, takeUntil, tap } from 'rxjs';
 import { Action, ContrastTestStep, EssayTemplate, EssayTemplateDbTableContext, ExecutionStatus, PageUrlName, PhotocellAdjustmentStep, PreparationStep, RelationsManager, StepBuilder, WhereKind, WhereOperator } from 'src/app/models';
 import { EssayTemplateStep, EssayTemplateStepDbTableContext } from 'src/app/models/database/tables/essay-template-step.model';
 import { DatabaseService } from 'src/app/services/database.service';
 import { ExecutionDirector } from 'src/app/services/execution-director.service';
-import { GeneratorService } from 'src/app/services/generator.service';
-import { MessagesService } from 'src/app/services/messages.service';
 import { NavigationService } from 'src/app/services/navigation.service';
-import { PatternService } from 'src/app/services/pattern.service';
 
 @Component({
   templateUrl: './execute-essay.component.html',
   styleUrls: ['./execute-essay.component.scss']
 })
-export class ExecuteEssayComponent implements OnInit, OnDestroy, ComponentCanDeactivate {
+export class ExecuteEssayComponent implements OnInit, OnDestroy {
 
   readonly title: string = 'Ensayo';
   readonly id$: Observable<number>;
@@ -65,14 +61,11 @@ export class ExecuteEssayComponent implements OnInit, OnDestroy, ComponentCanDea
   }
 
   constructor(
-    private readonly messagesService: MessagesService,
     private readonly dbServiceEssayTemplate: DatabaseService<EssayTemplate>,
     private readonly dbServiceEssayTemplateStep: DatabaseService<EssayTemplateStep>,
     private readonly navigationService: NavigationService,
     private readonly route: ActivatedRoute,
     private readonly executionDirectorService: ExecutionDirector,
-    private readonly generatorService: GeneratorService,
-    private readonly patternService: PatternService,
   ) {
     this.id$ = this.route.queryParams.pipe(
       filter(({ id }) => id),
@@ -152,62 +145,6 @@ export class ExecuteEssayComponent implements OnInit, OnDestroy, ComponentCanDea
 
   executeNext(): void {
     this.executionDirectorService.executeNext();
-  }
-
-  /**
-   * TODO: mejorar el apagado. hayendo un apagado general.
-   */
-  @HostListener('window:beforeunload')
-  canDeactivate(): Observable<boolean> {
-    return of(true); // FIXME: no se puede salir de un step que no tiene generador.
-    // return of(this.generatorService.generatorStatus$.value).pipe(
-    //   switchMap((status) => {
-    //     switch (status) {
-    //       case GeneratorStatusEnum.TURN_OFF:
-    //         return of(true);
-    //       case GeneratorStatusEnum.REQUEST_IN_PROGRESS:
-    //       case GeneratorStatusEnum.WAITING_FOR_STABILIZATION:
-    //       case GeneratorStatusEnum.STABILIZED:
-    //         this.messagesService.warn('Hay una operación con el hardware en curso. Aguarde un momento para que finalice y vuelva a intentar.');
-    //         return of(false);
-    //       case GeneratorStatusEnum.ERROR:
-    //       case GeneratorStatusEnum.TIMEOUT:
-    //       case GeneratorStatusEnum.UNKNOW:
-    //       case GeneratorStatusEnum.WORKING:
-    //         return this.generatorService.turnOffSignals$().pipe(
-    //           switchMap((status) => {
-    //             if (status !== ResponseStatusEnum.ACK) {
-    //               return of(false);
-    //             }
-    //             return of(true).pipe(delay(1000));
-    //           })
-    //         );
-    //     }
-    //   }),
-    //   switchMap(() => of(this.patternService.patternStatus$.value).pipe(
-    //     switchMap((status) => {
-    //       switch (status) {
-    //         case PatternStatusEnum.TURN_OFF:
-    //           return of(true);
-    //         case PatternStatusEnum.REQUEST_IN_PROGRESS:
-    //           this.messagesService.warn('Hay una operación con el hardware en curso. Aguarde un momento para que finalice y vuelva a intentar.');
-    //           return of(false);
-    //         case PatternStatusEnum.ERROR:
-    //         case PatternStatusEnum.TIMEOUT:
-    //         case PatternStatusEnum.UNKNOW:
-    //         case PatternStatusEnum.REPORTING:
-    //           return this.patternService.turnOffSignals$().pipe(
-    //             switchMap((status) => {
-    //               if (status !== ResponseStatusEnum.ACK) {
-    //                 return of(false);
-    //               }
-    //               return of(true).pipe(delay(1000));
-    //             })
-    //           );
-    //       }
-    //     })
-    //   )),
-    // );
   }
 
   ngOnDestroy() {

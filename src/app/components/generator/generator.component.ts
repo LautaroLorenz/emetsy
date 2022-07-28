@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { Observable } from 'rxjs';
-import { GeneratorStatus, GeneratorStatusEnum, WorkingParametersStatus, WorkingParamsStatusEnum } from 'src/app/models';
+import { GeneratorStatus, GeneratorStatusEnum, WorkingParamsStatus, WorkingParamsStatusEnum } from 'src/app/models';
 import { GeneratorService } from 'src/app/services/generator.service';
 
 @Component({
@@ -14,7 +14,7 @@ export class GeneratorComponent {
   readonly WorkingParamsStatusEnum = WorkingParamsStatusEnum;
   readonly GeneratorStatusEnum = GeneratorStatusEnum;
 
-  get workingParamsStatus$(): Observable<WorkingParametersStatus> {
+  get workingParamsStatus$(): Observable<WorkingParamsStatus> {
     return this.generatorService.workingParamsStatus$;
   }
 

@@ -1,7 +1,7 @@
 import { AfterViewInit, ChangeDetectionStrategy, Component, Input, OnDestroy } from '@angular/core';
 import { FormGroup } from '@angular/forms';
-import { BehaviorSubject, delay, filter, interval, Observable, of, ReplaySubject, retryWhen, Subject, switchMap, take, takeUntil, takeWhile, tap } from 'rxjs';
-import { Action, ActionComponent, PatternStatusEnum, Phases, PhotocellAdjustmentExecutionAction, PhotocellAdjustmentValuesAction, ResponseStatusEnum } from 'src/app/models';
+import { BehaviorSubject, filter, forkJoin, Observable, ReplaySubject, switchMap, take, takeUntil, takeWhile, tap } from 'rxjs';
+import { Action, ActionComponent, Phases, PhotocellAdjustmentExecutionAction, PhotocellAdjustmentValuesAction, ResponseStatus, ResponseStatusEnum } from 'src/app/models';
 import { GeneratorService } from 'src/app/services/generator.service';
 import { PatternService } from 'src/app/services/pattern.service';
 import { UsbHandlerService } from 'src/app/services/usb-handler.service';
@@ -39,15 +39,16 @@ export class PhotocellAdjustmentExecutionActionComponent implements ActionCompon
     return this.usbHandlerService.connected$.value;
   }
 
-  /**
-   * TODO: crear un botón rojo que apague todo.
-   */
   completeAction(): void {
-    this.generatorService.turnOffSignals$().pipe(
+    forkJoin<Record<string, Observable<ResponseStatus>>>({
+      turnOffGenerator: this.generatorService.turnOff$(),
+      turnOffPattern: this.patternService.turnOff$(),
+    }).pipe(
       take(1),
-      filter((status) => status === ResponseStatusEnum.ACK),
-      switchMap(() => this.patternService.turnOffSignals$()),
-      filter((status) => status === ResponseStatusEnum.ACK),
+      filter((response) => {
+        const hasError = Object.keys(response).some(key => response[key] !== ResponseStatusEnum.ACK);
+        return !hasError;
+      }),
       tap(() => this.form.get('photocellAdjustmentExecutionComplete')?.setValue(true)),
     ).subscribe();
   }

@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
 import { BehaviorSubject, delay, map, Observable, of, switchMap, tap } from "rxjs";
-import { Command, CommandManager, WorkingParametersStatus, WorkingParamsStatusEnum, PROTOCOL, ResponseStatus, ResponseStatusEnum, GeneratorStatus, GeneratorStatusEnum, Phases } from "../models";
+import { Command, CommandManager, WorkingParamsStatus, WorkingParamsStatusEnum, PROTOCOL, ResponseStatus, ResponseStatusEnum, GeneratorStatus, GeneratorStatusEnum, Phases } from "../models";
 import { MessagesService } from "./messages.service";
 import { UsbHandlerService } from "./usb-handler.service";
 
@@ -10,7 +10,7 @@ import { UsbHandlerService } from "./usb-handler.service";
 export class GeneratorService {
 
   readonly errorCode$: BehaviorSubject<number | null>;
-  readonly workingParamsStatus$: BehaviorSubject<WorkingParametersStatus>;
+  readonly workingParamsStatus$: BehaviorSubject<WorkingParamsStatus>;
   readonly generatorStatus$: BehaviorSubject<GeneratorStatus>;
 
   private readonly commandManager: CommandManager;
@@ -23,7 +23,7 @@ export class GeneratorService {
   ) {
     this.errorCode$ = new BehaviorSubject<number | null>(null);
     this.commandManager = new CommandManager(this.deviceFrom, this.deviceTo);
-    this.workingParamsStatus$ = new BehaviorSubject<WorkingParametersStatus>(WorkingParamsStatusEnum.UNKNOW);
+    this.workingParamsStatus$ = new BehaviorSubject<WorkingParamsStatus>(WorkingParamsStatusEnum.UNKNOW);
     this.generatorStatus$ = new BehaviorSubject<GeneratorStatus>(GeneratorStatusEnum.UNKNOW);
   }
 
@@ -103,7 +103,7 @@ export class GeneratorService {
     );
   }
 
-  turnOffSignals$(): Observable<ResponseStatus> {
+  turnOff$(): Observable<ResponseStatus> {
     const command: Command = this.commandManager.build(PROTOCOL.DEVICE.GENERATOR.COMMAND.STOP);
     return of(this.generatorStatus$.next(GeneratorStatusEnum.REQUEST_IN_PROGRESS)).pipe(
       switchMap(() => this.usbHandlerService.sendAndWaitAsync$(command, this.commandManager).pipe(

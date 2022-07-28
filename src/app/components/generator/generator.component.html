@@ -6,31 +6,9 @@
   <div class="flex align-items-center">
     <div class="mr-2">Parámetros de trabajo:</div>
     <ng-container *ngIf="(workingParamsStatus$ | async) as workingParamsStatus">
-      <ng-container [ngSwitch]="workingParamsStatus">
-        <ng-container *ngSwitchCase="WorkingParamsStatusEnum.UNKNOW">
-          <span class="text-500">Estado desconocido</span>
-        </ng-container>
-        <ng-container
-          *ngSwitchCase="WorkingParamsStatusEnum.REQUEST_IN_PROGRESS"
-        >
-          <span class="text-yellow-600">Esperando respuesta...</span>
-        </ng-container>
-        <ng-container
-          *ngSwitchCase="WorkingParamsStatusEnum.PARAMETERS_SET_CORRECTLY"
-        >
-          <span class="text-green-500">Configurados</span>
-        </ng-container>
-        <ng-container
-          *ngSwitchCase="WorkingParamsStatusEnum.PARAMETERS_SET_ERROR"
-        >
-          <span class="text-red-500">No se pudieron configurar</span>
-        </ng-container>
-        <ng-container
-          *ngSwitchCase="WorkingParamsStatusEnum.PARAMETERS_TURN_OFF"
-        >
-          <span class="text-500">Apagados</span>
-        </ng-container>
-      </ng-container>
+      <app-working-parameters-status
+        [workingParamsStatus]="workingParamsStatus">
+      </app-working-parameters-status>
     </ng-container>
   </div>
 
@@ -41,7 +19,9 @@
         <ng-container *ngSwitchCase="GeneratorStatusEnum.UNKNOW">
           <span class="text-500">Estado desconocido</span>
         </ng-container>
-        <ng-container *ngSwitchCase="GeneratorStatusEnum.WAITING_FOR_STABILIZATION">
+        <ng-container
+          *ngSwitchCase="GeneratorStatusEnum.WAITING_FOR_STABILIZATION"
+        >
           <span class="text-yellow-600">Estabilizando...</span>
         </ng-container>
         <ng-container *ngSwitchCase="GeneratorStatusEnum.STABILIZED">

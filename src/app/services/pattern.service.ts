@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
 import { BehaviorSubject, delay, filter, map, Observable, of, Subject, switchMap, take, takeUntil, takeWhile, tap } from "rxjs";
-import { Command, CommandManager, WorkingParametersStatus, WorkingParamsStatusEnum, PROTOCOL, ResponseStatus, ResponseStatusEnum, PatternStatus, PatternStatusEnum, Phases } from "../models";
+import { Command, CommandManager, WorkingParamsStatus, WorkingParamsStatusEnum, PROTOCOL, ResponseStatus, ResponseStatusEnum, PatternStatus, PatternStatusEnum, Phases } from "../models";
 import { MessagesService } from "./messages.service";
 import { UsbHandlerService } from "./usb-handler.service";
 
@@ -9,7 +9,7 @@ import { UsbHandlerService } from "./usb-handler.service";
 })
 export class PatternService {
 
-  readonly workingParamsStatus$: BehaviorSubject<WorkingParametersStatus>;
+  readonly workingParamsStatus$: BehaviorSubject<WorkingParamsStatus>;
   readonly patternStatus$: BehaviorSubject<PatternStatus>;
   readonly errorCode$: BehaviorSubject<number | null>;
   readonly params$: BehaviorSubject<Phases | null>;
@@ -19,6 +19,7 @@ export class PatternService {
   private readonly deviceFrom = PROTOCOL.DEVICE.SOFTWARE.NAME;
   private readonly deviceTo = PROTOCOL.DEVICE.PATTERN.NAME;
   private readonly reportingStoper$: Subject<void>;
+  private readonly getStatusStoper$: Subject<void>;
 
   constructor(
     private readonly usbHandlerService: UsbHandlerService,
@@ -27,11 +28,12 @@ export class PatternService {
     this.errorCode$ = new BehaviorSubject<number | null>(null);
     this.params$ = new BehaviorSubject<Phases | null>(null);
     this.constant$ = new BehaviorSubject<string | null>(null);
-    this.workingParamsStatus$ = new BehaviorSubject<WorkingParametersStatus>(WorkingParamsStatusEnum.UNKNOW);
+    this.workingParamsStatus$ = new BehaviorSubject<WorkingParamsStatus>(WorkingParamsStatusEnum.UNKNOW);
     this.patternStatus$ = new BehaviorSubject<PatternStatus>(PatternStatusEnum.UNKNOW);
 
     this.commandManager = new CommandManager(this.deviceFrom, this.deviceTo);
     this.reportingStoper$ = new Subject<any>();
+    this.getStatusStoper$ = new Subject<any>();
   }
 
   private reportLoop$(): Observable<ResponseStatus> {
@@ -49,6 +51,7 @@ export class PatternService {
     this.params$.next(null);
     this.constant$.next(null);
     this.reportingStoper$.next();
+    this.getStatusStoper$.next();
 
     this.workingParamsStatus$.next(WorkingParamsStatusEnum.UNKNOW);
     this.patternStatus$.next(PatternStatusEnum.UNKNOW);
@@ -91,6 +94,7 @@ export class PatternService {
   getStatus$(): Observable<ResponseStatus> {
     const command: Command = this.commandManager.build(PROTOCOL.DEVICE.PATTERN.COMMAND.STATUS);
     return of(this.patternStatus$.next(PatternStatusEnum.REPORTING)).pipe(
+      takeUntil(this.getStatusStoper$),
       switchMap(() => this.usbHandlerService.sendAndWaitAsync$(command, this.commandManager).pipe(
         map(({ status, errorCode, params }) => {
           this.errorCode$.next(errorCode);
@@ -139,10 +143,12 @@ export class PatternService {
     ).subscribe();
   }
 
-  turnOffSignals$(): Observable<ResponseStatus> {
+  turnOff$(): Observable<ResponseStatus> {
     const command: Command = this.commandManager.build(PROTOCOL.DEVICE.PATTERN.COMMAND.STOP);
     return of(this.patternStatus$.next(PatternStatusEnum.REQUEST_IN_PROGRESS)).pipe(
       tap(() => this.reportingStoper$.next()),
+      tap(() => this.getStatusStoper$.next()),
+      delay(PROTOCOL.TIME.LOOP.GET_COMMAND * 4),
       switchMap(() => this.usbHandlerService.sendAndWaitAsync$(command, this.commandManager).pipe(
         switchMap(({ status }) => {
           switch (status) {
@@ -154,7 +160,7 @@ export class PatternService {
             case ResponseStatusEnum.ERROR:
             case ResponseStatusEnum.TIMEOUT:
             case ResponseStatusEnum.UNKNOW:
-              this.messagesService.error('No se pudo apagar el generador.');
+              this.messagesService.error('No se pudo apagar el patrón.');
               return this.getStatus$();
           }
         })
