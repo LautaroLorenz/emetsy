@@ -231,6 +231,7 @@ export class UsbHandlerService {
           this.stopChekingConnectionLoop();
           this.stopGettingCommandLoop();
           this.stopPosttingCommandLoop();
+          this.sendAndWaitInProgress$.next(false);
         }
       }),
       tap((isClose) => this.connected$.next(!isClose)),

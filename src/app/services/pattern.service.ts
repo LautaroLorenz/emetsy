@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { BehaviorSubject, delay, interval, map, Observable, of, switchMap, takeWhile, tap } from "rxjs";
+import { BehaviorSubject, delay, filter, map, Observable, of, Subject, switchMap, take, takeUntil, takeWhile, tap } from "rxjs";
 import { Command, CommandManager, WorkingParametersStatus, WorkingParamsStatusEnum, PROTOCOL, ResponseStatus, ResponseStatusEnum, PatternStatus, PatternStatusEnum, Phases } from "../models";
 import { MessagesService } from "./messages.service";
 import { UsbHandlerService } from "./usb-handler.service";
@@ -18,6 +18,7 @@ export class PatternService {
   private readonly commandManager: CommandManager;
   private readonly deviceFrom = PROTOCOL.DEVICE.SOFTWARE.NAME;
   private readonly deviceTo = PROTOCOL.DEVICE.PATTERN.NAME;
+  private readonly reportingStoper$: Subject<void>;
 
   constructor(
     private readonly usbHandlerService: UsbHandlerService,
@@ -26,15 +27,29 @@ export class PatternService {
     this.errorCode$ = new BehaviorSubject<number | null>(null);
     this.params$ = new BehaviorSubject<Phases | null>(null);
     this.constant$ = new BehaviorSubject<string | null>(null);
-    this.commandManager = new CommandManager(this.deviceFrom, this.deviceTo);
     this.workingParamsStatus$ = new BehaviorSubject<WorkingParametersStatus>(WorkingParamsStatusEnum.UNKNOW);
     this.patternStatus$ = new BehaviorSubject<PatternStatus>(PatternStatusEnum.UNKNOW);
+
+    this.commandManager = new CommandManager(this.deviceFrom, this.deviceTo);
+    this.reportingStoper$ = new Subject<any>();
+  }
+
+  private reportLoop$(): Observable<ResponseStatus> {
+    return of(true).pipe(
+      delay(PROTOCOL.TIME.LOOP.STATUS_REPORTING),
+      take(1),
+      switchMap(() => this.getStatus$()),
+      filter((status) => status === ResponseStatusEnum.ACK),
+      switchMap(() => this.reportLoop$())
+    );
   }
 
   clearStatus(): void {
     this.errorCode$.next(null);
     this.params$.next(null);
     this.constant$.next(null);
+    this.reportingStoper$.next();
+
     this.workingParamsStatus$.next(WorkingParamsStatusEnum.UNKNOW);
     this.patternStatus$.next(PatternStatusEnum.UNKNOW);
   }
@@ -98,7 +113,7 @@ export class PatternService {
                   currentI3: this.commandManager.formatString(params[6], 5, 2),
                   anglePhi3: this.commandManager.formatString(params[9], 4, 1),
                 }
-              });              
+              });
               this.patternStatus$.next(PatternStatusEnum.REPORTING);
               break;
             case ResponseStatusEnum.ERROR:
@@ -116,20 +131,18 @@ export class PatternService {
     );
   }
 
-  startReportingLoop$(): Observable<ResponseStatus> {
-    this.patternStatus$.next(PatternStatusEnum.REPORTING);
-    return interval(PROTOCOL.TIME.LOOP.STATUS_REPORTING).pipe(
-      takeWhile(() => this.patternStatus$.value !== PatternStatusEnum.TURN_OFF),
-      takeWhile(() => this.patternStatus$.value === PatternStatusEnum.REPORTING),
+  startRerporting(): void {
+    this.reportingStoper$.next();
+    this.reportLoop$().pipe(
+      takeUntil(this.reportingStoper$),
       takeWhile(() => this.usbHandlerService.connected$.value),
-      switchMap(() => this.getStatus$()),
-    );
+    ).subscribe();
   }
 
   turnOffSignals$(): Observable<ResponseStatus> {
     const command: Command = this.commandManager.build(PROTOCOL.DEVICE.PATTERN.COMMAND.STOP);
     return of(this.patternStatus$.next(PatternStatusEnum.REQUEST_IN_PROGRESS)).pipe(
-      delay(PROTOCOL.TIME.LOOP.STATUS_REPORTING * 2),
+      tap(() => this.reportingStoper$.next()),
       switchMap(() => this.usbHandlerService.sendAndWaitAsync$(command, this.commandManager).pipe(
         switchMap(({ status }) => {
           switch (status) {

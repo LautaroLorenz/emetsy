@@ -1,7 +1,7 @@
 import { AfterViewInit, ChangeDetectionStrategy, Component, Input, OnDestroy } from '@angular/core';
 import { FormGroup } from '@angular/forms';
-import { BehaviorSubject, filter, ReplaySubject, switchMap, take, takeUntil, takeWhile, tap } from 'rxjs';
-import { Action, ActionComponent, Phases, PhotocellAdjustmentExecutionAction, PhotocellAdjustmentValuesAction, ResponseStatusEnum } from 'src/app/models';
+import { BehaviorSubject, delay, filter, interval, Observable, of, ReplaySubject, retryWhen, Subject, switchMap, take, takeUntil, takeWhile, tap } from 'rxjs';
+import { Action, ActionComponent, PatternStatusEnum, Phases, PhotocellAdjustmentExecutionAction, PhotocellAdjustmentValuesAction, ResponseStatusEnum } from 'src/app/models';
 import { GeneratorService } from 'src/app/services/generator.service';
 import { PatternService } from 'src/app/services/pattern.service';
 import { UsbHandlerService } from 'src/app/services/usb-handler.service';
@@ -73,11 +73,13 @@ export class PhotocellAdjustmentExecutionActionComponent implements ActionCompon
       }),
       filter((isConnected) => isConnected),
       switchMap(() => this.generatorService.setWorkingParams$(phases).pipe(
+        filter(status => status === ResponseStatusEnum.ACK),
         switchMap(() => this.generatorService.getStatus$()),
       )),
       filter(status => status === ResponseStatusEnum.ACK),
       switchMap(() => this.patternService.setWorkingParams$(phases).pipe(
-        switchMap(() => this.patternService.startReportingLoop$()),
+        filter(status => status === ResponseStatusEnum.ACK),
+        tap(() => this.patternService.startRerporting()),
       )),
       filter(status => status === ResponseStatusEnum.ACK),
       tap(() => this.initialized$.next(true)),
