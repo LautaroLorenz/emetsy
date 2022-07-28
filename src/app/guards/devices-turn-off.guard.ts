@@ -40,6 +40,13 @@ export class DevicesTurnOffGuard implements CanDeactivate<ComponentCanDeactivate
               return of(false);
           }
 
+          if(generatorStatus === GeneratorStatusEnum.TIMEOUT) {
+            if(patternStatus === PatternStatusEnum.TIMEOUT) {
+              this.messagesService.error('Ocurrió un fallo crítico. Comuníquese con su proveedor.');
+              return of(true);
+            }
+          }
+
           return of({ generatorStatus, patternStatus }).pipe(
             switchMap(({ generatorStatus, patternStatus }) => {
               const toTurnOff$: Observable<ResponseStatusEnum>[] = [];

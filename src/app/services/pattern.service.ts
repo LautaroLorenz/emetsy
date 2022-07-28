@@ -93,7 +93,15 @@ export class PatternService {
 
   getStatus$(): Observable<ResponseStatus> {
     const command: Command = this.commandManager.build(PROTOCOL.DEVICE.PATTERN.COMMAND.STATUS);
-    return of(this.patternStatus$.next(PatternStatusEnum.REPORTING)).pipe(
+
+    let newState: PatternStatus;
+    if(this.patternStatus$.value !== PatternStatusEnum.REPORTING) {
+      newState = PatternStatusEnum.REQUEST_IN_PROGRESS;
+    } else {
+      newState = PatternStatusEnum.REPORTING;
+    }
+
+    return of(this.patternStatus$.next(newState)).pipe(
       takeUntil(this.getStatusStoper$),
       switchMap(() => this.usbHandlerService.sendAndWaitAsync$(command, this.commandManager).pipe(
         map(({ status, errorCode, params }) => {
