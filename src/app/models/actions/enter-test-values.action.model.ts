@@ -1,5 +1,6 @@
 import { FormControl, FormGroup, Validators } from "@angular/forms";
 import { BehaviorSubject } from "rxjs";
+import { Phases } from "../components/phase.model";
 import { Action, ActionEnum, ExecutionStatus } from "./action.model";
 
 export class EnterTestValuesAction implements Action {
@@ -39,5 +40,13 @@ export class EnterTestValuesAction implements Action {
     });
     
     return this.form;
+  }
+
+  getPhases(): Phases {
+    return {
+      phaseL1: this.form.get('phaseL1')?.value,
+      phaseL2: this.form.get('phaseL2')?.value,
+      phaseL3: this.form.get('phaseL3')?.value,
+    };
   }
 }

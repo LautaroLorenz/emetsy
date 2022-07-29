@@ -63,6 +63,7 @@ import { LoadingDotsComponent } from './loading-dots/loading-dots.component';
 import { PatternComponent } from './pattern/pattern.component';
 import { PhasesComponent } from './phases/phases.component';
 import { WorkingParametersStatusComponent } from './working-parameters-status/working-parameters-status.component';
+import { ContrastTestExecutionActionComponent } from './actions/contrast-test-execution-action/contrast-test-execution-action.component';
 
 const PrimeNgModules = [
   MenubarModule,
@@ -130,7 +131,7 @@ const EmetsyComponents = [
 ];
 
 @NgModule({
-  declarations: [EmetsyComponents],
+  declarations: [EmetsyComponents, ContrastTestExecutionActionComponent],
   imports: [
     CommonModule,
     PrimeNgModules,

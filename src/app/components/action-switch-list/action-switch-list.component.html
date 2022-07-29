@@ -30,5 +30,10 @@
       [action]="action"
       class="mb-3"
     ></app-photocell-adjustment-execution-action>
+    <app-contrast-test-execution-action
+      *ngSwitchCase="ActionEnum.ContrastTestExecution"
+      [action]="action"
+      class="mb-3"
+    ></app-contrast-test-execution-action>
   </ng-container>
 </ng-container>
