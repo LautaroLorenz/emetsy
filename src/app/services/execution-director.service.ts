@@ -66,4 +66,8 @@ export class ExecutionDirector {
     this.executionStatus$.next('COMPLETED');
     return;
   }
+
+  getStepBuilderById(id: number): StepBuilder | undefined {
+    return this.steps.find(step => step.essayTemplateStep.step_id === id);
+  }
 }

@@ -39,20 +39,6 @@ export class PhotocellAdjustmentExecutionActionComponent implements ActionCompon
     return this.usbHandlerService.connected$.value;
   }
 
-  completeAction(): void {
-    forkJoin<Record<string, Observable<ResponseStatus>>>({
-      turnOffGenerator: this.generatorService.turnOff$(),
-      turnOffPattern: this.patternService.turnOff$(),
-    }).pipe(
-      take(1),
-      filter((response) => {
-        const hasError = Object.keys(response).some(key => response[key] !== ResponseStatusEnum.ACK);
-        return !hasError;
-      }),
-      tap(() => this.form.get('photocellAdjustmentExecutionComplete')?.setValue(true)),
-    ).subscribe();
-  }
-
   protected readonly destroyed$: ReplaySubject<boolean> = new ReplaySubject(1);
 
   constructor(
@@ -84,6 +70,20 @@ export class PhotocellAdjustmentExecutionActionComponent implements ActionCompon
       )),
       filter(status => status === ResponseStatusEnum.ACK),
       tap(() => this.initialized$.next(true)),
+    ).subscribe();
+  }
+
+  completeAction(): void {
+    forkJoin<Record<string, Observable<ResponseStatus>>>({
+      turnOffGenerator: this.generatorService.turnOff$(),
+      turnOffPattern: this.patternService.turnOff$(),
+    }).pipe(
+      take(1),
+      filter((response) => {
+        const hasError = Object.keys(response).some(key => response[key] !== ResponseStatusEnum.ACK);
+        return !hasError;
+      }),
+      tap(() => this.form.get('photocellAdjustmentExecutionComplete')?.setValue(true)),
     ).subscribe();
   }
 

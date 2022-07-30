@@ -32,3 +32,5 @@ export * from "./protocol/protocol.model";
 export * from "./protocol/generator.model";
 export * from "./protocol/pattern.model";
 export * from "./protocol/working-parameters.model";
+export * from "./forms/action.form.model";
+export * from "./forms/contrast-test-parameters-action.form.model";
