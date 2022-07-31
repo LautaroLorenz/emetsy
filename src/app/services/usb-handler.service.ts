@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { BehaviorSubject, filter, first, from, map, Observable, of, Subject, switchMap, take, tap, timeout } from "rxjs";
+import { BehaviorSubject, catchError, filter, first, from, map, Observable, of, retry, Subject, switchMap, take, tap, timeout } from "rxjs";
 import { Command, CommandManager, CompileParams, PROTOCOL, ResponseStatus, ResponseStatusEnum } from "../models";
 import { IpcService } from "./ipc.service";
 import { MessagesService } from "./messages.service";
@@ -271,14 +271,28 @@ export class UsbHandlerService {
           } else {
             status = ResponseStatusEnum.UNKNOW;
           }
-          return {
+
+          const result = {
             status,
             errorCode,
             params
           };
+
+          switch (status) {
+            case ResponseStatusEnum.ERROR:
+            case ResponseStatusEnum.UNKNOW:
+            case ResponseStatusEnum.TIMEOUT:
+              throw new Error(JSON.stringify(result));
+            case ResponseStatusEnum.ACK:
+              return result;
+          }
         }),
         tap(() => this.sendAndWaitInProgress$.next(false)),
       )),
+      retry(2),
+      catchError(({ message }) => {
+        return of(JSON.parse(message));
+      }),
     );
   }
 

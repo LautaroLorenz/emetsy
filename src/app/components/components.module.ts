@@ -64,6 +64,7 @@ import { PatternComponent } from './pattern/pattern.component';
 import { PhasesComponent } from './phases/phases.component';
 import { WorkingParametersStatusComponent } from './working-parameters-status/working-parameters-status.component';
 import { ContrastTestExecutionActionComponent } from './actions/contrast-test-execution-action/contrast-test-execution-action.component';
+import { CalculatorComponent } from './calculator/calculator.component';
 
 const PrimeNgModules = [
   MenubarModule,
@@ -128,10 +129,12 @@ const EmetsyComponents = [
   PatternComponent,
   PhasesComponent,
   WorkingParametersStatusComponent,
+  ContrastTestExecutionActionComponent,
+  CalculatorComponent,
 ];
 
 @NgModule({
-  declarations: [EmetsyComponents, ContrastTestExecutionActionComponent],
+  declarations: [EmetsyComponents],
   imports: [
     CommonModule,
     PrimeNgModules,

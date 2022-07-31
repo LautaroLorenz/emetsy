@@ -16,19 +16,10 @@
       <p-divider></p-divider>
 
       <app-pattern></app-pattern>
+      <p-divider></p-divider>
 
-    </div>
+      <app-calculator></app-calculator>
 
-    <div class="flex justify-content-end">
-      <p-button
-        styleClass="p-button-outlined"
-        label="Ajuste de fotocelulas realizado"
-        (click)="completeAction()"
-        [disabled]="contrastTestExecutionComplete || !connected || !initialized$.value"
-        [ngClass]="{
-          'pointer-events-none': contrastTestExecutionComplete || !connected || !initialized$.value
-        }"
-      ></p-button>
     </div>
 
   </p-fieldset>

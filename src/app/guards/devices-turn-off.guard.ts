@@ -47,7 +47,7 @@ export class DevicesTurnOffGuard implements CanDeactivate<ComponentCanDeactivate
 
               if (generatorStatus === GeneratorStatusEnum.TIMEOUT) {
                 if (patternStatus === PatternStatusEnum.TIMEOUT) {
-                  this.messagesService.error('Ocurrió un fallo crítico. Comuníquese con su proveedor.');
+                  this.messagesService.error('Ocurrió un fallo de comunicación con el hardware.');
                   return of(true);
                 }
               }

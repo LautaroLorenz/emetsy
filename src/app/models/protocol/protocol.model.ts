@@ -12,9 +12,9 @@ export const PROTOCOL = {
       CHECK_IS_CONNECTED: 2000,
       GET_COMMAND: 250,
       POST_COMMAND: 500,
-      STATUS_REPORTING: 15000, // TODO:
+      STATUS_REPORTING: 500,
     },
-    WAITING_RESPONSE_TIMEOUT: 3000,
+    WAITING_RESPONSE_TIMEOUT: 1000,
     WAIT_STABILIZATION: 2000,
   },
   COMMAND: {
@@ -41,6 +41,16 @@ export const PROTOCOL = {
         STOP: 'STP00000',
         START: 'MAR00000',
       }
-    }
+    },
+    CALCULATOR: {
+      NAME: 'CAL',
+      COMMAND: {
+        STATUS: 'STD00000',
+        STOP: 'STP00000',
+        ESSAY: {
+          CONTRAST: 'TS1xxxxx',
+        },
+      }
+    },
   }
 };

@@ -32,4 +32,5 @@ export class PatternComponent {
   constructor(
     private readonly patternService: PatternService,
   ) { }
+  
 }

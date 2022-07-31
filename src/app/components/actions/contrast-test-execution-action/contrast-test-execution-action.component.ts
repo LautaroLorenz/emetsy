@@ -54,35 +54,42 @@ export class ContrastTestExecutionActionComponent implements ActionComponent, Af
     const { meterConstant, testName } = this.enterTestValuesAction.form.getRawValue();
     const { maxAllowedError, meterPulses, numberOfDiscardedResults } = this.contrastTestParametersAction.form.getRawValue();
     const preparationStep = this.executionDirectorService.getStepBuilderById(6);
-    if(preparationStep) {
+    if (preparationStep) {
       const standIdentificationAction = preparationStep.actions.find((ac) => ac instanceof StandIdentificationAction)
-      if(standIdentificationAction) {
+      if (standIdentificationAction) {
         const { hasManufacturingInformation, stands } = standIdentificationAction.form.getRawValue();
       }
     }
 
-    // this.usbHandlerService.connected$.pipe(
-    //   takeUntil(this.destroyed$),
-    //   takeWhile(() => !this.contrastTestExecutionComplete),
-    //   tap(() => {
-    //     this.initialized$.next(false);
-    //     this.generatorService.clearStatus();
-    //     this.patternService.clearStatus();
-    //   }),
-    //   filter((isConnected) => isConnected),
-    //   switchMap(() => this.generatorService.setWorkingParams$(phases).pipe(
-    //     filter(status => status === ResponseStatusEnum.ACK),
-    //     switchMap(() => this.generatorService.getStatus$()),
-    //   )),
-    //   filter(status => status === ResponseStatusEnum.ACK),
-    //   switchMap(() => this.patternService.setWorkingParams$(phases).pipe(
-    //     filter(status => status === ResponseStatusEnum.ACK),
-    //     tap(() => this.patternService.startRerporting()),
-    //   )),
-    //   filter(status => status === ResponseStatusEnum.ACK),
-    //   // TODO:
-    //   tap(() => this.initialized$.next(true)),
-    // ).subscribe();
+    this.usbHandlerService.connected$.pipe(
+      takeUntil(this.destroyed$),
+      takeWhile(() => !this.contrastTestExecutionComplete),
+      tap(() => {
+        this.initialized$.next(false);
+        this.generatorService.clearStatus();
+        this.patternService.clearStatus();
+        this.calculatorService.clearStatus();
+      }),
+      filter((isConnected) => isConnected),
+      switchMap(() => this.generatorService.setWorkingParams$(phases).pipe(
+        filter(status => status === ResponseStatusEnum.ACK),
+        switchMap(() => this.generatorService.getStatus$()),
+      )),
+      filter(status => status === ResponseStatusEnum.ACK),
+      switchMap(() => this.patternService.setWorkingParams$(phases).pipe(
+        filter(status => status === ResponseStatusEnum.ACK),
+        tap(() => this.patternService.startRerporting()),
+      )),
+      filter(status => status === ResponseStatusEnum.ACK),
+      switchMap(() => this.calculatorService.setWorkingParams$(
+        // phases // TODO:
+      ).pipe(
+        filter(status => status === ResponseStatusEnum.ACK),
+        tap(() => this.calculatorService.startRerporting()),
+      )),
+      filter(status => status === ResponseStatusEnum.ACK),
+      tap(() => this.initialized$.next(true)),
+    ).subscribe();
   }
 
   completeAction(): void {
