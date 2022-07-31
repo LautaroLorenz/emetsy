@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { BehaviorSubject, delay, filter, map, Observable, of, Subject, switchMap, take, takeUntil, takeWhile } from "rxjs";
+import { BehaviorSubject, delay, filter, map, Observable, of, Subject, switchMap, take, takeUntil, takeWhile, tap } from "rxjs";
 import { CalculatorParams, CalculatorStatus, CalculatorStatusEnum, Command, CommandManager, PROTOCOL, ResponseStatus, ResponseStatusEnum, WorkingParamsStatus, WorkingParamsStatusEnum } from "../models";
 import { MessagesService } from "./messages.service";
 import { UsbHandlerService } from "./usb-handler.service";
@@ -137,29 +137,29 @@ export class CalculatorService {
     ).subscribe();
   }
 
-  // turnOff$(): Observable<ResponseStatus> {
-  //   const command: Command = this.commandManager.build(PROTOCOL.DEVICE.CALCULATOR.COMMAND.STOP);
-  //   return of(this.patternStatus$.next(PatternStatusEnum.REQUEST_IN_PROGRESS)).pipe(
-  //     tap(() => this.reportingStoper$.next()),
-  //     tap(() => this.getStatusStoper$.next()),
-  //     delay(PROTOCOL.TIME.LOOP.GET_COMMAND * 4),
-  //     switchMap(() => this.usbHandlerService.sendAndWaitAsync$(command, this.commandManager).pipe(
-  //       switchMap(({ status }) => {
-  //         switch (status) {
-  //           case ResponseStatusEnum.ACK:
-  //             this.clearStatus();
-  //             this.workingParamsStatus$.next(WorkingParamsStatusEnum.PARAMETERS_TURN_OFF);
-  //             this.patternStatus$.next(PatternStatusEnum.TURN_OFF);
-  //             return of(status);
-  //           case ResponseStatusEnum.ERROR:
-  //           case ResponseStatusEnum.TIMEOUT:
-  //           case ResponseStatusEnum.UNKNOW:
-  //             this.messagesService.error('No se pudo apagar el calculador.');
-  //             return this.getStatus$();
-  //         }
-  //       })
-  //     ))
-  //   );
-  // }
+  turnOff$(): Observable<ResponseStatus> {
+    const command: Command = this.commandManager.build(PROTOCOL.DEVICE.CALCULATOR.COMMAND.STOP);
+    return of(this.calculatorStatus$.next(CalculatorStatusEnum.REQUEST_IN_PROGRESS)).pipe(
+      tap(() => this.reportingStoper$.next()),
+      tap(() => this.getStatusStoper$.next()),
+      delay(PROTOCOL.TIME.LOOP.GET_COMMAND * 4),
+      switchMap(() => this.usbHandlerService.sendAndWaitAsync$(command, this.commandManager).pipe(
+        switchMap(({ status }) => {
+          switch (status) {
+            case ResponseStatusEnum.ACK:
+              this.clearStatus();
+              this.workingParamsStatus$.next(WorkingParamsStatusEnum.PARAMETERS_TURN_OFF);
+              this.calculatorStatus$.next(CalculatorStatusEnum.TURN_OFF);
+              return of(status);
+            case ResponseStatusEnum.ERROR:
+            case ResponseStatusEnum.TIMEOUT:
+            case ResponseStatusEnum.UNKNOW:
+              this.messagesService.error('No se pudo apagar el calculador.');
+              return this.getStatus$();
+          }
+        })
+      ))
+    );
+  }
 
 }

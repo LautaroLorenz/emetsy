@@ -5,6 +5,6 @@ export const MeterConstants = [
   },
   {
     id: 1,
-    name: 'Rectiva'
+    name: 'Reactiva'
   }
 ];

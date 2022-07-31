@@ -96,6 +96,7 @@ export class ContrastTestExecutionActionComponent implements ActionComponent, Af
     forkJoin<Record<string, Observable<ResponseStatus>>>({
       turnOffGenerator: this.generatorService.turnOff$(),
       turnOffPattern: this.patternService.turnOff$(),
+      turnOffCalculator: this.calculatorService.turnOff$(),
     }).pipe(
       take(1),
       filter((response) => {
