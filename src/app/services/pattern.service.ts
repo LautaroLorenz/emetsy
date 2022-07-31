@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
 import { BehaviorSubject, delay, filter, map, Observable, of, Subject, switchMap, take, takeUntil, takeWhile, tap } from "rxjs";
-import { Command, CommandManager, WorkingParamsStatus, WorkingParamsStatusEnum, PROTOCOL, ResponseStatus, ResponseStatusEnum, PatternStatus, PatternStatusEnum, Phases } from "../models";
+import { Command, CommandManager, WorkingParamsStatus, WorkingParamsStatusEnum, PROTOCOL, ResponseStatus, ResponseStatusEnum, PatternStatus, PatternStatusEnum, Phases, PatternParams } from "../models";
 import { MessagesService } from "./messages.service";
 import { UsbHandlerService } from "./usb-handler.service";
 
@@ -12,8 +12,7 @@ export class PatternService {
   readonly workingParamsStatus$: BehaviorSubject<WorkingParamsStatus>;
   readonly patternStatus$: BehaviorSubject<PatternStatus>;
   readonly errorCode$: BehaviorSubject<number | null>;
-  readonly params$: BehaviorSubject<Phases | null>;
-  readonly constant$: BehaviorSubject<string | null>;
+  readonly params$: BehaviorSubject<PatternParams | null>;
 
   private readonly commandManager: CommandManager;
   private readonly deviceFrom = PROTOCOL.DEVICE.SOFTWARE.NAME;
@@ -26,8 +25,7 @@ export class PatternService {
     private readonly messagesService: MessagesService,
   ) {
     this.errorCode$ = new BehaviorSubject<number | null>(null);
-    this.params$ = new BehaviorSubject<Phases | null>(null);
-    this.constant$ = new BehaviorSubject<string | null>(null);
+    this.params$ = new BehaviorSubject<PatternParams | null>(null);
     this.workingParamsStatus$ = new BehaviorSubject<WorkingParamsStatus>(WorkingParamsStatusEnum.UNKNOW);
     this.patternStatus$ = new BehaviorSubject<PatternStatus>(PatternStatusEnum.UNKNOW);
 
@@ -49,7 +47,6 @@ export class PatternService {
   clearStatus(): void {
     this.errorCode$.next(null);
     this.params$.next(null);
-    this.constant$.next(null);
     this.reportingStoper$.next();
     this.getStatusStoper$.next();
 
@@ -95,7 +92,7 @@ export class PatternService {
     const command: Command = this.commandManager.build(PROTOCOL.DEVICE.PATTERN.COMMAND.STATUS);
 
     let newState: PatternStatus;
-    if(this.patternStatus$.value !== PatternStatusEnum.REPORTING) {
+    if (this.patternStatus$.value !== PatternStatusEnum.REPORTING) {
       newState = PatternStatusEnum.REQUEST_IN_PROGRESS;
     } else {
       newState = PatternStatusEnum.REPORTING;
@@ -108,22 +105,24 @@ export class PatternService {
           this.errorCode$.next(errorCode);
           switch (status) {
             case ResponseStatusEnum.ACK:
-              this.constant$.next(params[0]);
               this.params$.next({
-                phaseL1: {
-                  voltageU1: this.commandManager.formatString(params[1], 4, 1),
-                  currentI1: this.commandManager.formatString(params[4], 5, 2),
-                  anglePhi1: this.commandManager.formatString(params[7], 4, 1),
-                },
-                phaseL2: {
-                  voltageU2: this.commandManager.formatString(params[2], 4, 1),
-                  currentI2: this.commandManager.formatString(params[5], 5, 2),
-                  anglePhi2: this.commandManager.formatString(params[8], 4, 1),
-                },
-                phaseL3: {
-                  voltageU3: this.commandManager.formatString(params[3], 4, 1),
-                  currentI3: this.commandManager.formatString(params[6], 5, 2),
-                  anglePhi3: this.commandManager.formatString(params[9], 4, 1),
+                constant: params[0],
+                phases: {
+                  phaseL1: {
+                    voltageU1: this.commandManager.formatString(params[1], 4, 1),
+                    currentI1: this.commandManager.formatString(params[4], 5, 2),
+                    anglePhi1: this.commandManager.formatString(params[7], 4, 1),
+                  },
+                  phaseL2: {
+                    voltageU2: this.commandManager.formatString(params[2], 4, 1),
+                    currentI2: this.commandManager.formatString(params[5], 5, 2),
+                    anglePhi2: this.commandManager.formatString(params[8], 4, 1),
+                  },
+                  phaseL3: {
+                    voltageU3: this.commandManager.formatString(params[3], 4, 1),
+                    currentI3: this.commandManager.formatString(params[6], 5, 2),
+                    anglePhi3: this.commandManager.formatString(params[9], 4, 1),
+                  }
                 }
               });
               this.patternStatus$.next(PatternStatusEnum.REPORTING);

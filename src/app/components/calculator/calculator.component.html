@@ -12,36 +12,37 @@
     </ng-container>
   </div>
 
-  <!-- <div class="flex align-items-center">
-    <div class="mr-2">Estado de la señal patrón:</div>
-    <ng-container *ngIf="(patternStatus$ | async) as patternStatus">
-      <ng-container [ngSwitch]="patternStatus">
-        <ng-container *ngSwitchCase="PatternStatusEnum.UNKNOW">
+  <div class="flex align-items-center">
+    <div class="mr-2">Estado del calculador:</div>
+    <ng-container *ngIf="(calculatorStatus$ | async) as calculatorStatus">
+      <ng-container [ngSwitch]="calculatorStatus">
+        <ng-container *ngSwitchCase="CalculatorStatusEnum.UNKNOW">
           <span class="text-500">Estado desconocido</span>
         </ng-container>
-        <ng-container *ngSwitchCase="PatternStatusEnum.REQUEST_IN_PROGRESS">
+        <ng-container *ngSwitchCase="CalculatorStatusEnum.REQUEST_IN_PROGRESS">
           <span class="text-yellow-600">Esperando respuesta...</span>
         </ng-container>
-        <ng-container *ngSwitchCase="PatternStatusEnum.REPORTING">
+        <ng-container *ngSwitchCase="CalculatorStatusEnum.REPORTING">
           <span class="text-green-500">Reportando</span>
         </ng-container>
-        <ng-container *ngSwitchCase="PatternStatusEnum.TURN_OFF">
+        <ng-container *ngSwitchCase="CalculatorStatusEnum.TURN_OFF">
           <span class="text-500">Apagado</span>
         </ng-container>
-        <ng-container *ngSwitchCase="PatternStatusEnum.TIMEOUT">
+        <ng-container *ngSwitchCase="CalculatorStatusEnum.TIMEOUT">
           <span class="text-red-500">No responde</span>
         </ng-container>
-        <ng-container *ngSwitchCase="PatternStatusEnum.ERROR">
+        <ng-container *ngSwitchCase="CalculatorStatusEnum.ERROR">
           <span class="text-red-500">ERROR {{errorCode$ | async}}</span>
         </ng-container>
       </ng-container>
     </ng-container>
-  </div> -->
+  </div>
 
-  <!-- <div class="flex flex-1 mb-3 mt-4">
-    <ng-container *ngIf="params$ | async as phases">
-      <app-phases [phases]="phases"></app-phases>
+  <div class="flex flex-1 mb-3 mt-4">
+    <ng-container *ngIf="params$ | async as params">
+      {{params|json}}
+      <!-- <app-phases [phases]="phases"></app-phases> -->
     </ng-container>
-  </div> -->
+  </div>
 
 </div>

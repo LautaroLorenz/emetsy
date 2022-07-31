@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { Observable } from 'rxjs';
-import { WorkingParamsStatus, WorkingParamsStatusEnum } from 'src/app/models';
+import { CalculatorParams, CalculatorStatus, CalculatorStatusEnum, WorkingParamsStatus, WorkingParamsStatusEnum } from 'src/app/models';
 import { CalculatorService } from 'src/app/services/calculator.service';
 
 @Component({
@@ -12,22 +12,23 @@ import { CalculatorService } from 'src/app/services/calculator.service';
 export class CalculatorComponent {
 
   readonly WorkingParamsStatusEnum = WorkingParamsStatusEnum;
-  // readonly PatternStatusEnum = CalculatorStatusEnum;
+  readonly CalculatorStatusEnum = CalculatorStatusEnum;
 
   get workingParamsStatus$(): Observable<WorkingParamsStatus> {
     return this.calculatorService.workingParamsStatus$;
   }
 
-  // get patternStatus$(): Observable<PatternStatus> {
-  //   return this.patternService.patternStatus$;
-  // }
+  get calculatorStatus$(): Observable<CalculatorStatus> {
+    return this.calculatorService.calculatorStatus$;
+  }
 
-  // get errorCode$(): Observable<number | null> {
-  //   return this.patternService.errorCode$;    
-  // }
-  // get params$(): Observable<Phases | null> {
-  //   return this.patternService.params$;    
-  // }
+  get errorCode$(): Observable<number | null> {
+    return this.calculatorService.errorCode$;    
+  }
+
+  get params$(): Observable<CalculatorParams | null> {
+    return this.calculatorService.params$;    
+  }
 
   constructor(
     private readonly calculatorService: CalculatorService,

@@ -7,3 +7,7 @@ export enum CalculatorStatusEnum {
   TURN_OFF = 'TURN_OFF',
 }
 export type CalculatorStatus = CalculatorStatusEnum;
+
+export interface CalculatorParams {
+  results: string[]
+}

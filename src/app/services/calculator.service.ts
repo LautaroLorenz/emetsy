@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
 import { BehaviorSubject, delay, filter, map, Observable, of, Subject, switchMap, take, takeUntil, takeWhile } from "rxjs";
-import { CalculatorStatus, CalculatorStatusEnum, Command, CommandManager, PROTOCOL, ResponseStatus, ResponseStatusEnum, WorkingParamsStatus, WorkingParamsStatusEnum } from "../models";
+import { CalculatorParams, CalculatorStatus, CalculatorStatusEnum, Command, CommandManager, PROTOCOL, ResponseStatus, ResponseStatusEnum, WorkingParamsStatus, WorkingParamsStatusEnum } from "../models";
 import { MessagesService } from "./messages.service";
 import { UsbHandlerService } from "./usb-handler.service";
 
@@ -12,8 +12,7 @@ export class CalculatorService {
   readonly workingParamsStatus$: BehaviorSubject<WorkingParamsStatus>;
   readonly calculatorStatus$: BehaviorSubject<CalculatorStatus>;
   readonly errorCode$: BehaviorSubject<number | null>;
-  // readonly params$: BehaviorSubject<Phases | null>;
-  // readonly constant$: BehaviorSubject<string | null>;
+  readonly params$: BehaviorSubject<CalculatorParams | null>;
 
   private readonly commandManager: CommandManager;
   private readonly deviceFrom = PROTOCOL.DEVICE.SOFTWARE.NAME;
@@ -26,8 +25,7 @@ export class CalculatorService {
     private readonly messagesService: MessagesService,
   ) {
     this.errorCode$ = new BehaviorSubject<number | null>(null);
-    // this.params$ = new BehaviorSubject<Phases | null>(null);
-    // this.constant$ = new BehaviorSubject<string | null>(null);
+    this.params$ = new BehaviorSubject<CalculatorParams | null>(null);
     this.workingParamsStatus$ = new BehaviorSubject<WorkingParamsStatus>(WorkingParamsStatusEnum.UNKNOW);
     this.calculatorStatus$ = new BehaviorSubject<CalculatorStatus>(CalculatorStatusEnum.UNKNOW);
 
@@ -48,8 +46,7 @@ export class CalculatorService {
 
   clearStatus(): void {
     this.errorCode$.next(null);
-    //   this.params$.next(null);
-    //   this.constant$.next(null);
+    this.params$.next(null);
     this.reportingStoper$.next();
     this.getStatusStoper$.next();
 
@@ -109,38 +106,23 @@ export class CalculatorService {
       takeUntil(this.getStatusStoper$),
       switchMap(() => this.usbHandlerService.sendAndWaitAsync$(command, this.commandManager).pipe(
         map(({ status, errorCode, params }) => {
-          //         this.errorCode$.next(errorCode);
-          //         switch (status) {
-          //           case ResponseStatusEnum.ACK:
-          //             this.constant$.next(params[0]);
-          //             this.params$.next({
-          //               phaseL1: {
-          //                 voltageU1: this.commandManager.formatString(params[1], 4, 1),
-          //                 currentI1: this.commandManager.formatString(params[4], 5, 2),
-          //                 anglePhi1: this.commandManager.formatString(params[7], 4, 1),
-          //               },
-          //               phaseL2: {
-          //                 voltageU2: this.commandManager.formatString(params[2], 4, 1),
-          //                 currentI2: this.commandManager.formatString(params[5], 5, 2),
-          //                 anglePhi2: this.commandManager.formatString(params[8], 4, 1),
-          //               },
-          //               phaseL3: {
-          //                 voltageU3: this.commandManager.formatString(params[3], 4, 1),
-          //                 currentI3: this.commandManager.formatString(params[6], 5, 2),
-          //                 anglePhi3: this.commandManager.formatString(params[9], 4, 1),
-          //               }
-          //             });
-          //             this.patternStatus$.next(PatternStatusEnum.REPORTING);
-          //             break;
-          //           case ResponseStatusEnum.ERROR:
-          //             this.patternStatus$.next(PatternStatusEnum.ERROR);
-          //             break;
-          //           case ResponseStatusEnum.TIMEOUT:
-          //           case ResponseStatusEnum.UNKNOW:
-          //             this.patternStatus$.next(PatternStatusEnum.TIMEOUT);
-          //             this.messagesService.error('No se pudo obtener el estado del calculador.');
-          //             break;
-          //         }
+          this.errorCode$.next(errorCode);
+          switch (status) {
+            case ResponseStatusEnum.ACK:
+              this.params$.next({
+                results: params
+              });
+              this.calculatorStatus$.next(CalculatorStatusEnum.REPORTING);
+              break;
+            case ResponseStatusEnum.ERROR:
+              this.calculatorStatus$.next(CalculatorStatusEnum.ERROR);
+              break;
+            case ResponseStatusEnum.TIMEOUT:
+            case ResponseStatusEnum.UNKNOW:
+              this.calculatorStatus$.next(CalculatorStatusEnum.TIMEOUT);
+              this.messagesService.error('No se pudo obtener el estado del calculador.');
+              break;
+          }
           return status;
         }),
       ))

@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { Observable } from 'rxjs';
-import { PatternStatus, PatternStatusEnum, Phases, WorkingParamsStatus, WorkingParamsStatusEnum } from 'src/app/models';
+import { PatternParams, PatternStatus, PatternStatusEnum, WorkingParamsStatus, WorkingParamsStatusEnum } from 'src/app/models';
 import { PatternService } from 'src/app/services/pattern.service';
 
 @Component({
@@ -23,14 +23,14 @@ export class PatternComponent {
   }
 
   get errorCode$(): Observable<number | null> {
-    return this.patternService.errorCode$;    
+    return this.patternService.errorCode$;
   }
-  get params$(): Observable<Phases | null> {
-    return this.patternService.params$;    
+  get params$(): Observable<PatternParams | null> {
+    return this.patternService.params$;
   }
 
   constructor(
     private readonly patternService: PatternService,
   ) { }
-  
+
 }

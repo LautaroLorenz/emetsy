@@ -39,8 +39,8 @@
   </div>
 
   <div class="flex flex-1 mb-3 mt-4">
-    <ng-container *ngIf="params$ | async as phases">
-      <app-phases [phases]="phases"></app-phases>
+    <ng-container *ngIf="params$ | async as params">
+      <app-phases [phases]="params.phases"></app-phases>
     </ng-container>
   </div>
 
