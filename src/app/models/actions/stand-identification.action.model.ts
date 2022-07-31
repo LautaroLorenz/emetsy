@@ -1,6 +1,7 @@
 import { FormArray, FormControl, FormGroup, Validators } from "@angular/forms";
 import { ReplaySubject, takeUntil, tap, BehaviorSubject } from "rxjs";
 import { CompileParams } from "../compile-params.model";
+import { StandArrayForm } from "../forms/stand-identification-action.form.model";
 import { Action, ActionEnum, ExecutionStatus } from "./action.model";
 
 export class StandIdentificationAction implements Action {
@@ -16,8 +17,8 @@ export class StandIdentificationAction implements Action {
     hasManufacturingInformation: true,
   };
 
-  get standArray(): FormArray<FormGroup> {
-    return (this.form.get('stands') as FormArray);
+  get standArray(): FormArray<FormGroup<StandArrayForm>> {
+    return (this.form.get('stands') as FormArray<FormGroup<StandArrayForm>>);
   }
 
   constructor(destroyed$: ReplaySubject<boolean>) {
@@ -30,18 +31,12 @@ export class StandIdentificationAction implements Action {
       hasManufacturingInformation: new FormControl(true, [Validators.required]),
       stands: new FormArray<FormGroup>([]),
     });
-    this.form.get('hasManufacturingInformation')?.valueChanges.pipe(
-      takeUntil(this.destroyed$),
-      tap(() => {
-        this.standArray.controls.forEach((control) => control.get('meterId')?.setValue(undefined));
-      }),
-    ).subscribe();
     for (let i = 0; i < CompileParams.STANDS_LENGTH; i++) {
-      const standGroup = new FormGroup({
-        isActive: new FormControl(true),
-        meterId: new FormControl(),
-        serialNumber: new FormControl(),
-        yearOfProduction: new FormControl(),
+      const standGroup = new FormGroup<StandArrayForm>({
+        isActive: new FormControl<boolean | null | undefined>(true),
+        meterId: new FormControl<number | null | undefined>(undefined),
+        serialNumber: new FormControl<number | null | undefined>(undefined),
+        yearOfProduction: new FormControl<number | null | undefined>(undefined),
       });
       standGroup.get('isActive')?.valueChanges.pipe(
         takeUntil(this.destroyed$),

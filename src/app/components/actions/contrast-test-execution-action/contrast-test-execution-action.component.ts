@@ -1,10 +1,11 @@
 import { AfterViewInit, ChangeDetectionStrategy, Component, Input, OnDestroy } from '@angular/core';
 import { FormGroup } from '@angular/forms';
-import { BehaviorSubject, filter, forkJoin, Observable, ReplaySubject, switchMap, take, takeUntil, takeWhile, tap } from 'rxjs';
-import { Action, ActionComponent, ContrastTestExecutionAction, ContrastTestParametersAction, EnterTestValuesAction, Phases, ResponseStatus, ResponseStatusEnum, StandIdentificationAction } from 'src/app/models';
+import { BehaviorSubject, catchError, filter, forkJoin, map, Observable, of, ReplaySubject, switchMap, take, takeUntil, takeWhile, tap } from 'rxjs';
+import { Action, ActionComponent, CalculatorParams, ContrastTestExecutionAction, ContrastTestParametersAction, EnterTestValuesAction, Phases, ResponseStatus, ResponseStatusEnum, ResultEnum, StandArrayFormValue, StandIdentificationAction, StandResult } from 'src/app/models';
 import { CalculatorService } from 'src/app/services/calculator.service';
 import { ExecutionDirector } from 'src/app/services/execution-director.service';
 import { GeneratorService } from 'src/app/services/generator.service';
+import { MessagesService } from 'src/app/services/messages.service';
 import { PatternService } from 'src/app/services/pattern.service';
 import { UsbHandlerService } from 'src/app/services/usb-handler.service';
 
@@ -18,6 +19,7 @@ export class ContrastTestExecutionActionComponent implements ActionComponent, Af
 
   @Input() action!: Action;
 
+  readonly results$: BehaviorSubject<StandResult[]> = new BehaviorSubject<StandResult[]>([]);
   readonly initialized$: BehaviorSubject<boolean | null> = new BehaviorSubject<boolean | null>(null);
 
   get contrastTestExecutionComplete(): boolean {
@@ -47,7 +49,68 @@ export class ContrastTestExecutionActionComponent implements ActionComponent, Af
     private readonly generatorService: GeneratorService,
     private readonly patternService: PatternService,
     private readonly calculatorService: CalculatorService,
+    private readonly messagesService: MessagesService,
   ) { }
+
+  private completeAction$(): Observable<Record<string, ResponseStatus>> {
+    return forkJoin<Record<string, Observable<ResponseStatus>>>({
+      turnOffGenerator: this.generatorService.turnOff$(),
+      turnOffPattern: this.patternService.turnOff$(),
+      turnOffCalculator: this.calculatorService.turnOff$(),
+    }).pipe(
+      take(1),
+      filter((response) => {
+        const hasError = Object.keys(response).some(key => response[key] !== ResponseStatusEnum.ACK);
+        return !hasError;
+      }),
+      tap(() => this.form.get('contrastTestExecutionComplete')?.setValue(true)),
+    );
+  }
+
+  private lisenResults(
+    stands: StandArrayFormValue[],
+    maxAllowedError: number,
+    meterPulses: number,
+    numberOfDiscardedResults: number
+  ): void {
+    let remainingDiscartedResultsCounter = numberOfDiscardedResults;
+
+    this.calculatorService.params$.pipe(
+      takeUntil(this.destroyed$),
+      takeWhile(() => !this.contrastTestExecutionComplete),
+      filter((value) => value !== null),
+      map((value) => value as CalculatorParams),
+      tap(() => {
+        if (remainingDiscartedResultsCounter > 0) {
+          remainingDiscartedResultsCounter--;
+        }
+      }),
+      filter(() => remainingDiscartedResultsCounter === 0),
+      map(({ results }) => {
+        const standResults: StandResult[] = results
+          .map((result, index) => {
+            const standPulses: number = Number(result.slice(4, 9));
+            const calculatedError = Math.abs(100 - 100 * standPulses / meterPulses);
+
+            return {
+              stand: index + 1,
+              value: standPulses,
+              calculatedError,
+              result: calculatedError < maxAllowedError ? ResultEnum.APPROVED : ResultEnum.DISAPPROVED,
+            };
+          }).filter((standResult) => stands[standResult.stand - 1]?.isActive);
+
+        return standResults;
+      }),
+      tap((standResults) => this.results$.next(standResults)),
+      switchMap(() => this.completeAction$()),
+      catchError((error) => {
+        console.error(error);
+        this.messagesService.error('Ocurrió un error durante el calculo de resultados.');
+        return of(void 0)
+      }),
+    ).subscribe();
+  }
 
   ngAfterViewInit(): void {
     const phases: Phases = this.enterTestValuesAction.getPhases();
@@ -55,9 +118,11 @@ export class ContrastTestExecutionActionComponent implements ActionComponent, Af
     const { maxAllowedError, meterPulses, numberOfDiscardedResults } = this.contrastTestParametersAction.form.getRawValue();
     const preparationStep = this.executionDirectorService.getStepBuilderById(6);
     if (preparationStep) {
-      const standIdentificationAction = preparationStep.actions.find((ac) => ac instanceof StandIdentificationAction)
+      const standIdentificationAction = preparationStep.actions.find((ac) => ac instanceof StandIdentificationAction);
       if (standIdentificationAction) {
-        const { hasManufacturingInformation, stands } = standIdentificationAction.form.getRawValue();
+        const { hasManufacturingInformation } = standIdentificationAction.form.getRawValue();
+        const stands = (standIdentificationAction as StandIdentificationAction).standArray.getRawValue();
+        this.lisenResults(stands, maxAllowedError!, meterPulses!, numberOfDiscardedResults!);
       }
     }
 
@@ -89,21 +154,6 @@ export class ContrastTestExecutionActionComponent implements ActionComponent, Af
       )),
       filter(status => status === ResponseStatusEnum.ACK),
       tap(() => this.initialized$.next(true)),
-    ).subscribe();
-  }
-
-  completeAction(): void {
-    forkJoin<Record<string, Observable<ResponseStatus>>>({
-      turnOffGenerator: this.generatorService.turnOff$(),
-      turnOffPattern: this.patternService.turnOff$(),
-      turnOffCalculator: this.calculatorService.turnOff$(),
-    }).pipe(
-      take(1),
-      filter((response) => {
-        const hasError = Object.keys(response).some(key => response[key] !== ResponseStatusEnum.ACK);
-        return !hasError;
-      }),
-      tap(() => this.form.get('contrastTestExecutionComplete')?.setValue(true)),
     ).subscribe();
   }
 

@@ -65,6 +65,7 @@ import { PhasesComponent } from './phases/phases.component';
 import { WorkingParametersStatusComponent } from './working-parameters-status/working-parameters-status.component';
 import { ContrastTestExecutionActionComponent } from './actions/contrast-test-execution-action/contrast-test-execution-action.component';
 import { CalculatorComponent } from './calculator/calculator.component';
+import { StandResultComponent } from './stand-result/stand-result.component';
 
 const PrimeNgModules = [
   MenubarModule,
@@ -131,6 +132,7 @@ const EmetsyComponents = [
   WorkingParametersStatusComponent,
   ContrastTestExecutionActionComponent,
   CalculatorComponent,
+  StandResultComponent,
 ];
 
 @NgModule({

@@ -5,11 +5,8 @@
 }
 
 .cell {
-  @include styleclass('py-2 px-4 border border-1 border-200');
+  @include styleclass('py-2 px-3 border border-1 border-200');
 }
 .cell-header {
   @include styleclass('justify-content-center surface-100');
-}
-.cell-data {
-  @include styleclass('justify-content-end');
 }
