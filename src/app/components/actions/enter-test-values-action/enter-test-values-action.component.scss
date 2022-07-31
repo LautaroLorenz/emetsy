@@ -1,9 +1,5 @@
 @import 'primeflex/primeflex.scss';
 
-:host {
-  @include styleclass('flex flex-column h-full');
-}
-
 ::ng-deep p-selectbutton {
   .p-highlight {
     @include styleclass('bg-primary-500 text-0');

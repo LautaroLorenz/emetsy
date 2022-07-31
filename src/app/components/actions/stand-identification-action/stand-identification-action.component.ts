@@ -13,15 +13,21 @@ import { DatabaseService } from 'src/app/services/database.service';
 export class StandIdentificationActionComponent implements ActionComponent, AfterViewInit, OnDestroy {
 
   dropdownMeterOptions: Meter[] = [];
-  readonly name = 'Identificación de puestos';
+  dropdownYearOfProductionOptions: { id: number, label: number }[] = [];
 
   @Input() action!: Action;
 
+  get name(): string {
+    return this.action.name;
+  }
   get form(): FormGroup {
     return this.action.form;
   }
   get standArray(): FormArray<FormGroup> {
     return (this.action as StandIdentificationAction).standArray;
+  }
+  get hiddenFields(): Record<string, boolean> {
+    return (this.action as StandIdentificationAction).hiddenFields;
   }
 
   protected readonly destroyed$: ReplaySubject<boolean> = new ReplaySubject(1);
@@ -51,6 +57,9 @@ export class StandIdentificationActionComponent implements ActionComponent, Afte
       MeterDbTableContext.tableName,
       { relations: MeterDbTableContext.foreignTables.map(ft => ft.tableName) }
     );
+
+    const yearOfProduction = new Date().getFullYear();
+    this.dropdownYearOfProductionOptions = Array(60).fill({}).map((_, index) => ({ id: yearOfProduction - index, label: yearOfProduction - index }));
   }
 
   constructor(

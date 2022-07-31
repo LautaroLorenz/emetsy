@@ -42,6 +42,7 @@ export class MessagesService {
   }
 
   public error(message: string): void {
+    this.messageService.clear();
     this.messageService.add({
       severity: 'error',
       summary: 'Error',

@@ -1,4 +1,10 @@
+@import 'primeflex/primeflex.scss';
+
 /* You can add global styles to this file, and also import other style files */
 body {
   margin: 0;
+}
+
+.p-font-family {
+  font-family: var(--font-family);
 }

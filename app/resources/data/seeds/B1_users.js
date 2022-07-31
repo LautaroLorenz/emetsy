@@ -13,7 +13,7 @@ const schema = {
  */
 exports.seed = async function (knex) {
   // generate in batches so as not to overload the query
-  for (let i = 0; i < 100; i++) {
+  for (let i = 0; i < 1; i++) {
     // generate faker rows data based on {{schema}}
     const fakeData = fakerBySchema(schema, 99, 100);
     // insert fake data into table

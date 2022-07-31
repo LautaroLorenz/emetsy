@@ -111,7 +111,10 @@ export class FormArrayControlsOrderListComponent implements OnChanges {
       this.animationRemoveInProgress = false;
       this.arrayOfControls.removeAt(index);
       const nearestIndex = this.getNearestIndex(index);
-      this.selectIndex(nearestIndex, { toggle: false });
+      if (nearestIndex === index) {
+        this.selectIndex(null); // force refresh if nearest index
+      }
+      setTimeout(() => this.selectIndex(nearestIndex, { toggle: false }));
     }, 250);
     this.onChanges.emit();
   }

@@ -1,0 +1,46 @@
+<fom
+  novalidate
+  [formGroup]="form"
+>
+  <p-fieldset>
+    <ng-template pTemplate="header">
+      <span>{{name}}</span>
+    </ng-template>
+
+    <div class="border border-1 border-200 p-4 mb-4 border-round">
+
+      <app-connection-status></app-connection-status>
+      <p-divider></p-divider>
+
+      <app-generator></app-generator>
+      <p-divider></p-divider>
+
+      <app-pattern></app-pattern>
+      <p-divider></p-divider>
+
+      <app-calculator></app-calculator>
+
+      <div class="mt-2">
+        <span>Parámetros del ensayo</span>
+        <div class="text-sm">
+          Cantidad de impulsos:
+          {{contrastTestParametersAction.form.get('meterPulses')?.value}}
+        </div>
+        <div class="text-sm">
+          Error máximo aceptado:
+          {{contrastTestParametersAction.form.get('maxAllowedError')?.value}}
+          [%]
+        </div>
+      </div>
+      <div class="flex flex-1 mb-3 mt-4">
+        <ng-container *ngIf="results$ | async as results">
+          <app-stand-result [results]="results"></app-stand-result>
+        </ng-container>
+      </div>
+
+    </div>
+
+    <!-- TODO: repetir prueba -->
+
+  </p-fieldset>
+</fom>

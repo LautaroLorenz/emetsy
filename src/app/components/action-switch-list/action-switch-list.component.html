@@ -1,0 +1,39 @@
+<ng-container *ngFor="let action of actions; let i = index;">
+  <ng-container [ngSwitch]="action.actionEnum">
+    <app-stand-identification-action
+      *ngSwitchCase="ActionEnum.StandIdentification"
+      [action]="action"
+      class="mb-3"
+    ></app-stand-identification-action>
+    <app-photocell-adjustment-values-action
+      *ngSwitchCase="ActionEnum.PhotocellAdjustmentValues"
+      [action]="action"
+      class="mb-3"
+    ></app-photocell-adjustment-values-action>
+    <app-contrast-test-parameters-action
+      *ngSwitchCase="ActionEnum.ContrastTestParameters"
+      [action]="action"
+      class="mb-3"
+    ></app-contrast-test-parameters-action>
+    <app-enter-test-values-action
+      *ngSwitchCase="ActionEnum.EnterTestValues"
+      [action]="action"
+      class="mb-3"
+    ></app-enter-test-values-action>
+    <app-user-identification-action
+      *ngSwitchCase="ActionEnum.UserIdentification"
+      [action]="action"
+      class="mb-3"
+    ></app-user-identification-action>
+    <app-photocell-adjustment-execution-action
+      *ngSwitchCase="ActionEnum.PhotocellAdjustmentExecution"
+      [action]="action"
+      class="mb-3"
+    ></app-photocell-adjustment-execution-action>
+    <app-contrast-test-execution-action
+      *ngSwitchCase="ActionEnum.ContrastTestExecution"
+      [action]="action"
+      class="mb-3"
+    ></app-contrast-test-execution-action>
+  </ng-container>
+</ng-container>

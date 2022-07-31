@@ -1,0 +1,40 @@
+<div class="p-font-family">
+
+
+  <div class="text-xl mb-2 flex flex-1 justify-content-between">
+    <div class="text-xl mb-2">Conexión</div>
+    <!-- <ng-container *ngIf="sendAndWaitInProgress$ | async">
+      <app-loading-dots text="Transmitiendo"></app-loading-dots>
+    </ng-container> -->
+  </div>
+
+  <div class="flex align-items-center">
+    <div class="flex">Estado de la conexión USB:</div>
+    <div class="flex align-items-center justify-content-between flex-1 ml-2">
+      <ng-container
+        *ngIf="connected$ | async as connected; else disconnectedTemplate"
+      >
+        <span class="text-green-500">Conectado</span>
+      </ng-container>
+      <ng-template #disconnectedTemplate>
+        <span class="text-red-500">Desconectado</span>
+      </ng-template>
+    </div>
+  </div>
+
+  <ng-container *ngIf="(connected$ | async) === false">
+    <div class="flex flex-1 align-items-center mt-3">
+      <p-message
+        severity="error"
+        text="No se puedo detectar el dispositivo USB."
+        styleClass="flex flex-1 justify-content-start"
+      ></p-message>
+      <p-button
+        label="Reintentar conexión"
+        styleClass="p-button-outlined ml-4"
+        (click)="connect()"
+      ></p-button>
+    </div>
+  </ng-container>
+
+</div>

@@ -9,11 +9,12 @@ import { Action, ActionComponent } from 'src/app/models';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class PhotocellAdjustmentValuesActionComponent implements ActionComponent {
-
-  readonly name = 'Valores para ajuste de fotocélula';
-
+  
   @Input() action!: Action;
 
+  get name(): string {
+    return this.action.name;
+  }
   get form(): FormGroup {
     return this.action.form;
   }

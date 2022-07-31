@@ -1,6 +1,7 @@
 const { app, BrowserWindow, ipcMain } = require('electron');
 const { connect: databaseConnect } = require('./resources/database');
 require('./commands/ping');
+require('./commands/usb-serial-port');
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.

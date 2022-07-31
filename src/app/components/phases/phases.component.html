@@ -1,0 +1,26 @@
+<div class="flex flex-1 flex-column">
+  <div class="flex w-full">
+    <div class="flex w-3 cell cell-header">Fase</div>
+    <div class="flex w-3 cell cell-header">Tensión [V]</div>
+    <div class="flex w-3 cell cell-header">Corriente [A]</div>
+    <div class="flex w-3 cell cell-header">Ángulo [º]</div>
+  </div>
+  <div class="flex w-full">
+    <div class="flex w-3 cell">L1</div>
+    <div class="flex w-3 cell cell-data">{{phases.phaseL1.voltageU1}}</div>
+    <div class="flex w-3 cell cell-data">{{phases.phaseL1.currentI1}}</div>
+    <div class="flex w-3 cell cell-data">{{phases.phaseL1.anglePhi1}}</div>
+  </div>
+  <div class="flex w-full">
+    <div class="flex w-3 cell">L2</div>
+    <div class="flex w-3 cell cell-data">{{phases.phaseL2.voltageU2}}</div>
+    <div class="flex w-3 cell cell-data">{{phases.phaseL2.currentI2}}</div>
+    <div class="flex w-3 cell cell-data">{{phases.phaseL2.anglePhi2}}</div>
+  </div>
+  <div class="flex w-full">
+    <div class="flex w-3 cell">L3</div>
+    <div class="flex w-3 cell cell-data">{{phases.phaseL3.voltageU3}}</div>
+    <div class="flex w-3 cell cell-data">{{phases.phaseL3.currentI3}}</div>
+    <div class="flex w-3 cell cell-data">{{phases.phaseL3.anglePhi3}}</div>
+  </div>
+</div>

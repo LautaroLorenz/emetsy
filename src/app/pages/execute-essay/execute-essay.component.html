@@ -1,1 +1,58 @@
-<p>execute-essay works! {{id$ | async}}</p>
+<app-page-title
+  [title]="title"
+  [showBack]="true"
+  (backEvent)="exit()"
+>
+  <ng-container toolbar-left>
+    <div class="ml-3">{{essayName}}</div>
+  </ng-container>
+  <ng-container toolbar-right>
+    <ng-container *ngIf="activeAction$ | async as activeAction">
+      <ng-container *ngIf="(executionStatus$ | async) === 'IN_PROGRESS'">
+        <div class="mr-3">
+          <p-button
+            label="Confirmar"
+            icon="pi pi-check"
+            styleClass="p-button-primary"
+            [disabled]="activeAction?.form?.invalid || false"
+            [ngClass]="{
+              'pointer-events-none': activeAction?.form?.invalid || false
+            }"
+            (click)="executeNext()"
+          ></p-button>
+        </div>
+      </ng-container>
+    </ng-container>
+  </ng-container>
+</app-page-title>
+
+<app-fill-available-space class="flex justify-content-evenly">
+
+  <div class="flex flex-column pt-4 pl-3 w-4">
+    <ng-container *ngIf="stepBuilders.length; else noStepsTemplate">
+      <app-step-execution-status-list
+        [steps]="stepBuilders"
+        [activeStepIndex]="activeStepIndex$ | async"
+        [activeActionIndex]="activeActionIndex$ | async"
+      >
+      </app-step-execution-status-list>
+    </ng-container>
+    <ng-template #noStepsTemplate>
+      <p-message
+        *ngIf="showNoStepsWarning"
+        severity="warn"
+        text="Primero debe modificar el template agregando pasos para ejecutar."
+      ></p-message>
+    </ng-template>
+  </div>
+
+  <p-divider layout="vertical"></p-divider>
+
+  <div class="flex flex-column w-8 overflow-auto py-3 mb-4 pr-3">
+    <ng-container *ngIf="activeAction$ | async as activeAction">
+      <app-action-switch-list [actions]="[activeAction]">
+      </app-action-switch-list>
+    </ng-container>
+  </div>
+
+</app-fill-available-space>

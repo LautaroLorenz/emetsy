@@ -1,0 +1,49 @@
+<div class="p-font-family">
+  <div class="text-xl mb-2 flex flex-1 justify-content-between">
+    <span>Generador</span>
+  </div>
+
+  <div class="flex align-items-center">
+    <div class="mr-2">Parámetros de trabajo:</div>
+    <ng-container *ngIf="(workingParamsStatus$ | async) as workingParamsStatus">
+      <app-working-parameters-status
+        [workingParamsStatus]="workingParamsStatus">
+      </app-working-parameters-status>
+    </ng-container>
+  </div>
+
+  <div class="flex align-items-center">
+    <div class="mr-2">Estado del generador:</div>
+    <ng-container *ngIf="(generatorStatus$ | async) as generatorStatus">
+      <ng-container [ngSwitch]="generatorStatus">
+        <ng-container *ngSwitchCase="GeneratorStatusEnum.UNKNOW">
+          <span class="text-500">Estado desconocido</span>
+        </ng-container>
+        <ng-container
+          *ngSwitchCase="GeneratorStatusEnum.WAITING_FOR_STABILIZATION"
+        >
+          <span class="text-yellow-600">Estabilizando...</span>
+        </ng-container>
+        <ng-container *ngSwitchCase="GeneratorStatusEnum.STABILIZED">
+          <span class="text-yellow-600">Estabilizado</span>
+        </ng-container>
+        <ng-container *ngSwitchCase="GeneratorStatusEnum.REQUEST_IN_PROGRESS">
+          <span class="text-yellow-600">Esperando respuesta...</span>
+        </ng-container>
+        <ng-container *ngSwitchCase="GeneratorStatusEnum.WORKING">
+          <span class="text-green-500">Funcionando</span>
+        </ng-container>
+        <ng-container *ngSwitchCase="GeneratorStatusEnum.TURN_OFF">
+          <span class="text-500">Apagado</span>
+        </ng-container>
+        <ng-container *ngSwitchCase="GeneratorStatusEnum.TIMEOUT">
+          <span class="text-red-500">No responde</span>
+        </ng-container>
+        <ng-container *ngSwitchCase="GeneratorStatusEnum.ERROR">
+          <span class="text-red-500">ERROR {{errorCode$ | async}}</span>
+        </ng-container>
+      </ng-container>
+    </ng-container>
+  </div>
+
+</div>

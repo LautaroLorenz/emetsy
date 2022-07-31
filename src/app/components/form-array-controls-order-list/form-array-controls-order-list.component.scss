@@ -4,10 +4,6 @@
   @include styleclass('flex flex-column h-full');
 }
 
-.p-font-family {
-  font-family: var(--font-family);
-}
-
 .item {
   &:hover {
     @include styleclass('bg-purple-50');

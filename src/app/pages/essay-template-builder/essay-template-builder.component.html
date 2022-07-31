@@ -117,14 +117,15 @@
           <span class="mx-1">-</span>
           <span>{{selectedControl?.value.foreign.step.name}}</span>
         </div>
-        <app-step-switch
+        <app-step-build-form
           class="overflow-auto mt-2 pr-2"
           [selectedIndex]="selectedIndex"
           [stepId]="selectedControl?.value.step_id"
+          [essayTemplateStep]="selectedControl?.value"
           [(actionsRawData)]="selectedControl?.value.actions_raw_data"
           (actionsRawDataChange)="form.markAsDirty()"
         >
-        </app-step-switch>
+        </app-step-build-form>
       </ng-container>
     </div>
 
