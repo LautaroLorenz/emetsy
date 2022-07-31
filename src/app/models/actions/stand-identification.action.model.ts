@@ -47,19 +47,19 @@ export class StandIdentificationAction implements Action {
         takeUntil(this.destroyed$),
         tap((isActive) => {
           if (isActive) {
+            standGroup.get('meterId')?.setValidators(Validators.required);
+            standGroup.get('meterId')?.enable();
             if (this.form.get('hasManufacturingInformation')?.value) {
-              standGroup.get('meterId')?.setValidators(Validators.required);
-              standGroup.get('meterId')?.enable();
               standGroup.get('serialNumber')?.setValidators(Validators.required);
               standGroup.get('serialNumber')?.enable();
               standGroup.get('yearOfProduction')?.setValidators(Validators.required);
               standGroup.get('yearOfProduction')?.enable();
             }
           } else {
+            standGroup.get('meterId')?.disable();
+            standGroup.get('meterId')?.setValidators(null);
+            standGroup.get('meterId')?.reset();
             if (this.form.get('hasManufacturingInformation')?.value) {
-              standGroup.get('meterId')?.disable();
-              standGroup.get('meterId')?.setValidators(null);
-              standGroup.get('meterId')?.reset();
               standGroup.get('serialNumber')?.disable();
               standGroup.get('serialNumber')?.setValidators(null);
               standGroup.get('serialNumber')?.reset();

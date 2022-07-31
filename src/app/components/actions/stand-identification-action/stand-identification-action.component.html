@@ -22,7 +22,7 @@
             'text-black-alpha-40': !hasManufacturingInformation.checked()
           }"
           >
-            Solicitar información de los medidores,
+            Durante la ejecución solicitar información de los medidores,
             para mostrar en el reporte final.
           </span>
         </div>
@@ -40,7 +40,7 @@
           class="relative p-3 mb-3"
         >
           <button
-            *ngIf="i===0 && form.get('hasManufacturingInformation')?.value"
+            *ngIf="i===0"
             pButton
             pRipple
             icon="pi pi-copy"
@@ -73,33 +73,33 @@
             </div>
           </div>
 
-          <ng-container *ngIf="form.get('hasManufacturingInformation')?.value">
-
-            <div class="flex">
-              <div class="flex flex-1 flex-column">
-                <label
-                  for="meterId"
-                  class="mb-2"
-                  [ngClass]="{
+          <div class="flex">
+            <div class="flex flex-1 flex-column">
+              <label
+                for="meterId"
+                class="mb-2"
+                [ngClass]="{
                   'text-black-alpha-40': !isActive.checked()
                 }"
-                >Modelo de medidor<span
-                    *ngIf="isActive.checked()"
-                    class="ml-1 text-red-300"
-                  >*</span>
-                </label>
-                <p-dropdown
-                  styleClass="w-full"
-                  id="meterId"
-                  [options]="dropdownMeterOptions"
-                  formControlName="meterId"
-                  optionValue="id"
-                  optionLabel="label"
-                  appendTo="body"
-                  [autoDisplayFirst]="false"
-                ></p-dropdown>
-              </div>
+              >Modelo de medidor<span
+                  *ngIf="isActive.checked()"
+                  class="ml-1 text-red-300"
+                >*</span>
+              </label>
+              <p-dropdown
+                styleClass="w-full"
+                id="meterId"
+                [options]="dropdownMeterOptions"
+                formControlName="meterId"
+                optionValue="id"
+                optionLabel="label"
+                appendTo="body"
+                [autoDisplayFirst]="false"
+              ></p-dropdown>
             </div>
+          </div>
+
+          <ng-container *ngIf="form.get('hasManufacturingInformation')?.value">
 
             <ng-container *ngIf="!hiddenFields['serialNumber']">
               <div class="flex flex-1 flex-column mt-3">
