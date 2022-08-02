@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/core';
-import { BehaviorSubject, Observable, ReplaySubject, take, takeUntil, tap } from 'rxjs';
+import { BehaviorSubject, debounceTime, delay, Observable, of, ReplaySubject, take, takeUntil, tap } from 'rxjs';
 import { DeviceStatus, DeviceStatusEnum, LedColor, LedColorEnum } from 'src/app/models';
 import { CalculatorService } from 'src/app/services/calculator.service';
 import { GeneratorService } from 'src/app/services/generator.service';
@@ -14,15 +14,12 @@ import { UsbHandlerService } from 'src/app/services/usb-handler.service';
 })
 export class DevicesComponent implements OnInit, OnDestroy {
 
+  connected$: BehaviorSubject<boolean | null> = new BehaviorSubject<boolean | null>(null);
   connectedColor$: BehaviorSubject<LedColor> = new BehaviorSubject<LedColor>(LedColorEnum.WHITE);
   transmittingColor$: BehaviorSubject<LedColor> = new BehaviorSubject<LedColor>(LedColorEnum.WHITE);
   generatorStatusColor$: BehaviorSubject<LedColor> = new BehaviorSubject<LedColor>(LedColorEnum.WHITE);
   patternStatusColor$: BehaviorSubject<LedColor> = new BehaviorSubject<LedColor>(LedColorEnum.WHITE);
   calculatorStatusColor$: BehaviorSubject<LedColor> = new BehaviorSubject<LedColor>(LedColorEnum.WHITE);
-
-  get connected$(): Observable<boolean> {
-    return this.usbHandlerService.connected$;
-  }
 
   get generatorErrorMessage$(): Observable<string | null> {
     return this.generatorService.errorMessage$;
@@ -64,9 +61,12 @@ export class DevicesComponent implements OnInit, OnDestroy {
     ).subscribe();
   }
 
-  ngOnInit() {
+  ngOnInit() {   
+    this.connected$.next(null);
     this.usbHandlerService.connected$.pipe(
       takeUntil(this.destroyed$),
+      debounceTime(250),
+      tap((isConnected) => this.connected$.next(isConnected)),
       tap((isConnected) => this.connectedColor$.next(isConnected ? LedColorEnum.GREEN : LedColorEnum.GREY))
     ).subscribe();
 

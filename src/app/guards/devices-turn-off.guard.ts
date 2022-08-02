@@ -34,6 +34,12 @@ export class DevicesTurnOffGuard implements CanDeactivate<ComponentCanDeactivate
             calculatorStatus: of(this.calculatorService.deviceStatus$.value),
           }).pipe(
             switchMap(({ generatorStatus, patternStatus, calculatorStatus }) => {
+              if (generatorStatus !== DeviceStatusEnum.FAIL &&
+                patternStatus !== DeviceStatusEnum.FAIL &&
+                calculatorStatus !== DeviceStatusEnum.FAIL) {
+                return of(true);
+              }
+
               return of({ generatorStatus, patternStatus, calculatorStatus }).pipe(
                 switchMap(({ generatorStatus, patternStatus, calculatorStatus }) => {
                   const toTurnOff$: Observable<ResponseStatusEnum>[] = [];
