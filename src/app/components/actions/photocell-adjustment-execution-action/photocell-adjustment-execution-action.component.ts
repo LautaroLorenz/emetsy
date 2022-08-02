@@ -59,12 +59,12 @@ export class PhotocellAdjustmentExecutionActionComponent implements ActionCompon
         this.patternService.clearStatus();
       }),
       filter((isConnected) => isConnected),
-      switchMap(() => this.generatorService.setWorkingParams$(phases).pipe(
+      switchMap(() => this.generatorService.turnOn$(phases).pipe(
         filter(status => status === ResponseStatusEnum.ACK),
         switchMap(() => this.generatorService.getStatus$()),
       )),
       filter(status => status === ResponseStatusEnum.ACK),
-      switchMap(() => this.patternService.setWorkingParams$(phases).pipe(
+      switchMap(() => this.patternService.turnOn$(phases).pipe(
         filter(status => status === ResponseStatusEnum.ACK),
         tap(() => this.patternService.startRerporting()),
       )),

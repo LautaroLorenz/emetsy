@@ -1,7 +1,7 @@
 import { AfterViewInit, ChangeDetectionStrategy, Component, Input, OnDestroy } from '@angular/core';
 import { FormGroup } from '@angular/forms';
-import { BehaviorSubject, catchError, filter, forkJoin, map, Observable, of, ReplaySubject, switchMap, take, takeUntil, takeWhile, tap } from 'rxjs';
-import { Action, ActionComponent, CalculatorParams, ContrastTestExecutionAction, ContrastTestParametersAction, EnterTestValuesAction, Phases, ResponseStatus, ResponseStatusEnum, ResultEnum, StandArrayFormValue, StandIdentificationAction, StandResult } from 'src/app/models';
+import { BehaviorSubject, catchError, filter, forkJoin, map, Observable, of, ReplaySubject, Subject, switchMap, take, takeUntil, takeWhile, tap } from 'rxjs';
+import { Action, ActionComponent, CalculatorParams, ContrastTestExecutionAction, ContrastTestParametersAction, EnterTestValuesAction, PatternParams, Phases, ResponseStatus, ResponseStatusEnum, ResultEnum, StandArrayFormValue, StandIdentificationAction, StandResult } from 'src/app/models';
 import { CalculatorService } from 'src/app/services/calculator.service';
 import { ExecutionDirector } from 'src/app/services/execution-director.service';
 import { GeneratorService } from 'src/app/services/generator.service';
@@ -19,6 +19,7 @@ export class ContrastTestExecutionActionComponent implements ActionComponent, Af
 
   @Input() action!: Action;
 
+  readonly phases$: BehaviorSubject<Phases | null> = new BehaviorSubject<Phases | null>(null);
   readonly results$: BehaviorSubject<StandResult[]> = new BehaviorSubject<StandResult[]>([]);
   readonly initialized$: BehaviorSubject<boolean | null> = new BehaviorSubject<boolean | null>(null);
 
@@ -41,7 +42,8 @@ export class ContrastTestExecutionActionComponent implements ActionComponent, Af
     return this.usbHandlerService.connected$.value;
   }
 
-  protected readonly destroyed$: ReplaySubject<boolean> = new ReplaySubject(1);
+  private readonly destroyed$: ReplaySubject<boolean> = new ReplaySubject(1);
+  private readonly listenPatternParams$ = new Subject<void>();
 
   constructor(
     private readonly executionDirectorService: ExecutionDirector,
@@ -65,6 +67,16 @@ export class ContrastTestExecutionActionComponent implements ActionComponent, Af
       }),
       tap(() => this.form.get('contrastTestExecutionComplete')?.setValue(true)),
     );
+  }
+
+  private listenPatternParams(): void {
+    this.listenPatternParams$.next();
+    this.patternService.params$.pipe(
+      takeUntil(this.listenPatternParams$),
+      filter((params) => params !== null),
+      map((params) => params as PatternParams),
+      tap(({ phases }) => this.phases$.next(phases))
+    ).subscribe();
   }
 
   private lisenResults(
@@ -122,7 +134,7 @@ export class ContrastTestExecutionActionComponent implements ActionComponent, Af
       if (standIdentificationAction) {
         const { hasManufacturingInformation } = standIdentificationAction.form.getRawValue();
         const stands = (standIdentificationAction as StandIdentificationAction).standArray.getRawValue();
-        this.lisenResults(stands, maxAllowedError!, meterPulses!, numberOfDiscardedResults!);
+        this.lisenResults(stands, maxAllowedError!, meterPulses!, numberOfDiscardedResults!); // TODO:
       }
     }
 
@@ -136,21 +148,25 @@ export class ContrastTestExecutionActionComponent implements ActionComponent, Af
         this.calculatorService.clearStatus();
       }),
       filter((isConnected) => isConnected),
-      switchMap(() => this.generatorService.setWorkingParams$(phases).pipe(
+      switchMap(() => this.generatorService.turnOn$(phases).pipe(
         filter(status => status === ResponseStatusEnum.ACK),
         switchMap(() => this.generatorService.getStatus$()),
       )),
       filter(status => status === ResponseStatusEnum.ACK),
-      switchMap(() => this.patternService.setWorkingParams$(phases).pipe(
+      switchMap(() => this.patternService.turnOn$(phases).pipe(
         filter(status => status === ResponseStatusEnum.ACK),
-        tap(() => this.patternService.startRerporting()),
+        tap(() => {
+          this.listenPatternParams();
+          this.patternService.startRerporting();
+        }),
       )),
       filter(status => status === ResponseStatusEnum.ACK),
-      switchMap(() => this.calculatorService.setWorkingParams$(
-        // phases // TODO:
-      ).pipe(
+      switchMap(() => this.calculatorService.turnOn$(/* TODO: params */).pipe(
         filter(status => status === ResponseStatusEnum.ACK),
-        tap(() => this.calculatorService.startRerporting()),
+        tap(() => {
+          // TODO: subscribe to listen results
+          this.calculatorService.startRerporting();
+        }),
       )),
       filter(status => status === ResponseStatusEnum.ACK),
       tap(() => this.initialized$.next(true)),
