@@ -128,7 +128,7 @@ export class ContrastTestExecutionActionComponent implements ActionComponent, Af
     const phases: Phases = this.enterTestValuesAction.getPhases();
     const { meterConstant, testName } = this.enterTestValuesAction.form.getRawValue();
     const { maxAllowedError, meterPulses, numberOfDiscardedResults } = this.contrastTestParametersAction.form.getRawValue();
-    const preparationStep = this.executionDirectorService.getStepBuilderById(6);
+    const preparationStep = this.executionDirectorService.getStepBuilderById(7);
     if (preparationStep) {
       const standIdentificationAction = preparationStep.actions.find((ac) => ac instanceof StandIdentificationAction);
       if (standIdentificationAction) {

@@ -2,7 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormArray, FormControl, FormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { filter, map, Observable, ReplaySubject, switchMap, takeUntil, tap } from 'rxjs';
-import { Action, ContrastTestStep, EssayTemplate, EssayTemplateDbTableContext, ExecutionStatus, PageUrlName, PhotocellAdjustmentStep, PreparationStep, RelationsManager, StepBuilder, WhereKind, WhereOperator } from 'src/app/models';
+import { Action, ContrastTestStep, EssayTemplate, EssayTemplateDbTableContext, ExecutionStatus, PageUrlName, PhotocellAdjustmentStep, PreparationStep, RelationsManager, ReportStep, StepBuilder, WhereKind, WhereOperator } from 'src/app/models';
 import { EssayTemplateStep, EssayTemplateStepDbTableContext } from 'src/app/models/database/tables/essay-template-step.model';
 import { DatabaseService } from 'src/app/services/database.service';
 import { ExecutionDirector } from 'src/app/services/execution-director.service';
@@ -81,11 +81,13 @@ export class ExecuteEssayComponent implements OnInit, OnDestroy {
 
   private buildStepById(step_id: number, essayTemplateStep: EssayTemplateStep): StepBuilder {
     switch (step_id) {
-      case 3:
+      case 1:
+        return new ReportStep(essayTemplateStep);
+      case 4:
         return new ContrastTestStep(essayTemplateStep);
-      case 5:
-        return new PhotocellAdjustmentStep(essayTemplateStep);
       case 6:
+        return new PhotocellAdjustmentStep(essayTemplateStep);
+      case 7:
         return new PreparationStep(essayTemplateStep, this.destroyed$);
     }
 

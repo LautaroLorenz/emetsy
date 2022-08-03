@@ -35,5 +35,10 @@
       [action]="action"
       class="mb-3"
     ></app-contrast-test-execution-action>
+    <app-report-action
+      *ngSwitchCase="ActionEnum.Report"
+      [action]="action"
+      class="mb-3"
+    ></app-report-action>
   </ng-container>
 </ng-container>

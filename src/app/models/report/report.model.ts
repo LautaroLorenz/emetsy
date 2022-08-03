@@ -41,18 +41,3 @@ export class ReportBuilderHTML implements ReportBuilder {
     return result;
   }
 }
-
-export class ReportDirector {
-  private builder!: ReportBuilder;
-
-  public setBuilder(builder: ReportBuilder): void {
-    this.builder = builder;
-  }
-
-  public buildContrastTestReport(): void {
-    this.builder.produceHeader();
-    this.builder.produceBody();
-    this.builder.produceFooter();
-  }
-
-}

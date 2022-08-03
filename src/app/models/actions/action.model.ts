@@ -23,4 +23,5 @@ export enum ActionEnum {
   ContrastTestExecution = 'ContrastTestExecution',
   PhotocellAdjustmentExecution = 'PhotocellAdjustmentExecution',
   UserIdentification = 'UserIdentification',
+  Report = 'Report',
 }

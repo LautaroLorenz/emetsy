@@ -48,6 +48,10 @@ ipcMain.handle('open-usb-serial-port', async (_, { productId, vendorId }) => {
   readCommandQueue = [];
   parser.removeAllListeners();
   initParser(parser);
+  if (!serialPort) {
+    console.error('No se pudo crear el puerto');
+    return false;
+  }
   serialPort.pipe(parser);
   return true;
 });

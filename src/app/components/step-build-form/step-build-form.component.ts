@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { filter, Observable, ReplaySubject, takeUntil, tap } from 'rxjs';
-import { ContrastTestStep, PhotocellAdjustmentStep, PreparationStep, StepBuilder } from 'src/app/models';
+import { ContrastTestStep, PhotocellAdjustmentStep, PreparationStep, ReportStep, StepBuilder } from 'src/app/models';
 import { EssayTemplateStep } from 'src/app/models/database/tables/essay-template-step.model';
 
 @Component({
@@ -45,11 +45,13 @@ export class StepBuildFormComponent implements OnInit, OnChanges, OnDestroy {
 
   buildStepById(step_id: number, essayTemplateStep: EssayTemplateStep): StepBuilder {
     switch (step_id) {
-      case 3:
+      case 1:
+        return new ReportStep(essayTemplateStep);
+      case 4:
         return new ContrastTestStep(essayTemplateStep);
-      case 5:
-        return new PhotocellAdjustmentStep(essayTemplateStep);
       case 6:
+        return new PhotocellAdjustmentStep(essayTemplateStep);
+      case 7:
         return new PreparationStep(essayTemplateStep, this.destroyed$);
     }
 

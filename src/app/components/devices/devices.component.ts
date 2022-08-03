@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/core';
-import { BehaviorSubject, debounceTime, delay, Observable, of, ReplaySubject, take, takeUntil, tap } from 'rxjs';
+import { BehaviorSubject, debounceTime, delay, Observable, of, ReplaySubject, skip, take, takeUntil, tap } from 'rxjs';
 import { DeviceStatus, DeviceStatusEnum, LedColor, LedColorEnum } from 'src/app/models';
 import { CalculatorService } from 'src/app/services/calculator.service';
 import { GeneratorService } from 'src/app/services/generator.service';
@@ -61,11 +61,10 @@ export class DevicesComponent implements OnInit, OnDestroy {
     ).subscribe();
   }
 
-  ngOnInit() {   
-    this.connected$.next(null);
+  ngOnInit() {
     this.usbHandlerService.connected$.pipe(
+      skip(1),
       takeUntil(this.destroyed$),
-      debounceTime(250),
       tap((isConnected) => this.connected$.next(isConnected)),
       tap((isConnected) => this.connectedColor$.next(isConnected ? LedColorEnum.GREEN : LedColorEnum.GREY))
     ).subscribe();

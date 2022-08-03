@@ -14,7 +14,7 @@
     ></p-message>
 
     <div class="border border-1 border-200 p-4 mb-4 border-round">
-      
+
       <app-devices></app-devices>
 
       <div class="flex flex-1 mb-3 mt-4">
@@ -30,9 +30,9 @@
         styleClass="p-button-outlined"
         label="Ajuste de fotocelulas realizado"
         (click)="completeAction()"
-        [disabled]="photocellAdjustmentExecutionComplete || !connected || !initialized$.value"
+        [disabled]="photocellAdjustmentExecutionComplete || !connected || !initialized$.value || completing"
         [ngClass]="{
-          'pointer-events-none': photocellAdjustmentExecutionComplete || !connected || !initialized$.value
+          'pointer-events-none': photocellAdjustmentExecutionComplete || !connected || !initialized$.value || completing
         }"
       ></p-button>
     </div>
