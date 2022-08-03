@@ -38,3 +38,4 @@ export * from "./protocol/device.model";
 export * from "./forms/action.form.model";
 export * from "./forms/contrast-test-parameters-action.form.model";
 export * from "./forms/stand-identification-action.form.model";
+export * from "./report/report.model";
