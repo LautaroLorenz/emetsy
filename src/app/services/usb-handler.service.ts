@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { BehaviorSubject, catchError, filter, first, from, map, Observable, of, retry, Subject, switchMap, take, tap, timeout } from "rxjs";
+import { BehaviorSubject, catchError, filter, first, from, map, Observable, of, retry, Subject, switchMap, take, takeWhile, tap, timeout } from "rxjs";
 import { Command, CommandManager, CompileParams, PROTOCOL, ResponseStatus, ResponseStatusEnum } from "../models";
 import { IpcService } from "./ipc.service";
 import { MessagesService } from "./messages.service";
@@ -227,11 +227,7 @@ export class UsbHandlerService {
       }),
       tap((isClose) => {
         if (isClose) {
-          this.postCommandQueue = null;
-          this.stopChekingConnectionLoop();
-          this.stopGettingCommandLoop();
-          this.stopPosttingCommandLoop();
-          this.sendAndWaitInProgress$.next(false);
+          this.stopLoops();
         }
       }),
       tap((isClose) => this.connected$.next(!isClose)),
@@ -244,6 +240,7 @@ export class UsbHandlerService {
     params: string[]
   }> {
     return of(this.sendAndWaitInProgress$.next(true)).pipe(
+      takeWhile(() => this.connected$.value),
       take(1),
       tap(() => this.send(command)),
       switchMap(() => this.getCommand$.pipe(
@@ -269,7 +266,7 @@ export class UsbHandlerService {
             params = this.getParams(command, commandManager);
             status = ResponseStatusEnum.ACK;
           } else {
-            status = ResponseStatusEnum.UNKNOW;
+            status = ResponseStatusEnum.UNKNOWN;
           }
 
           const result = {
@@ -280,20 +277,26 @@ export class UsbHandlerService {
 
           switch (status) {
             case ResponseStatusEnum.ERROR:
-            case ResponseStatusEnum.UNKNOW:
+            case ResponseStatusEnum.UNKNOWN:
             case ResponseStatusEnum.TIMEOUT:
               throw new Error(JSON.stringify(result));
             case ResponseStatusEnum.ACK:
               return result;
           }
-        }),
-        tap(() => this.sendAndWaitInProgress$.next(false)),
+        })
       )),
       retry(2),
-      catchError(({ message }) => {
-        return of(JSON.parse(message));
-      }),
+      catchError(({ message }) => of(JSON.parse(message))),
+      tap(() => this.sendAndWaitInProgress$.next(false)),
     );
+  }
+
+  stopLoops(): void {
+    this.postCommandQueue = null;
+    this.stopChekingConnectionLoop();
+    this.stopGettingCommandLoop();
+    this.stopPosttingCommandLoop();
+    this.sendAndWaitInProgress$.next(false);
   }
 
 }

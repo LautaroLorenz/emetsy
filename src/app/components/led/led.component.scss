@@ -1,0 +1,5 @@
+@import 'primeflex/primeflex.scss';
+
+:host {
+  @include styleclass('flex align-items-center py-1');
+}

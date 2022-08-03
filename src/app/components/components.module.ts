@@ -57,15 +57,12 @@ import { StepExecutionStatusListComponent } from './step-execution-status-list/s
 import { StepBuildFormComponent } from './step-build-form/step-build-form.component';
 import { PhotocellAdjustmentExecutionActionComponent } from './actions/photocell-adjustment-execution-action/photocell-adjustment-execution-action.component';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
-import { GeneratorComponent } from './generator/generator.component';
-import { ConnectionStatusComponent } from './connection-status/connection-status.component';
 import { LoadingDotsComponent } from './loading-dots/loading-dots.component';
-import { PatternComponent } from './pattern/pattern.component';
 import { PhasesComponent } from './phases/phases.component';
-import { WorkingParametersStatusComponent } from './working-parameters-status/working-parameters-status.component';
 import { ContrastTestExecutionActionComponent } from './actions/contrast-test-execution-action/contrast-test-execution-action.component';
-import { CalculatorComponent } from './calculator/calculator.component';
 import { StandResultComponent } from './stand-result/stand-result.component';
+import { DevicesComponent } from './devices/devices.component';
+import { LedComponent } from './led/led.component';
 
 const PrimeNgModules = [
   MenubarModule,
@@ -124,15 +121,12 @@ const EmetsyComponents = [
   StepExecutionStatusListComponent,
   StepBuildFormComponent,
   PhotocellAdjustmentExecutionActionComponent,
-  GeneratorComponent,
-  ConnectionStatusComponent,
   LoadingDotsComponent,
-  PatternComponent,
   PhasesComponent,
-  WorkingParametersStatusComponent,
   ContrastTestExecutionActionComponent,
-  CalculatorComponent,
   StandResultComponent,
+  DevicesComponent,
+  LedComponent,
 ];
 
 @NgModule({

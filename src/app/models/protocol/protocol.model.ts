@@ -2,7 +2,7 @@ export enum ResponseStatusEnum {
   ERROR = 'ERROR',
   ACK = 'ACK',
   TIMEOUT = 'TIMEOUT',
-  UNKNOW = 'UNKNOW',
+  UNKNOWN = 'UNKNOWN',
 };
 export type ResponseStatus = ResponseStatusEnum;
 
@@ -14,7 +14,7 @@ export const PROTOCOL = {
       POST_COMMAND: 500,
       STATUS_REPORTING: 1000,
     },
-    WAITING_RESPONSE_TIMEOUT: 1000,
+    WAITING_RESPONSE_TIMEOUT: 2000,
     WAIT_STABILIZATION: 2000,
   },
   COMMAND: {

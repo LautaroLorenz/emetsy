@@ -1,37 +1,57 @@
 import { Injectable } from "@angular/core";
 import { BehaviorSubject, delay, filter, map, Observable, of, Subject, switchMap, take, takeUntil, takeWhile, tap } from "rxjs";
-import { CalculatorParams, CalculatorStatus, CalculatorStatusEnum, Command, CommandManager, PROTOCOL, ResponseStatus, ResponseStatusEnum, WorkingParamsStatus, WorkingParamsStatusEnum } from "../models";
-import { MessagesService } from "./messages.service";
+import { CalculatorParams, Command, CommandManager, Device, DeviceStatus, DeviceStatusEnum, PROTOCOL, ResponseStatus, ResponseStatusEnum, WorkingParamsStatus, WorkingParamsStatusEnum } from "../models";
 import { UsbHandlerService } from "./usb-handler.service";
 
 @Injectable({
   providedIn: "root"
 })
-export class CalculatorService {
+export class CalculatorService implements Device {
 
-  readonly workingParamsStatus$: BehaviorSubject<WorkingParamsStatus>;
-  readonly calculatorStatus$: BehaviorSubject<CalculatorStatus>;
-  readonly errorCode$: BehaviorSubject<number | null>;
+  readonly sendStoper$: Subject<void>;
+  readonly errorMessage$: BehaviorSubject<string | null>;
+  readonly deviceStatus$: BehaviorSubject<DeviceStatus>;
   readonly params$: BehaviorSubject<CalculatorParams | null>;
 
   private readonly commandManager: CommandManager;
   private readonly deviceFrom = PROTOCOL.DEVICE.SOFTWARE.NAME;
   private readonly deviceTo = PROTOCOL.DEVICE.CALCULATOR.NAME;
-  private readonly reportingStoper$: Subject<void>;
-  private readonly getStatusStoper$: Subject<void>;
 
   constructor(
     private readonly usbHandlerService: UsbHandlerService,
-    private readonly messagesService: MessagesService,
   ) {
-    this.errorCode$ = new BehaviorSubject<number | null>(null);
+    this.sendStoper$ = new Subject<void>();
+    this.errorMessage$ = new BehaviorSubject<string | null>(null);
+    this.deviceStatus$ = new BehaviorSubject<DeviceStatus>(DeviceStatusEnum.UNKNOWN);
     this.params$ = new BehaviorSubject<CalculatorParams | null>(null);
-    this.workingParamsStatus$ = new BehaviorSubject<WorkingParamsStatus>(WorkingParamsStatusEnum.UNKNOW);
-    this.calculatorStatus$ = new BehaviorSubject<CalculatorStatus>(CalculatorStatusEnum.UNKNOW);
 
     this.commandManager = new CommandManager(this.deviceFrom, this.deviceTo);
-    this.reportingStoper$ = new Subject<any>();
-    this.getStatusStoper$ = new Subject<any>();
+  }
+
+  private checkIsErrorResponseOrSetParams(status: ResponseStatus, errorCode: number | null, params: string[]): ResponseStatus {
+    switch (status) {
+      case ResponseStatusEnum.ACK:
+        if (params.length > 0) {
+          this.setParams(params);
+        }
+        this.errorMessage$.next(null);
+        return status;
+      case ResponseStatusEnum.TIMEOUT:
+        this.errorMessage$.next('Error: No responde');
+        return status;
+      case ResponseStatusEnum.ERROR:
+        this.errorMessage$.next('Error: '.concat(errorCode ? errorCode.toString() : 'sin código'));
+        return status;
+      case ResponseStatusEnum.UNKNOWN:
+        this.errorMessage$.next('Error: no se pudo procesar el comando');
+        return status;
+    }
+  }
+
+  private setParams(params: string[]): void {
+    this.params$.next({
+      results: params
+    });
   }
 
   private reportLoop$(): Observable<ResponseStatus> {
@@ -44,17 +64,21 @@ export class CalculatorService {
     );
   }
 
-  clearStatus(): void {
-    this.errorCode$.next(null);
-    this.params$.next(null);
-    this.reportingStoper$.next();
-    this.getStatusStoper$.next();
-
-    this.workingParamsStatus$.next(WorkingParamsStatusEnum.UNKNOW);
-    this.calculatorStatus$.next(CalculatorStatusEnum.UNKNOW);
+  startRerporting(): void {
+    this.sendStoper$.next();
+    this.reportLoop$().pipe(
+      takeUntil(this.sendStoper$),
+      takeWhile(() => this.usbHandlerService.connected$.value),
+    ).subscribe();
   }
 
-  setWorkingParams$(
+  clearStatus(): void {
+    this.errorMessage$.next(null);
+    this.params$.next(null);
+    this.deviceStatus$.next(DeviceStatusEnum.UNKNOWN);
+  }
+
+  turnOn$(
     // phases: Phases // TODO:
   ): Observable<ResponseStatus> {
     // const command: Command = this.commandManager.build(
@@ -71,94 +95,51 @@ export class CalculatorService {
     // );
     // TODO:
     const command: Command = 'B| PCS| CAL| TS1xxxxx| 1234567891| 00000015| P0101200| P0201200| P03     | P0400750| P0500750| Z| x';
-    return of(this.workingParamsStatus$.next(WorkingParamsStatusEnum.REQUEST_IN_PROGRESS)).pipe(
+    return of(true).pipe(
+      takeUntil(this.sendStoper$),
       switchMap(() => this.usbHandlerService.sendAndWaitAsync$(command, this.commandManager).pipe(
-        map(({ status, errorCode }) => {
-          this.errorCode$.next(errorCode);
-          switch (status) {
-            case ResponseStatusEnum.ACK:
-              this.workingParamsStatus$.next(WorkingParamsStatusEnum.PARAMETERS_SET_CORRECTLY);
-              break;
-            case ResponseStatusEnum.ERROR:
-            case ResponseStatusEnum.TIMEOUT:
-            case ResponseStatusEnum.UNKNOW:
-              this.workingParamsStatus$.next(WorkingParamsStatusEnum.PARAMETERS_SET_ERROR);
-              this.messagesService.error('No se pudo configurar los parámetros de trabajo del calculador.');
-              break;
+        map(({ status, errorCode, params }) => this.checkIsErrorResponseOrSetParams(status, errorCode, params)),
+        tap((status) => {
+          if (status === ResponseStatusEnum.ACK) {
+            this.deviceStatus$.next(DeviceStatusEnum.TURN_ON);
+          } else {
+            this.deviceStatus$.next(DeviceStatusEnum.FAIL);
           }
-          return status;
-        })
-      )),
-    );
-  }
-
-  getStatus$(): Observable<ResponseStatus> {
-    const command: Command = this.commandManager.build(PROTOCOL.DEVICE.CALCULATOR.COMMAND.STATUS);
-
-    let newState: CalculatorStatus;
-    if (this.calculatorStatus$.value !== CalculatorStatusEnum.REPORTING) {
-      newState = CalculatorStatusEnum.REQUEST_IN_PROGRESS;
-    } else {
-      newState = CalculatorStatusEnum.REPORTING;
-    }
-
-    return of(this.calculatorStatus$.next(newState)).pipe(
-      takeUntil(this.getStatusStoper$),
-      switchMap(() => this.usbHandlerService.sendAndWaitAsync$(command, this.commandManager).pipe(
-        map(({ status, errorCode, params }) => {
-          this.errorCode$.next(errorCode);
-          switch (status) {
-            case ResponseStatusEnum.ACK:
-              this.params$.next({
-                results: params
-              });
-              this.calculatorStatus$.next(CalculatorStatusEnum.REPORTING);
-              break;
-            case ResponseStatusEnum.ERROR:
-              this.calculatorStatus$.next(CalculatorStatusEnum.ERROR);
-              break;
-            case ResponseStatusEnum.TIMEOUT:
-            case ResponseStatusEnum.UNKNOW:
-              this.calculatorStatus$.next(CalculatorStatusEnum.TIMEOUT);
-              this.messagesService.error('No se pudo obtener el estado del calculador.');
-              break;
-          }
-          return status;
         }),
       ))
     );
   }
 
-  startRerporting(): void {
-    this.reportingStoper$.next();
-    this.reportLoop$().pipe(
-      takeUntil(this.reportingStoper$),
-      takeWhile(() => this.usbHandlerService.connected$.value),
-    ).subscribe();
+  getStatus$(): Observable<ResponseStatus> {
+    const command: Command = this.commandManager.build(PROTOCOL.DEVICE.CALCULATOR.COMMAND.STATUS);
+    return of(true).pipe(
+      takeUntil(this.sendStoper$),
+      switchMap(() => this.usbHandlerService.sendAndWaitAsync$(command, this.commandManager).pipe(
+        map(({ status, errorCode, params }) => this.checkIsErrorResponseOrSetParams(status, errorCode, params)),
+        tap((status) => {
+          if (status !== ResponseStatusEnum.ACK) {
+            this.deviceStatus$.next(DeviceStatusEnum.FAIL);
+          }
+        }),
+      ))
+    );
   }
 
   turnOff$(): Observable<ResponseStatus> {
     const command: Command = this.commandManager.build(PROTOCOL.DEVICE.CALCULATOR.COMMAND.STOP);
-    return of(this.calculatorStatus$.next(CalculatorStatusEnum.REQUEST_IN_PROGRESS)).pipe(
-      tap(() => this.reportingStoper$.next()),
-      tap(() => this.getStatusStoper$.next()),
+    return of(true).pipe(
+      tap(() => this.sendStoper$.next()),
       delay(PROTOCOL.TIME.LOOP.GET_COMMAND * 4),
       switchMap(() => this.usbHandlerService.sendAndWaitAsync$(command, this.commandManager).pipe(
-        switchMap(({ status }) => {
-          switch (status) {
-            case ResponseStatusEnum.ACK:
-              this.clearStatus();
-              this.workingParamsStatus$.next(WorkingParamsStatusEnum.PARAMETERS_TURN_OFF);
-              this.calculatorStatus$.next(CalculatorStatusEnum.TURN_OFF);
-              return of(status);
-            case ResponseStatusEnum.ERROR:
-            case ResponseStatusEnum.TIMEOUT:
-            case ResponseStatusEnum.UNKNOW:
-              this.messagesService.error('No se pudo apagar el calculador.');
-              return this.getStatus$();
+        map(({ status, errorCode, params }) => this.checkIsErrorResponseOrSetParams(status, errorCode, params)),
+        tap((status) => {
+          if (status === ResponseStatusEnum.ACK) {
+            this.deviceStatus$.next(DeviceStatusEnum.TURN_OFF);
+          } else {
+            this.deviceStatus$.next(DeviceStatusEnum.FAIL);
           }
-        })
-      ))
+        }),
+      )),
     );
   }
 

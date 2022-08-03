@@ -1,0 +1,80 @@
+<div class="flex flex-1">
+
+  <div class="w-3">
+    <span class="mb-1 flex">Conexión USB</span>
+    <ng-container *ngIf="connectedColor$ | async as connectedColor">
+      <app-led [color]="connectedColor">Conectado</app-led>
+    </ng-container>
+  </div>
+
+  <div class="w-3">
+    <span class="mb-1 flex">Generador</span>
+    <ng-container *ngIf="generatorStatusColor$ | async as generatorStatusColor">
+      <app-led [color]="generatorStatusColor">Funcionando</app-led>
+    </ng-container>
+  </div>
+
+  <div class="w-3">
+    <span class="mb-1 flex">Patrón</span>
+    <ng-container *ngIf="patternStatusColor$ | async as patternStatusColor">
+      <app-led [color]="patternStatusColor">Funcionando</app-led>
+    </ng-container>
+  </div>
+
+  <div class="w-3">
+    <span class="mb-1 flex">Calculador</span>
+    <ng-container *ngIf="calculatorStatusColor$ | async as calculatorStatusColor">
+      <app-led [color]="calculatorStatusColor">Funcionando</app-led>
+    </ng-container>
+  </div>
+
+</div>
+
+<div class="flex flex-1 mt-3 flex-column">
+
+  <ng-container *ngIf="(connected$ | async) === false">
+    <div class="flex flex-1 align-items-center mt-3">
+      <p-message
+        severity="error"
+        text="No se puedo detectar el dispositivo USB."
+        styleClass="flex flex-1 justify-content-start"
+      ></p-message>
+      <p-button
+        label="Reintentar conexión"
+        styleClass="p-button-outlined ml-4"
+        (click)="connect()"
+      ></p-button>
+    </div>
+  </ng-container>
+
+  <ng-container *ngIf="(generatorErrorMessage$ | async) as generatorErrorMessage">
+    <div class="flex flex-1 align-items-center mt-3">
+      <p-message
+        severity="error"
+        [text]="'Generador - '.concat(generatorErrorMessage)"
+        styleClass="flex flex-1 justify-content-start"
+      ></p-message>
+    </div>
+  </ng-container>
+
+  <ng-container *ngIf="(patternErrorMessage$ | async) as patternErrorMessage">
+    <div class="flex flex-1 align-items-center mt-3">
+      <p-message
+        severity="error"
+        [text]="'Patrón - '.concat(patternErrorMessage)"
+        styleClass="flex flex-1 justify-content-start"
+      ></p-message>
+    </div>
+  </ng-container>
+
+  <ng-container *ngIf="(calculatorErrorMessage$ | async) as calculatorErrorMessage">
+    <div class="flex flex-1 align-items-center mt-3">
+      <p-message
+        severity="error"
+        [text]="'Calculador - '.concat(calculatorErrorMessage)"
+        styleClass="flex flex-1 justify-content-start"
+      ></p-message>
+    </div>
+  </ng-container>
+
+</div>

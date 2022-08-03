@@ -1,7 +1,7 @@
 import { AfterViewInit, ChangeDetectionStrategy, Component, Input, OnDestroy } from '@angular/core';
 import { FormGroup } from '@angular/forms';
-import { BehaviorSubject, filter, forkJoin, Observable, ReplaySubject, switchMap, take, takeUntil, takeWhile, tap } from 'rxjs';
-import { Action, ActionComponent, Phases, PhotocellAdjustmentExecutionAction, PhotocellAdjustmentValuesAction, ResponseStatus, ResponseStatusEnum } from 'src/app/models';
+import { BehaviorSubject, filter, forkJoin, map, Observable, ReplaySubject, Subject, switchMap, take, takeUntil, takeWhile, tap } from 'rxjs';
+import { Action, ActionComponent, PatternParams, Phases, PhotocellAdjustmentExecutionAction, PhotocellAdjustmentValuesAction, ResponseStatus, ResponseStatusEnum } from 'src/app/models';
 import { GeneratorService } from 'src/app/services/generator.service';
 import { PatternService } from 'src/app/services/pattern.service';
 import { UsbHandlerService } from 'src/app/services/usb-handler.service';
@@ -16,6 +16,7 @@ export class PhotocellAdjustmentExecutionActionComponent implements ActionCompon
 
   @Input() action!: Action;
 
+  readonly phases$: BehaviorSubject<Phases | null> = new BehaviorSubject<Phases | null>(null);
   readonly initialized$: BehaviorSubject<boolean | null> = new BehaviorSubject<boolean | null>(null);
 
   get helpText(): string {
@@ -40,12 +41,23 @@ export class PhotocellAdjustmentExecutionActionComponent implements ActionCompon
   }
 
   protected readonly destroyed$: ReplaySubject<boolean> = new ReplaySubject(1);
+  private readonly listenPatternParams$ = new Subject<void>();
 
   constructor(
     private readonly usbHandlerService: UsbHandlerService,
     private readonly generatorService: GeneratorService,
     private readonly patternService: PatternService,
   ) { }
+
+  private listenPatternParams(): void {
+    this.listenPatternParams$.next();
+    this.patternService.params$.pipe(
+      takeUntil(this.listenPatternParams$),
+      filter((params) => params !== null),
+      map((params) => params as PatternParams),
+      tap(({ phases }) => this.phases$.next(phases))
+    ).subscribe();
+  }
 
   ngAfterViewInit(): void {
     const phases: Phases = this.photocellAdjustmentValuesAction.getPhases();
@@ -59,14 +71,17 @@ export class PhotocellAdjustmentExecutionActionComponent implements ActionCompon
         this.patternService.clearStatus();
       }),
       filter((isConnected) => isConnected),
-      switchMap(() => this.generatorService.setWorkingParams$(phases).pipe(
+      switchMap(() => this.generatorService.turnOn$(phases).pipe(
         filter(status => status === ResponseStatusEnum.ACK),
         switchMap(() => this.generatorService.getStatus$()),
       )),
       filter(status => status === ResponseStatusEnum.ACK),
-      switchMap(() => this.patternService.setWorkingParams$(phases).pipe(
+      switchMap(() => this.patternService.turnOn$(phases).pipe(
         filter(status => status === ResponseStatusEnum.ACK),
-        tap(() => this.patternService.startRerporting()),
+        tap(() => {          
+          this.listenPatternParams();
+          this.patternService.startRerporting();
+        }),
       )),
       filter(status => status === ResponseStatusEnum.ACK),
       tap(() => this.initialized$.next(true)),

@@ -1,17 +1,16 @@
 import { Injectable } from "@angular/core";
-import { BehaviorSubject, delay, map, Observable, of, switchMap, tap } from "rxjs";
-import { Command, CommandManager, WorkingParamsStatus, WorkingParamsStatusEnum, PROTOCOL, ResponseStatus, ResponseStatusEnum, GeneratorStatus, GeneratorStatusEnum, Phases } from "../models";
-import { MessagesService } from "./messages.service";
+import { BehaviorSubject, delay, map, Observable, of, Subject, switchMap, takeUntil, tap } from "rxjs";
+import { Command, CommandManager, PROTOCOL, ResponseStatus, ResponseStatusEnum, Phases, Device, DeviceStatus, DeviceStatusEnum } from "../models";
 import { UsbHandlerService } from "./usb-handler.service";
 
 @Injectable({
   providedIn: "root"
 })
-export class GeneratorService {
+export class GeneratorService implements Device {
 
-  readonly errorCode$: BehaviorSubject<number | null>;
-  readonly workingParamsStatus$: BehaviorSubject<WorkingParamsStatus>;
-  readonly generatorStatus$: BehaviorSubject<GeneratorStatus>;
+  readonly sendStoper$: Subject<void>;
+  readonly errorMessage$: BehaviorSubject<string | null>;
+  readonly deviceStatus$: BehaviorSubject<DeviceStatus>;
 
   private readonly commandManager: CommandManager;
   private readonly deviceFrom = PROTOCOL.DEVICE.SOFTWARE.NAME;
@@ -19,21 +18,41 @@ export class GeneratorService {
 
   constructor(
     private readonly usbHandlerService: UsbHandlerService,
-    private readonly messagesService: MessagesService,
   ) {
-    this.errorCode$ = new BehaviorSubject<number | null>(null);
+    this.sendStoper$ = new Subject<void>();
+    this.errorMessage$ = new BehaviorSubject<string | null>(null);
     this.commandManager = new CommandManager(this.deviceFrom, this.deviceTo);
-    this.workingParamsStatus$ = new BehaviorSubject<WorkingParamsStatus>(WorkingParamsStatusEnum.UNKNOW);
-    this.generatorStatus$ = new BehaviorSubject<GeneratorStatus>(GeneratorStatusEnum.UNKNOW);
+    this.deviceStatus$ = new BehaviorSubject<DeviceStatus>(DeviceStatusEnum.UNKNOWN);
   }
+
+  private checkIsErrorResponseOrSetParams(status: ResponseStatus, errorCode: number | null, params: string[]): ResponseStatus {
+    switch (status) {
+      case ResponseStatusEnum.ACK:
+        if (params.length > 0) {
+          this.setParams(params);
+        }
+        this.errorMessage$.next(null);
+        return status;
+      case ResponseStatusEnum.TIMEOUT:
+        this.errorMessage$.next('Error: No responde');
+        return status;
+      case ResponseStatusEnum.ERROR:
+        this.errorMessage$.next('Error: '.concat(errorCode ? errorCode.toString() : 'sin código'));
+        return status;
+      case ResponseStatusEnum.UNKNOWN:
+        this.errorMessage$.next('Error: no se pudo procesar el comando');
+        return status;
+    }
+  }
+
+  private setParams(params: string[]): void { }
 
   clearStatus(): void {
-    this.errorCode$.next(null);
-    this.workingParamsStatus$.next(WorkingParamsStatusEnum.UNKNOW);
-    this.generatorStatus$.next(GeneratorStatusEnum.UNKNOW);
+    this.errorMessage$.next(null);
+    this.deviceStatus$.next(DeviceStatusEnum.UNKNOWN);
   }
 
-  setWorkingParams$(phases: Phases): Observable<ResponseStatus> {
+  turnOn$(phases: Phases): Observable<ResponseStatus> {
     const command: Command = this.commandManager.build(
       PROTOCOL.DEVICE.GENERATOR.COMMAND.START,
       this.commandManager.formatNumber(phases.phaseL1.voltageU1, 'xxxx', 4, false),
@@ -46,58 +65,40 @@ export class GeneratorService {
       this.commandManager.formatNumber(phases.phaseL2.anglePhi2, 'xxxx', 3, true),
       this.commandManager.formatNumber(phases.phaseL3.anglePhi3, 'xxxx', 3, true),
     );
-    return of(this.workingParamsStatus$.next(WorkingParamsStatusEnum.REQUEST_IN_PROGRESS)).pipe(
+    return of(true).pipe(
+      takeUntil(this.sendStoper$),
       switchMap(() => this.usbHandlerService.sendAndWaitAsync$(command, this.commandManager).pipe(
-        map(({ status, errorCode }) => {
-          this.errorCode$.next(errorCode);
+        map(({ status, errorCode, params }) => this.checkIsErrorResponseOrSetParams(status, errorCode, params)),
+        tap((status) => {
+          if (status === ResponseStatusEnum.ACK) {
+            this.deviceStatus$.next(DeviceStatusEnum.TURN_ON);
+          } else {
+            this.deviceStatus$.next(DeviceStatusEnum.FAIL);
+          }
+        }),
+        switchMap((status) => {
           switch (status) {
             case ResponseStatusEnum.ACK:
-              this.workingParamsStatus$.next(WorkingParamsStatusEnum.PARAMETERS_SET_CORRECTLY);
-              break;
-            case ResponseStatusEnum.ERROR:
-            case ResponseStatusEnum.TIMEOUT:
-            case ResponseStatusEnum.UNKNOW:
-              this.workingParamsStatus$.next(WorkingParamsStatusEnum.PARAMETERS_SET_ERROR);
-              this.messagesService.error('No se pudo configurar los parámetros de trabajo del generador.');
-              break;
+              return of(status).pipe(
+                delay(PROTOCOL.TIME.WAIT_STABILIZATION),
+              );
           }
-          return status;
-        })
-      )),
-      switchMap((status) => {
-        switch (status) {
-          case ResponseStatusEnum.ACK:
-            this.generatorStatus$.next(GeneratorStatusEnum.WAITING_FOR_STABILIZATION);
-            return of(status).pipe(
-              delay(PROTOCOL.TIME.WAIT_STABILIZATION),
-              tap(() => this.generatorStatus$.next(GeneratorStatusEnum.STABILIZED))
-            );
-        }
-        return of(status);
-      }),
+          return of(status);
+        }),
+      ))
     );
   }
 
   getStatus$(): Observable<ResponseStatus> {
     const command: Command = this.commandManager.build(PROTOCOL.DEVICE.GENERATOR.COMMAND.STATUS);
-    return of(this.generatorStatus$.next(GeneratorStatusEnum.REQUEST_IN_PROGRESS)).pipe(
+    return of(true).pipe(
+      takeUntil(this.sendStoper$),
       switchMap(() => this.usbHandlerService.sendAndWaitAsync$(command, this.commandManager).pipe(
-        map(({ status, errorCode }) => {
-          this.errorCode$.next(errorCode);
-          switch (status) {
-            case ResponseStatusEnum.ACK:
-              this.generatorStatus$.next(GeneratorStatusEnum.WORKING);
-              break;
-            case ResponseStatusEnum.ERROR:
-              this.generatorStatus$.next(GeneratorStatusEnum.ERROR);
-              break;
-            case ResponseStatusEnum.TIMEOUT:
-            case ResponseStatusEnum.UNKNOW:
-              this.generatorStatus$.next(GeneratorStatusEnum.TIMEOUT);
-              this.messagesService.error('No se pudo obtener el estado del generador.');
-              break;
+        map(({ status, errorCode, params }) => this.checkIsErrorResponseOrSetParams(status, errorCode, params)),
+        tap((status) => {
+          if (status !== ResponseStatusEnum.ACK) {
+            this.deviceStatus$.next(DeviceStatusEnum.FAIL);
           }
-          return status;
         }),
       ))
     );
@@ -105,23 +106,18 @@ export class GeneratorService {
 
   turnOff$(): Observable<ResponseStatus> {
     const command: Command = this.commandManager.build(PROTOCOL.DEVICE.GENERATOR.COMMAND.STOP);
-    return of(this.generatorStatus$.next(GeneratorStatusEnum.REQUEST_IN_PROGRESS)).pipe(
+    return of(true).pipe(
+      tap(() => this.sendStoper$.next()),
       switchMap(() => this.usbHandlerService.sendAndWaitAsync$(command, this.commandManager).pipe(
-        switchMap(({ status }) => {
-          switch (status) {
-            case ResponseStatusEnum.ACK:
-              this.clearStatus();
-              this.workingParamsStatus$.next(WorkingParamsStatusEnum.PARAMETERS_TURN_OFF);
-              this.generatorStatus$.next(GeneratorStatusEnum.TURN_OFF);
-              return of(status);
-            case ResponseStatusEnum.ERROR:
-            case ResponseStatusEnum.TIMEOUT:
-            case ResponseStatusEnum.UNKNOW:
-              this.messagesService.error('No se pudo apagar el generador.');
-              return this.getStatus$();
+        map(({ status, errorCode, params }) => this.checkIsErrorResponseOrSetParams(status, errorCode, params)),
+        tap((status) => {
+          if (status === ResponseStatusEnum.ACK) {
+            this.deviceStatus$.next(DeviceStatusEnum.TURN_OFF);
+          } else {
+            this.deviceStatus$.next(DeviceStatusEnum.FAIL);
           }
-        })
-      ))
+        }),
+      )),
     );
   }
 }
