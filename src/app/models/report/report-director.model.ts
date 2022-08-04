@@ -13,7 +13,7 @@ export class ReportEssayDirector {
 
     this.steps.forEach(({ reportBuilder }) => {
       const stepReport = reportBuilder.produce();
-      console.log(stepReport);
+      report.html = report.html.concat(stepReport.parts.join(""));
     });
 
     return report;

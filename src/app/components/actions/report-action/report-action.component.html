@@ -1,8 +1,11 @@
-<div class="flex flex-1 align-items-center justify-content-center h-30rem">
-  <p-button
-    label="Crear reporte"
-    (click)="createReport()"
-    [disabled]="(creating$ | async) === true"
-    [ngClass]="{ 'pointer-events-none': (creating$ | async) === true }"
-  ></p-button>
-</div>
+<p-button
+  label="Crear PDF"
+  (click)="createPDF()"
+  [disabled]="disabled"
+  [ngClass]="{ 'pointer-events-none': disabled }"
+></p-button>
+<p-divider></p-divider>
+<div
+  [innerHtml]="preview"
+  [ngStyle]="{ 'width': '210mm' }"
+></div>
