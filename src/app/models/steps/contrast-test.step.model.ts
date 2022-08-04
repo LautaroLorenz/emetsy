@@ -4,10 +4,12 @@ import { StepBuilder } from "./step-builder.model";
 import { ContrastTestParametersAction } from "../actions/contrast-test-parameters.action.model";
 import { EnterTestValuesAction } from "../actions/enter-test-values.action.model";
 import { ContrastTestExecutionAction } from "../actions/contrast-test-execution.action.model";
+import { ReportContrastTestBuilder } from "../report/report-body-contrast-test.model";
 
 export class ContrastTestStep extends StepBuilder {
 
   constructor(essayTemplateStep: EssayTemplateStep) {
+    const reportBuilder = new ReportContrastTestBuilder();
     const enterTestValuesAction = new EnterTestValuesAction('Prueba de constraste', 0);
     const contrastTestParametersAction = new ContrastTestParametersAction(3);
     const contrastTestExecutionAction = new ContrastTestExecutionAction(enterTestValuesAction, contrastTestParametersAction);
@@ -23,7 +25,7 @@ export class ContrastTestStep extends StepBuilder {
       contrastTestParametersAction,
     ];
 
-    super(essayTemplateStep, _actions, _buildActions);
+    super(essayTemplateStep, _actions, _buildActions, reportBuilder);
   }
 
 }

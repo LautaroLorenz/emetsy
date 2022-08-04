@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { FormGroup } from '@angular/forms';
-import { Action, ActionComponent } from 'src/app/models';
+import { Action, ActionComponent, Report } from 'src/app/models';
+import { ExecutionDirector } from 'src/app/services/execution-director.service';
 
 @Component({
   selector: 'app-report-action',
@@ -19,7 +20,12 @@ export class ReportActionComponent implements ActionComponent {
     return this.action.form;
   }
 
+  constructor(
+    private readonly executionDirector: ExecutionDirector,
+  ) {}
+
   downloadReport(): void {
-    console.log('descargar reporte');
+    const report: Report = this.executionDirector.reportEssayDirector.createReport();
+    console.log(report.html);
   }
 }
