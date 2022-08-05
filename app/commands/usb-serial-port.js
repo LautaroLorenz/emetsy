@@ -2,9 +2,21 @@ const { ipcMain } = require('electron');
 const { SerialPort, DelimiterParser } = require('serialport');
 
 let serialPort;
-const parser = new DelimiterParser({ delimiter: 'Z| ', includeDelimiter: true });
+const parser = new DelimiterParser({ delimiter: '\n', includeDelimiter: false });
 let readCommandQueue = [];
 const MAX_QUEUE_SIZE = 10;
+
+function isCommandValid(buffer) {
+  let cheksum = 0;
+  for (const [index, byteHex] of buffer.entries()) {
+    if (index === buffer.length - 1) {
+      break;
+    }
+    cheksum += byteHex;
+  }
+  const checksumByte = cheksum % 256;
+  return checksumByte === buffer[buffer.length - 1];
+}
 
 function isUsbSerialPortConnected(serialPort) {
   return serialPort && serialPort.isOpen;
@@ -87,7 +99,7 @@ function addCommandToQueue(command, queue, MAX_QUEUE_SIZE) {
   if (queue.length === MAX_QUEUE_SIZE) {
     queue.pop(); // discard older command
   }
-  console.log('add-command-to-queue', `[${command}]`, `total: ${queue.length}`);
+  console.log('read', `[${command}]`, `total: ${queue.length}`);
   queue.unshift(command);
 }
 
@@ -96,7 +108,11 @@ function addCommandToQueue(command, queue, MAX_QUEUE_SIZE) {
  */
 function initParser(parser) {
   parser.on('data', (data) => {
-    addCommandToQueue(data.toString(), readCommandQueue, MAX_QUEUE_SIZE);
+    if (isCommandValid(data) === false) {
+      return;
+    }
+    
+    addCommandToQueue(data.toString("ascii"), readCommandQueue, MAX_QUEUE_SIZE);
     serialPort.flush((err) => {
       if (err !== null && err !== undefined) {
         console.error('No se pudo limpiar el buffer de entrada', err);
@@ -116,7 +132,7 @@ ipcMain.handle('get-command', async () => {
 });
 
 ipcMain.handle('post-command', async (_, { command }) => {
-  console.log('post-command', `[${command}]`);
+  console.log('write', `[${command}]`);
   const coludBeSent = await new Promise((resolve) => {
     serialPort.write(command, (err) => {
       if (err !== null && err !== undefined) {

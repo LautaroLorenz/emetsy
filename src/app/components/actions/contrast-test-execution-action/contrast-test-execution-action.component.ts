@@ -101,14 +101,14 @@ export class ContrastTestExecutionActionComponent implements ActionComponent, Af
       map(({ results }) => {
         const standResults: StandResult[] = results
           .map((result, index) => {
-            const standPulses: number = Number(result.slice(4, 9));
-            const calculatedError = Math.abs(100 - 100 * standPulses / meterPulses);
+            const calculatorErrorValue: number = Number(result.slice(3, 9)) / 100;
+            const calculatorErrorValueAbs: number = Math.abs(calculatorErrorValue);
+            const resultReal = calculatorErrorValueAbs < maxAllowedError ? ResultEnum.APPROVED : ResultEnum.DISAPPROVED;
 
             return {
               stand: index + 1,
-              value: standPulses,
-              calculatedError,
-              result: calculatedError < maxAllowedError ? ResultEnum.APPROVED : ResultEnum.DISAPPROVED,
+              calculatorErrorValue,
+              result: resultReal,
             };
           }).filter((standResult) => stands[standResult.stand - 1]?.isActive);
 

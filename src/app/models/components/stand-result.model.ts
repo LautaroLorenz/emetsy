@@ -7,7 +7,6 @@ export type Result = ResultEnum;
 
 export interface StandResult {
   stand: number;
-  value: number;
-  calculatedError: number;
+  calculatorErrorValue: number;
   result: Result;
 }

@@ -1,23 +1,19 @@
 <div class="flex flex-1 flex-column">
   <div class="flex w-full">
-    <div class="flex w-3 cell cell-header">Puesto</div>
-    <div class="flex w-3 cell cell-header">Medición</div>
-    <div class="flex w-3 cell cell-header">Error calculado [%]</div>
-    <div class="flex w-3 cell cell-header">Resultado</div>
+    <div class="flex w-4 cell cell-header">Puesto</div>
+    <div class="flex w-4 cell cell-header">Error calculado [%]</div>
+    <div class="flex w-4 cell cell-header">Resultado</div>
   </div>
 
   <ng-container *ngFor="let standResult of results">
     <div class="flex w-full">
-      <div class="flex w-3 cell justify-content-center">
+      <div class="flex w-4 cell justify-content-center">
         {{standResult.stand}}
       </div>
-      <div class="flex w-3 cell justify-content-end">
-        {{standResult.value}}
+      <div class="flex w-4 cell justify-content-end">
+        {{standResult.calculatorErrorValue}}
       </div>
-      <div class="flex w-3 cell justify-content-end">
-        {{standResult.calculatedError}}
-      </div>
-      <div class="flex w-3 cell justify-content-center">
+      <div class="flex w-4 cell justify-content-center">
         <ng-container [ngSwitch]="standResult.result">
           <ng-container *ngSwitchCase="ResultEnum.APPROVED">
             <span class="text-green-500">Aprobado</span>
