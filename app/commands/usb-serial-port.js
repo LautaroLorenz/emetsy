@@ -5,6 +5,12 @@ let serialPort;
 const parser = new DelimiterParser({ delimiter: '\n', includeDelimiter: false });
 let readCommandQueue = [];
 const MAX_QUEUE_SIZE = 10;
+const EXCLUDED_CODES = {
+  BAR_N: 10,
+  CHAR_B: 66,
+  CHAR_Z: 90,
+};
+const CHECKSUM_EXCLUDED_CODES = [EXCLUDED_CODES.BAR_N, EXCLUDED_CODES.CHAR_B, EXCLUDED_CODES.CHAR_Z];
 
 function isCommandValid(buffer) {
   let cheksum = 0;
@@ -14,8 +20,27 @@ function isCommandValid(buffer) {
     }
     cheksum += byteHex;
   }
-  const checksumByte = cheksum % 256;
+  let checksumByte = cheksum % 256;
+  if (CHECKSUM_EXCLUDED_CODES.includes(checksumByte)) {
+    checksumByte++;
+  }
   return checksumByte === buffer[buffer.length - 1];
+}
+
+function decimalChecksumToBuffer(checksum) {
+  return Buffer.from(checksum.toString(16), 'hex')
+}
+
+function getChecksumByte(buffer) {
+  let cheksum = 0;
+  for (const byte of buffer) {
+    cheksum += byte;
+  }
+  let checksumByte = cheksum % 256;
+  if (CHECKSUM_EXCLUDED_CODES.includes(checksumByte)) {
+    checksumByte++;
+  }
+  return checksumByte;
 }
 
 function isUsbSerialPortConnected(serialPort) {
@@ -109,9 +134,9 @@ function addCommandToQueue(command, queue, MAX_QUEUE_SIZE) {
 function initParser(parser) {
   parser.on('data', (data) => {
     if (isCommandValid(data) === false) {
+      console.error("checksum invalid", data.toString("ascii"));
       return;
     }
-    
     addCommandToQueue(data.toString("ascii"), readCommandQueue, MAX_QUEUE_SIZE);
     serialPort.flush((err) => {
       if (err !== null && err !== undefined) {
@@ -132,9 +157,19 @@ ipcMain.handle('get-command', async () => {
 });
 
 ipcMain.handle('post-command', async (_, { command }) => {
-  console.log('write', `[${command}]`);
+
+  const buffer = Buffer.from(command, 'ascii');
+  const checksum = getChecksumByte(buffer);
+  const checksumBuffer = decimalChecksumToBuffer(checksum);
+  const commandBuffer = Buffer.concat([buffer, checksumBuffer]);
+
+  console.log('write', `[${commandBuffer}]`);
+  // console.log('checksum', checksum);
+  // console.log('length', commandBuffer.length);
+  // console.log('write', commandBuffer.toString('hex').match(/../g).join(' '));
+
   const coludBeSent = await new Promise((resolve) => {
-    serialPort.write(command, (err) => {
+    serialPort.write(commandBuffer, (err) => {
       if (err !== null && err !== undefined) {
         console.error('No se pudo enviar el comando', err);
         resolve(false);

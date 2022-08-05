@@ -284,7 +284,7 @@ export class UsbHandlerService {
           }
         })
       )),
-      retry(2),
+      retry(PROTOCOL.RETRY_INTENTS),
       catchError(({ message }) => of(JSON.parse(message))),
       tap(() => this.sendAndWaitInProgress$.next(false)),
     );

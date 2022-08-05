@@ -17,6 +17,7 @@ export const PROTOCOL = {
     WAITING_RESPONSE_TIMEOUT: 2000,
     WAIT_STABILIZATION: 2000,
   },
+  RETRY_INTENTS: 2,
   COMMAND: {
     DIVIDER: '| ',
     START: 'B',
