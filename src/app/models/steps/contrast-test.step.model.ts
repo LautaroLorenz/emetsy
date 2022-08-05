@@ -10,7 +10,7 @@ export class ContrastTestStep extends StepBuilder {
 
   constructor(essayTemplateStep: EssayTemplateStep) {
     const reportBuilder = new ReportContrastTestBuilder();
-    const enterTestValuesAction = new EnterTestValuesAction('Prueba de constraste', 0);
+    const enterTestValuesAction = new EnterTestValuesAction(0);
     const contrastTestParametersAction = new ContrastTestParametersAction(3);
     const contrastTestExecutionAction = new ContrastTestExecutionAction(enterTestValuesAction, contrastTestParametersAction);
 

@@ -82,7 +82,6 @@ export class ContrastTestExecutionActionComponent implements ActionComponent, Af
   private lisenResults(
     stands: StandArrayFormValue[],
     maxAllowedError: number,
-    meterPulses: number,
     numberOfDiscardedResults: number
   ): void {
     let remainingDiscartedResultsCounter = numberOfDiscardedResults;
@@ -126,7 +125,7 @@ export class ContrastTestExecutionActionComponent implements ActionComponent, Af
 
   ngAfterViewInit(): void {
     const phases: Phases = this.enterTestValuesAction.getPhases();
-    const { meterConstant, testName } = this.enterTestValuesAction.form.getRawValue();
+    const { meterConstant } = this.enterTestValuesAction.form.getRawValue();
     const { maxAllowedError, meterPulses, numberOfDiscardedResults } = this.contrastTestParametersAction.form.getRawValue();
     const preparationStep = this.executionDirectorService.getStepBuilderById(7);
     if (preparationStep) {
@@ -134,7 +133,7 @@ export class ContrastTestExecutionActionComponent implements ActionComponent, Af
       if (standIdentificationAction) {
         const { hasManufacturingInformation } = standIdentificationAction.form.getRawValue();
         const stands = (standIdentificationAction as StandIdentificationAction).standArray.getRawValue();
-        this.lisenResults(stands, maxAllowedError!, meterPulses!, numberOfDiscardedResults!); // TODO:
+        this.lisenResults(stands, maxAllowedError!, numberOfDiscardedResults!); // TODO:
       }
     }
 
