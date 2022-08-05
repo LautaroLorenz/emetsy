@@ -54,13 +54,6 @@ export class CommandManager {
     return isNaN(result) ? 0 : result;
   }
 
-  /**
-   * TODO: validar checksum
-   */
-  isValid(command: Command): boolean {
-    return true;
-  }
-
   isForMe(command: Command): boolean {
     const blocks = command.split(PROTOCOL.COMMAND.DIVIDER);
     return blocks.some((block) => block === this.deviceTo);

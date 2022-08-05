@@ -244,7 +244,6 @@ export class UsbHandlerService {
       take(1),
       tap(() => this.send(command)),
       switchMap(() => this.getCommand$.pipe(
-        filter((command) => commandManager.isValid(command)),
         filter((command) => commandManager.isForMe(command)),
         take(1),
         timeout({
