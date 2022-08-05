@@ -3,7 +3,7 @@ import { Action } from "../actions/action.model";
 import { StepBuilder } from "./step-builder.model";
 import { PhotocellAdjustmentValuesAction } from "../actions/photocell-adjustment-values.action.model";
 import { PhotocellAdjustmentExecutionAction } from "../actions/photocell-adjustment-execution.action.model";
-import { ReportBodyBuilder } from "../report/report-body-builder.model";
+import { ReportBodyBuilder } from "../report/report-builder.model";
 
 export class PhotocellAdjustmentStep extends StepBuilder {
 

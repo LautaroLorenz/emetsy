@@ -2,7 +2,8 @@ import { ChangeDetectionStrategy, Component, ElementRef, Input, ViewChild } from
 import { FormGroup } from '@angular/forms';
 import { Action, ActionComponent, Report } from 'src/app/models';
 import { ExecutionDirector } from 'src/app/services/execution-director.service';
-import { jsPDF } from 'jspdf';
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
 import { BehaviorSubject } from 'rxjs';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 
@@ -14,8 +15,10 @@ import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 })
 export class ReportActionComponent implements ActionComponent {
 
+  @ViewChild('container', { static: false }) container!: ElementRef;
   @Input() action!: Action;
   private _preview: string = '';
+  private _report: Report;
 
   get preview(): SafeHtml {
     return this.sanitizer.bypassSecurityTrustHtml(this._preview);
@@ -40,18 +43,24 @@ export class ReportActionComponent implements ActionComponent {
     private readonly sanitizer: DomSanitizer
   ) {
     const report: Report = this.executionDirector.reportEssayDirector.createReport();
-    this._preview = report.html;
+    this._report = report;
+    this._preview = report.toString();
   }
 
-  private async savePDF(html: string, name: string): Promise<jsPDF> {
-    const doc = new jsPDF('p', 'mm', "a4");
-    await doc.html(html);
-    return await doc.save(name);
-  }
-
-  async createPDF(): Promise<void> {
+  async createPDF() {
     this.creating$.next(true);
-    await this.savePDF(this._preview, 'report.pdf'); // TODO: essay name - ejecution ID
+    const PDF = new jsPDF('p', 'mm', 'a4');
+    for (const [index] of this._report.pages.entries()) {
+      if(index > 0) {
+        PDF.addPage();
+      }
+      const canvas = await html2canvas(this.container.nativeElement.children[index], { scale: 3 });
+      const imageGeneratedFromTemplate = canvas.toDataURL('image/png');
+      const width = PDF.internal.pageSize.getWidth();
+      const height = PDF.internal.pageSize.getHeight();
+      PDF.addImage(imageGeneratedFromTemplate, 'PNG', 0, 0, width, height);
+    }
+    await PDF.save('report.pdf'); // TODO: essay name - ejecution ID
     this.creating$.next(false);
   }
 

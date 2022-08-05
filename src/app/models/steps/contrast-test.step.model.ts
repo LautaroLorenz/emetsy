@@ -4,7 +4,7 @@ import { StepBuilder } from "./step-builder.model";
 import { ContrastTestParametersAction } from "../actions/contrast-test-parameters.action.model";
 import { EnterTestValuesAction } from "../actions/enter-test-values.action.model";
 import { ContrastTestExecutionAction } from "../actions/contrast-test-execution.action.model";
-import { ReportContrastTestBuilder } from "../report/report-body-contrast-test.model";
+import { ReportContrastTestBuilder } from "../report/report-contrast-test.model";
 
 export class ContrastTestStep extends StepBuilder {
 

@@ -9,11 +9,11 @@ export class ReportEssayDirector {
   }
 
   public createReport(): Report {
-    const report: Report = { html: '' };
+    const report: Report = new Report();
 
     this.steps.forEach(({ reportBuilder }) => {
       const stepReport = reportBuilder.produce();
-      report.html = report.html.concat(stepReport.parts.join(""));
+      report.pages = report.pages.concat(stepReport.pages);
     });
 
     return report;

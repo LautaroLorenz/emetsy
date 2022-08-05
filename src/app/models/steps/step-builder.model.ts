@@ -1,7 +1,7 @@
 import { FormArray, FormGroup } from "@angular/forms";
 import { EssayTemplateStep } from "../database/tables/essay-template-step.model";
 import { Action } from "../actions/action.model";
-import { ReportBodyBuilder } from "../report/report-body-builder.model";
+import { ReportBodyBuilder } from "../report/report-builder.model";
 
 export class StepBuilder {
   essayTemplateStep: EssayTemplateStep;

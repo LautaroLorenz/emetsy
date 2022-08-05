@@ -1,11 +1,12 @@
 <p-button
-  label="Crear PDF"
+  label="Crear reporte PDF"
   (click)="createPDF()"
   [disabled]="disabled"
   [ngClass]="{ 'pointer-events-none': disabled }"
+  styleClass="mb-4"
 ></p-button>
-<p-divider></p-divider>
+
 <div
+  #container
   [innerHtml]="preview"
-  [ngStyle]="{ 'width': '210mm' }"
 ></div>

@@ -2,8 +2,8 @@ import { EssayTemplateStep } from "../database/tables/essay-template-step.model"
 import { Action } from "../actions/action.model";
 import { StepBuilder } from "./step-builder.model";
 import { ReportAction } from "../actions/report.action.model";
-import { ReportBodyBuilder } from "../report/report-body-builder.model";
-import { ReportContrastTestBuilder } from "../report/report-body-contrast-test.model";
+import { ReportBodyBuilder } from "../report/report-builder.model";
+import { ReportContrastTestBuilder } from "../report/report-contrast-test.model";
 
 export class ReportStep extends StepBuilder {
 
