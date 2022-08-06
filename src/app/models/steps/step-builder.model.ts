@@ -1,14 +1,14 @@
 import { FormArray, FormGroup } from "@angular/forms";
 import { EssayTemplateStep } from "../database/tables/essay-template-step.model";
 import { Action } from "../actions/action.model";
-import { ReportBodyBuilder } from "../report/report-builder.model";
+import { ReportBuilder } from "../report/report-builder.model";
 
 export class StepBuilder {
   essayTemplateStep: EssayTemplateStep;
   form: FormGroup;
   actions: Action[];
   buildActions: Action[];
-  reportBuilder: ReportBodyBuilder;
+  reportBuilder: ReportBuilder;
 
   private get formActionsArray(): FormArray<FormGroup> {
     return this.form.get('actions') as FormArray<FormGroup>;
@@ -18,7 +18,7 @@ export class StepBuilder {
     essayTemplateStep: EssayTemplateStep,
     actions: Action[],
     buildActions: Action[],
-    reportBuilder: ReportBodyBuilder,
+    reportBuilder: ReportBuilder,
   ) {
     this.essayTemplateStep = essayTemplateStep;
     this.actions = actions;

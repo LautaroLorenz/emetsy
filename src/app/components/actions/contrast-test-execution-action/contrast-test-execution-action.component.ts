@@ -1,7 +1,7 @@
 import { AfterViewInit, ChangeDetectionStrategy, Component, Input, OnDestroy } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { BehaviorSubject, catchError, filter, forkJoin, map, Observable, of, ReplaySubject, Subject, switchMap, take, takeUntil, takeWhile, tap } from 'rxjs';
-import { Action, ActionComponent, CalculatorParams, ContrastTestExecutionAction, ContrastTestParametersAction, EnterTestValuesAction, PatternParams, Phases, ResponseStatus, ResponseStatusEnum, ResultEnum, StandArrayFormValue, StandIdentificationAction, StandResult } from 'src/app/models';
+import { Action, ActionComponent, CalculatorParams, ContrastTestExecutionAction, ContrastTestParametersAction, EnterTestValuesAction, PatternParams, Phases, ReportContrastTestBuilder, ResponseStatus, ResponseStatusEnum, ResultEnum, StandArrayFormValue, StandIdentificationAction, StandResult } from 'src/app/models';
 import { CalculatorService } from 'src/app/services/calculator.service';
 import { ExecutionDirector } from 'src/app/services/execution-director.service';
 import { GeneratorService } from 'src/app/services/generator.service';
@@ -54,6 +54,12 @@ export class ContrastTestExecutionActionComponent implements ActionComponent, Af
     private readonly messagesService: MessagesService,
   ) { }
 
+  private setReportParams(): void {
+    const stepBuilder = this.executionDirectorService.getActiveStepBuilder();
+    const reportBuilder: ReportContrastTestBuilder = stepBuilder?.reportBuilder as ReportContrastTestBuilder;
+    // reportBuilder.setParams(5, 1600); // TODO:
+  }
+
   private completeAction$(): Observable<Record<string, ResponseStatus>> {
     return forkJoin<Record<string, Observable<ResponseStatus>>>({
       turnOffGenerator: this.generatorService.turnOff$(),
@@ -65,6 +71,7 @@ export class ContrastTestExecutionActionComponent implements ActionComponent, Af
         const hasError = Object.keys(response).some(key => response[key] !== ResponseStatusEnum.ACK);
         return !hasError;
       }),
+      tap(() => this.setReportParams()),
       tap(() => this.form.get('contrastTestExecutionComplete')?.setValue(true)),
     );
   }

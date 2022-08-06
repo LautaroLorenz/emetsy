@@ -5,12 +5,12 @@ import { StepBuilder } from "./step-builder.model";
 import { UserIdentificationAction } from "../actions/user-identification.action.model";
 import { StandIdentificationAction } from "../actions/stand-identification.action.model";
 import { StandIdentificationMinimalFieldsDecorator } from "../actions/meter-identification.action.model";
-import { ReportBodyBuilder } from "../report/report-builder.model";
+import { ReportBuilder } from "../report/report-builder.model";
 
 export class PreparationStep extends StepBuilder {
 
   constructor(essayTemplateStep: EssayTemplateStep, destroyed$: ReplaySubject<boolean>) {
-    const reportBuilder = new ReportBodyBuilder();
+    const reportBuilder = new ReportBuilder();
     const userIdentificationAction = new UserIdentificationAction();
     const standIdentificationAction = new StandIdentificationAction(destroyed$);
     const standIdentificationMinimalFieldsDecorator = new StandIdentificationMinimalFieldsDecorator(standIdentificationAction);

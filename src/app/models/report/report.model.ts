@@ -20,22 +20,9 @@ export class ReportPageA4 {
 }
 
 export class ReportTable {
-  private _tbody: ReportTbody[] = [];
-  public style: string = '';
-
-  add(tbody: ReportTbody): ReportTbody[] {
-    this._tbody.push(tbody);
-    return this._tbody;
-  }
-
-  get(): string {
-    const content = this._tbody.map((tbody) => tbody.get()).join("");
-    return `<table style="${this.style}">`.concat(content).concat('</table>');
-  }
-}
-
-export class ReportTbody {
   private _tr: ReportTr[] = [];
+  public style: string = '';
+  public attributes: string = '';
 
   add(tr: ReportTr): ReportTr[] {
     this._tr.push(tr);
@@ -44,11 +31,9 @@ export class ReportTbody {
 
   get(): string {
     const content = this._tr.map((tr) => tr.get()).join("");
-    return `<tbody>`.concat(content).concat('</tbody>');
+    return `<table ${this.attributes} style="${this.style}">`.concat(content).concat('</table>');
   }
-
 }
-
 export class ReportTr {
   private _td: ReportTd[] = [];
   public style: string = '';
@@ -68,8 +53,9 @@ export class ReportTr {
 export class ReportTd {
   public text: string = '';
   public style: string = '';
+  public class: string = '';
 
   get(): string {
-    return `<td style="${this.style}">`.concat(this.text).concat('</td>');
+    return `<td class="${this.class}" style="${this.style}">`.concat(this.text).concat('</td>');
   }
 }

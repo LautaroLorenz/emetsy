@@ -71,6 +71,13 @@ export class ExecutionDirector {
     return;
   }
 
+  getActiveStepBuilder(): StepBuilder | null {
+    if(this.activeStepIndex$.value === null) {
+      return null;
+    }
+    return this.steps[this.activeStepIndex$.value];
+  }
+  
   getStepBuilderById(id: number): StepBuilder | undefined {
     return this.steps.find(step => step.essayTemplateStep.step_id === id);
   }

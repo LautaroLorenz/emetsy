@@ -1,6 +1,6 @@
 import { Report } from "./report.model";
 
-export class ReportBodyBuilder {
+export class ReportBuilder {
   produce(): Report {
     return new Report();
   }
