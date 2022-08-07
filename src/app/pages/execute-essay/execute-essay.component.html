@@ -69,8 +69,11 @@
     </ng-container>
 
     <ng-container *ngIf="(executionStatus$ | async) === 'COMPLETED'">
-      <div class="h-30rem">
-        <span>Ensayo completado</span>
+      <div class="h-30rem flex justify-content-center align-items-center">
+        <p-message
+          severity="success"
+          text="Ensayo completado correctamente, ya puede Guardar."
+        ></p-message>
       </div>
     </ng-container>
   </div>

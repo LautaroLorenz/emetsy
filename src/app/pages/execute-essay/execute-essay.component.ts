@@ -2,8 +2,9 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormArray, FormControl, FormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { BehaviorSubject, filter, map, Observable, ReplaySubject, switchMap, takeUntil, tap } from 'rxjs';
-import { Action, ContrastTestStep, EssayTemplate, EssayTemplateDbTableContext, ExecutionStatus, PageUrlName, PhotocellAdjustmentStep, PreparationStep, RelationsManager, ReportBuilder, ReportStep, StepBuilder, WhereKind, WhereOperator } from 'src/app/models';
+import { Action, EssayTemplate, EssayTemplateDbTableContext, ExecutionStatus, PageUrlName, RelationsManager, StepBuilder, WhereKind, WhereOperator } from 'src/app/models';
 import { EssayTemplateStep, EssayTemplateStepDbTableContext } from 'src/app/models/database/tables/essay-template-step.model';
+import { StepConstructor } from 'src/app/models/steps/step-constructor.model';
 import { DatabaseService } from 'src/app/services/database.service';
 import { ExecutionDirector } from 'src/app/services/execution-director.service';
 import { NavigationService } from 'src/app/services/navigation.service';
@@ -80,25 +81,10 @@ export class ExecuteEssayComponent implements OnInit, OnDestroy {
     });
   }
 
-  private buildStepById(step_id: number, essayTemplateStep: EssayTemplateStep): StepBuilder {
-    switch (step_id) {
-      case 1:
-        return new ReportStep(essayTemplateStep);
-      case 4:
-        return new ContrastTestStep(essayTemplateStep);
-      case 6:
-        return new PhotocellAdjustmentStep(essayTemplateStep);
-      case 7:
-        return new PreparationStep(essayTemplateStep, this.destroyed$);
-    }
-
-    return new StepBuilder(essayTemplateStep, [], [], new ReportBuilder());
-  }
-
   private buildSteps(essayTemplateSteps: EssayTemplateStep[]): void {
     this.stepBuilders = [];
     essayTemplateSteps.forEach((essayTemplateStep) => {
-      const newStep: StepBuilder = this.buildStepById(essayTemplateStep.step_id, essayTemplateStep);
+      const newStep: StepBuilder = StepConstructor.buildStepById(essayTemplateStep.step_id, essayTemplateStep, this.destroyed$);
       newStep.buildStepForm();
       newStep.form.patchValue(essayTemplateStep.actions_raw_data);
       this.stepBuilders.push(newStep);

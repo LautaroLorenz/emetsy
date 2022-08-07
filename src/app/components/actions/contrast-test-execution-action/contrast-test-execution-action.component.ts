@@ -1,7 +1,7 @@
 import { AfterViewInit, ChangeDetectionStrategy, Component, Input, OnDestroy } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { BehaviorSubject, catchError, filter, forkJoin, interval, map, Observable, of, ReplaySubject, Subject, switchMap, take, takeUntil, takeWhile, tap } from 'rxjs';
-import { Action, ActionComponent, CalculatorParams, ContrastTestExecutionAction, ContrastTestParametersAction, EnterTestValuesAction, ManofacturingInformation, Meter, MeterDbTableContext, PatternParams, Phases, RelationsManager, ReportContrastTest, ReportContrastTestBuilder, ResponseStatus, ResponseStatusEnum, ResultEnum, StandArrayFormValue, StandIdentificationAction, StandResult, UserIdentificationAction, WhereKind, WhereOperator } from 'src/app/models';
+import { Action, ActionComponent, CalculatorParams, ContrastTestExecutionAction, ContrastTestParametersAction, EnterTestValuesAction, ManofacturingInformation, Meter, MeterDbTableContext, PatternParams, Phases, RelationsManager, ReportContrastTest, ReportContrastTestBuilder, ResponseStatus, ResponseStatusEnum, ResultEnum, StandArrayFormValue, StandIdentificationAction, StandResult, StepIdEnum, UserIdentificationAction, WhereKind, WhereOperator } from 'src/app/models';
 import { CalculatorService } from 'src/app/services/calculator.service';
 import { DatabaseService } from 'src/app/services/database.service';
 import { ExecutionDirector } from 'src/app/services/execution-director.service';
@@ -227,7 +227,7 @@ export class ContrastTestExecutionActionComponent implements ActionComponent, Af
       throw new Error('No se configuró el número de resultados para descartar');
     }
     this.reportData.maxAllowedError = maxAllowedError ?? 0;
-    const preparationStep = this.executionDirectorService.getStepBuilderById(7);
+    const preparationStep = this.executionDirectorService.getStepBuilderById(StepIdEnum.PreparationStep);
     if (!preparationStep) {
       throw new Error('Paso de preparación no encontrado');
     }
