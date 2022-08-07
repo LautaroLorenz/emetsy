@@ -1,6 +1,6 @@
 import { AfterViewInit, ChangeDetectionStrategy, Component, Input, OnDestroy } from '@angular/core';
 import { FormGroup } from '@angular/forms';
-import { BehaviorSubject, catchError, filter, forkJoin, interval, map, Observable, of, ReplaySubject, Subject, switchMap, take, takeUntil, takeWhile, tap } from 'rxjs';
+import { BehaviorSubject, catchError, filter, forkJoin,  interval, map, Observable, of, ReplaySubject,  Subject, switchMap, take, takeUntil, takeWhile, tap } from 'rxjs';
 import { Action, ActionComponent, CalculatorParams, ContrastTestExecutionAction, ContrastTestParametersAction, EnterTestValuesAction, ManofacturingInformation, Meter, MeterDbTableContext, PatternParams, Phases, RelationsManager, ReportContrastTest, ReportContrastTestBuilder, ResponseStatus, ResponseStatusEnum, ResultEnum, StandArrayFormValue, StandIdentificationAction, StandResult, UserIdentificationAction, WhereKind, WhereOperator } from 'src/app/models';
 import { CalculatorService } from 'src/app/services/calculator.service';
 import { DatabaseService } from 'src/app/services/database.service';
@@ -22,6 +22,7 @@ export class ContrastTestExecutionActionComponent implements ActionComponent, Af
   readonly phases$: BehaviorSubject<Phases | null> = new BehaviorSubject<Phases | null>(null);
   readonly results$: BehaviorSubject<StandResult[]> = new BehaviorSubject<StandResult[]>([]);
   readonly initialized$: BehaviorSubject<boolean | null> = new BehaviorSubject<boolean | null>(null);
+  readonly canConnect$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(true);
   get contrastTestExecutionComplete(): boolean {
     return this.form.get('contrastTestExecutionComplete')?.value;
   }
@@ -40,7 +41,16 @@ export class ContrastTestExecutionActionComponent implements ActionComponent, Af
   get connected(): boolean {
     return this.usbHandlerService.connected$.value;
   }
+  get restartDisabled(): boolean {
+    return !this.form.get('contrastTestExecutionComplete')?.value;
+  }
 
+  private executionParams = {
+    phases: {} as Phases,
+    stands: [] as StandArrayFormValue[],
+    maxAllowedError: 0,
+    numberOfDiscardedResults: 0
+  };
   private activeStands: StandArrayFormValue[] = [];
   private readonly destroyed$: ReplaySubject<boolean> = new ReplaySubject(1);
   private readonly listenPatternParams$ = new Subject<void>();
@@ -131,6 +141,10 @@ export class ContrastTestExecutionActionComponent implements ActionComponent, Af
       tap(() => this.reportData.executionSeconds = this.executionTime$.value),
       tap(() => this.setReportParams(this.reportData)),
       tap(() => this.form.get('contrastTestExecutionComplete')?.setValue(true)),
+      switchMap((value) => this.usbHandlerService.disconnect$().pipe(
+        tap(() => this.canConnect$.next(false)),
+        map(() => value)
+      )),
     );
   }
 
@@ -150,6 +164,7 @@ export class ContrastTestExecutionActionComponent implements ActionComponent, Af
     numberOfDiscardedResults: number
   ): void {
     this.lisenResultsControl$.next();
+    this.results$.next([]);
     let remainingDiscartedResultsCounter = numberOfDiscardedResults;
 
     this.calculatorService.params$.pipe(
@@ -171,7 +186,7 @@ export class ContrastTestExecutionActionComponent implements ActionComponent, Af
             const calculatorErrorValueAbs: number = Math.abs(calculatorErrorValue);
             const resultReal = calculatorErrorValueAbs < maxAllowedError ? ResultEnum.APPROVED : ResultEnum.DISAPPROVED;
 
-            const resultStandIndex = index + 1;
+            const resultStandIndex: number = index + 1;
             const reportStand = this.reportData.stands.find(({ standIndex }) => standIndex === resultStandIndex);
             if (reportStand) {
               reportStand.errorValue = calculatorErrorValue;
@@ -258,22 +273,30 @@ export class ContrastTestExecutionActionComponent implements ActionComponent, Af
       }),
     ).subscribe();
 
+    this.executionParams = {
+      phases,
+      maxAllowedError,
+      numberOfDiscardedResults,
+      stands,
+    };
+
     this.usbHandlerService.connected$.pipe(
       takeUntil(this.destroyed$),
-      takeWhile(() => !this.contrastTestExecutionComplete),
+      filter((isConnected) => isConnected),
       tap(() => {
+        this.results$.next([]);
         this.initialized$.next(false);
         this.generatorService.clearStatus();
         this.patternService.clearStatus();
         this.calculatorService.clearStatus();
+        this.lisenResultsControl$.next();
       }),
-      filter((isConnected) => isConnected),
-      switchMap(() => this.generatorService.turnOn$(phases).pipe(
+      switchMap(() => this.generatorService.turnOn$(this.executionParams.phases).pipe(
         filter(status => status === ResponseStatusEnum.ACK),
         switchMap(() => this.generatorService.getStatus$()),
       )),
       filter(status => status === ResponseStatusEnum.ACK),
-      switchMap(() => this.patternService.turnOn$(phases).pipe(
+      switchMap(() => this.patternService.turnOn$(this.executionParams.phases).pipe(
         filter(status => status === ResponseStatusEnum.ACK),
         tap(() => {
           this.listenPatternParams();
@@ -288,9 +311,18 @@ export class ContrastTestExecutionActionComponent implements ActionComponent, Af
         }),
       )),
       filter(status => status === ResponseStatusEnum.ACK),
-      tap(() => this.lisenResults(stands, maxAllowedError, numberOfDiscardedResults)),
+      tap(() => this.lisenResults(
+        this.executionParams.stands,
+        this.executionParams.maxAllowedError,
+        this.executionParams.numberOfDiscardedResults
+      )),
       tap(() => this.initialized$.next(true)),
     ).subscribe();
+  }
+
+  restart(): void {
+    this.form.get('contrastTestExecutionComplete')?.setValue(undefined);
+    this.usbHandlerService.connect$().pipe(take(1)).subscribe();
   }
 
   ngOnDestroy(): void {

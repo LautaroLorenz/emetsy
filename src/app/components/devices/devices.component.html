@@ -23,7 +23,9 @@
 
   <div class="w-3">
     <span class="mb-1 flex">Calculador</span>
-    <ng-container *ngIf="calculatorStatusColor$ | async as calculatorStatusColor">
+    <ng-container
+      *ngIf="calculatorStatusColor$ | async as calculatorStatusColor"
+    >
       <app-led [color]="calculatorStatusColor">Funcionando</app-led>
     </ng-container>
   </div>
@@ -32,22 +34,26 @@
 
 <div class="flex flex-1 mt-3 flex-column">
 
-  <ng-container *ngIf="(connected$ | async) === false">
-    <div class="flex flex-1 align-items-center mt-3">
-      <p-message
-        severity="error"
-        text="No se puedo detectar el dispositivo USB."
-        styleClass="flex flex-1 justify-content-start"
-      ></p-message>
-      <p-button
-        label="Reintentar conexión"
-        styleClass="p-button-outlined ml-4"
-        (click)="connect()"
-      ></p-button>
-    </div>
+  <ng-container *ngIf="canConnect">
+    <ng-container *ngIf="(connected$ | async) === false">
+      <div class="flex flex-1 align-items-center mt-3">
+        <p-message
+          severity="error"
+          text="No se puedo detectar el dispositivo USB."
+          styleClass="flex flex-1 justify-content-start"
+        ></p-message>
+        <p-button
+          label="Reintentar conexión"
+          styleClass="p-button-outlined ml-4"
+          (click)="connect()"
+        ></p-button>
+      </div>
+    </ng-container>
   </ng-container>
 
-  <ng-container *ngIf="(generatorErrorMessage$ | async) as generatorErrorMessage">
+  <ng-container
+    *ngIf="(generatorErrorMessage$ | async) as generatorErrorMessage"
+  >
     <div class="flex flex-1 align-items-center mt-3">
       <p-message
         severity="error"
@@ -67,7 +73,9 @@
     </div>
   </ng-container>
 
-  <ng-container *ngIf="(calculatorErrorMessage$ | async) as calculatorErrorMessage">
+  <ng-container
+    *ngIf="(calculatorErrorMessage$ | async) as calculatorErrorMessage"
+  >
     <div class="flex flex-1 align-items-center mt-3">
       <p-message
         severity="error"

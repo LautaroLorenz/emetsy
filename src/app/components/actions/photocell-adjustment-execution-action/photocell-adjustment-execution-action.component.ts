@@ -17,6 +17,7 @@ export class PhotocellAdjustmentExecutionActionComponent implements ActionCompon
   @Input() action!: Action;
 
   readonly phases$: BehaviorSubject<Phases | null> = new BehaviorSubject<Phases | null>(null);
+  readonly canConnect$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(true);
   readonly initialized$: BehaviorSubject<boolean | null> = new BehaviorSubject<boolean | null>(null);
 
   get helpText(): string {
@@ -104,9 +105,11 @@ export class PhotocellAdjustmentExecutionActionComponent implements ActionCompon
           const hasError = Object.keys(response).some(key => response[key] !== ResponseStatusEnum.ACK);
           return !hasError;
         }),
+        switchMap(() => this.usbHandlerService.disconnect$()),
         tap(() => this.form.get('photocellAdjustmentExecutionComplete')?.setValue(true)),
       )),
-      tap(() => this.completing$.next(false))
+      tap(() => this.canConnect$.next(false)),
+      tap(() => this.completing$.next(false)),
     ).subscribe();
   }
 

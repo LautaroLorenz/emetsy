@@ -15,7 +15,7 @@
 
     <div class="border border-1 border-200 p-4 mb-4 border-round">
 
-      <app-devices></app-devices>
+      <app-devices [canConnect]="(canConnect$ | async) ? true : false"></app-devices>
 
       <div class="flex flex-1 mb-3 mt-4">
         <ng-container *ngIf="phases$ | async as phases">

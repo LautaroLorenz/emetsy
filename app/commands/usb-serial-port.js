@@ -74,7 +74,11 @@ ipcMain.handle('open-usb-serial-port', async (_, { productId, vendorId }) => {
   const isOpen = await new Promise((resolve) => {
     serialPort = new SerialPort({ path: port.path, baudRate: 9600 }, (err) => {
       if (err !== null && err !== undefined) {
-        console.error('No se pudo abrir el puerto', err);
+        console.error('No se pudo abrir el puerto', `${err}`);
+        if (serialPort && serialPort.isOpen) {
+          console.log('cerrar puerto');
+          serialPort.close();
+        }
       }
       resolve(err === null || err === undefined);
     });
@@ -85,7 +89,7 @@ ipcMain.handle('open-usb-serial-port', async (_, { productId, vendorId }) => {
   readCommandQueue = [];
   parser.removeAllListeners();
   initParser(parser);
-  if (!serialPort) {
+  if (!isUsbSerialPortConnected(serialPort)) {
     console.error('No se pudo crear el puerto');
     return false;
   }
@@ -97,6 +101,7 @@ ipcMain.handle('open-usb-serial-port', async (_, { productId, vendorId }) => {
  * @return true if can close usb serial port
  */
 ipcMain.handle('close-usb-serial-port', async () => {
+  console.log('close puerto USB');
   if (!isUsbSerialPortConnected(serialPort)) {
     return true;
   }
