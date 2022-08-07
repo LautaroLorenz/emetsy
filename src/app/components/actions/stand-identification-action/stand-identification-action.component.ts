@@ -77,7 +77,8 @@ export class StandIdentificationActionComponent implements ActionComponent, Afte
       if (!control.get('isActive')?.value) {
         return;
       }
-      control.patchValue(group.value);
+      const { standIndex, ...props } = group.value;
+      control.patchValue(props);
     });
   }
 

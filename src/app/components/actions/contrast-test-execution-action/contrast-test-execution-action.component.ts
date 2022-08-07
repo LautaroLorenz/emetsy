@@ -1,6 +1,6 @@
 import { AfterViewInit, ChangeDetectionStrategy, Component, Input, OnDestroy } from '@angular/core';
 import { FormGroup } from '@angular/forms';
-import { BehaviorSubject, catchError, filter, forkJoin,  interval, map, Observable, of, ReplaySubject,  Subject, switchMap, take, takeUntil, takeWhile, tap } from 'rxjs';
+import { BehaviorSubject, catchError, filter, forkJoin, interval, map, Observable, of, ReplaySubject, Subject, switchMap, take, takeUntil, takeWhile, tap } from 'rxjs';
 import { Action, ActionComponent, CalculatorParams, ContrastTestExecutionAction, ContrastTestParametersAction, EnterTestValuesAction, ManofacturingInformation, Meter, MeterDbTableContext, PatternParams, Phases, RelationsManager, ReportContrastTest, ReportContrastTestBuilder, ResponseStatus, ResponseStatusEnum, ResultEnum, StandArrayFormValue, StandIdentificationAction, StandResult, UserIdentificationAction, WhereKind, WhereOperator } from 'src/app/models';
 import { CalculatorService } from 'src/app/services/calculator.service';
 import { DatabaseService } from 'src/app/services/database.service';
@@ -22,7 +22,7 @@ export class ContrastTestExecutionActionComponent implements ActionComponent, Af
   readonly phases$: BehaviorSubject<Phases | null> = new BehaviorSubject<Phases | null>(null);
   readonly results$: BehaviorSubject<StandResult[]> = new BehaviorSubject<StandResult[]>([]);
   readonly initialized$: BehaviorSubject<boolean | null> = new BehaviorSubject<boolean | null>(null);
-  readonly canConnect$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(true);
+  readonly canConnect$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   get contrastTestExecutionComplete(): boolean {
     return this.form.get('contrastTestExecutionComplete')?.value;
   }
@@ -283,6 +283,7 @@ export class ContrastTestExecutionActionComponent implements ActionComponent, Af
     this.usbHandlerService.connected$.pipe(
       takeUntil(this.destroyed$),
       filter((isConnected) => isConnected),
+      tap(() => this.canConnect$.next(true)),
       tap(() => {
         this.results$.next([]);
         this.initialized$.next(false);

@@ -94,7 +94,7 @@ export class CalculatorService implements Device {
     //   this.commandManager.formatNumber(phases.phaseL3.anglePhi3, 'xxxx', 3, true),
     // );
     // TODO:
-    const command: Command = 'B| PCS| CAL| TS1xxxxx| 1234567891| 00000015| P0101200| P0201200| P03     | P0400750| P0500750| Z| ';
+    const command: Command = 'B| PCS| CAL| TS1xxxxx| 1234567891| 00000015| P0101200| P0201200| P0300750| P04     | P06     | P07     | P08     | P09     | P10     | P11     | P12     | P13     | P14     | P15     | P16     | P17     | P18     | P19     | P20     | Z| ';
     return of(true).pipe(
       takeUntil(this.sendStoper$),
       switchMap(() => this.usbHandlerService.sendAndWaitAsync$(command, this.commandManager).pipe(
