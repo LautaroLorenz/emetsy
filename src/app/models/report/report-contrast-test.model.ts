@@ -9,9 +9,9 @@ export interface ManofacturingInformation {
 
 export interface ReportStand {
   standIndex: number;
-  brandModel: string;
-  errorValue: number;
-  result: Result;
+  brandModel: string | null;
+  errorValue: number | null;
+  result: Result | null;
   manofacturingInformation?: ManofacturingInformation;
 }
 export interface ReportContrastTest {
@@ -34,7 +34,7 @@ export class ReportContrastTestBuilder extends ReportBuilder {
 
   private creationDate(): string {
     const now = new Date();
-    const day = now.getDay();
+    const day = now.getDate();
     const dd = day < 10 ? '0' + day : day;
     const month = now.getMonth() + 1;
     const mm = month < 10 ? '0' + month : month;
@@ -138,7 +138,7 @@ export class ReportContrastTestBuilder extends ReportBuilder {
       const tr_1 = new ReportTr();
       const td_1 = new ReportTd();
       td_1.style = td_header_style.concat('border-right:unset;');
-      td_1.text = 'Error admisible [%]';
+      td_1.text = 'Error admisible +/- [%]';
       td_1.class = 'w-3';
       const td_2 = new ReportTd();
       td_2.style = td_header_style.concat('border-right:unset;');

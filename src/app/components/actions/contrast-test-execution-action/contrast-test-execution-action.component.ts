@@ -1,8 +1,9 @@
 import { AfterViewInit, ChangeDetectionStrategy, Component, Input, OnDestroy } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { BehaviorSubject, catchError, filter, forkJoin, interval, map, Observable, of, ReplaySubject, Subject, switchMap, take, takeUntil, takeWhile, tap } from 'rxjs';
-import { Action, ActionComponent, CalculatorParams, ContrastTestExecutionAction, ContrastTestParametersAction, EnterTestValuesAction, PatternParams, Phases, ReportContrastTest, ReportContrastTestBuilder, ResponseStatus, ResponseStatusEnum, ResultEnum, StandArrayFormValue, StandIdentificationAction, StandResult, UserIdentificationAction } from 'src/app/models';
+import { Action, ActionComponent, CalculatorParams, ContrastTestExecutionAction, ContrastTestParametersAction, EnterTestValuesAction, ManofacturingInformation, Meter, MeterDbTableContext, PatternParams, Phases, RelationsManager, ReportContrastTest, ReportContrastTestBuilder, ResponseStatus, ResponseStatusEnum, ResultEnum, StandArrayFormValue, StandIdentificationAction, StandResult, UserIdentificationAction, WhereKind, WhereOperator } from 'src/app/models';
 import { CalculatorService } from 'src/app/services/calculator.service';
+import { DatabaseService } from 'src/app/services/database.service';
 import { ExecutionDirector } from 'src/app/services/execution-director.service';
 import { GeneratorService } from 'src/app/services/generator.service';
 import { MessagesService } from 'src/app/services/messages.service';
@@ -18,11 +19,9 @@ import { UsbHandlerService } from 'src/app/services/usb-handler.service';
 export class ContrastTestExecutionActionComponent implements ActionComponent, AfterViewInit, OnDestroy {
 
   @Input() action!: Action;
-
   readonly phases$: BehaviorSubject<Phases | null> = new BehaviorSubject<Phases | null>(null);
   readonly results$: BehaviorSubject<StandResult[]> = new BehaviorSubject<StandResult[]>([]);
   readonly initialized$: BehaviorSubject<boolean | null> = new BehaviorSubject<boolean | null>(null);
-
   get contrastTestExecutionComplete(): boolean {
     return this.form.get('contrastTestExecutionComplete')?.value;
   }
@@ -42,6 +41,7 @@ export class ContrastTestExecutionActionComponent implements ActionComponent, Af
     return this.usbHandlerService.connected$.value;
   }
 
+  private activeStands: StandArrayFormValue[] = [];
   private readonly destroyed$: ReplaySubject<boolean> = new ReplaySubject(1);
   private readonly listenPatternParams$ = new Subject<void>();
   private readonly reportData: ReportContrastTest = {} as ReportContrastTest;
@@ -56,13 +56,14 @@ export class ContrastTestExecutionActionComponent implements ActionComponent, Af
     private readonly patternService: PatternService,
     private readonly calculatorService: CalculatorService,
     private readonly messagesService: MessagesService,
+    private readonly dbServiceMeter: DatabaseService<Meter>,
   ) {
     this.reportData.reportName = 'ENSAYO DE CONTRASTE';
   }
 
   private getExecutionDateString(): string {
     const now = new Date();
-    const day = now.getDay();
+    const day = now.getDate();
     const dd = day < 10 ? '0' + day : day;
     const month = now.getMonth() + 1;
     const mm = month < 10 ? '0' + month : month;
@@ -77,24 +78,30 @@ export class ContrastTestExecutionActionComponent implements ActionComponent, Af
     const stepBuilder = this.executionDirectorService.getActiveStepBuilder();
     const reportBuilder: ReportContrastTestBuilder = stepBuilder?.reportBuilder as ReportContrastTestBuilder;
     reportBuilder.pathValue(reportData);
-    // TODO:
-    // reportBuilder.pathValue({ 
-    // stands: [{
-    //   standIndex: 1,
-    //   brandModel: 'BETEL - XTR123',
-    //   errorValue: 5,
-    //   result: ResultEnum.APPROVED,
-    // }, {
-    //   standIndex: 2,
-    //   brandModel: 'BETEL - TRESS543',
-    //   errorValue: 3,
-    //   result: ResultEnum.DISAPPROVED,
-    //   manofacturingInformation: {
-    //     serialNumber: 'SSJJ54439-231234',
-    //     yearOfProduction: 2010
-    //   }
-    // }],
-    // });
+  }
+
+  private requestMeters$(meterIds: number[]): Observable<Meter[]> {
+    const { foreignTables } = MeterDbTableContext;
+    const { tableName } = MeterDbTableContext;
+    const foreignTableNames = foreignTables.map(({ tableName }) => tableName);
+    const getTableOptions = {
+      relations: foreignTableNames,
+      conditions: [{
+        kind: WhereKind.where,
+        columnName: 'id',
+        operator: WhereOperator.in,
+        value: meterIds
+      }]
+    };
+    this.dbServiceMeter.getTable(tableName, getTableOptions);
+
+    return this.dbServiceMeter.getTableReply$(tableName).pipe(
+      takeUntil(this.destroyed$),
+      map(({ rows, relations }) => {
+        const { foreignTables } = MeterDbTableContext;
+        return RelationsManager.mergeRelationsIntoRows<Meter>(rows, relations, foreignTables);
+      }),
+    );
   }
 
   private timeStart(): void {
@@ -164,8 +171,16 @@ export class ContrastTestExecutionActionComponent implements ActionComponent, Af
             const calculatorErrorValueAbs: number = Math.abs(calculatorErrorValue);
             const resultReal = calculatorErrorValueAbs < maxAllowedError ? ResultEnum.APPROVED : ResultEnum.DISAPPROVED;
 
+            const resultStandIndex = index + 1;
+            const reportStand = this.reportData.stands.find(({ standIndex }) => standIndex === resultStandIndex);
+            if (reportStand) {
+              reportStand.errorValue = calculatorErrorValue;
+              reportStand.result = resultReal;
+            } else {
+              console.warn(`El stand ${resultStandIndex} no se pudo agregar al reporte`);
+            }
             return {
-              stand: index + 1,
+              stand: resultStandIndex,
               calculatorErrorValue,
               result: resultReal,
             };
@@ -215,16 +230,33 @@ export class ContrastTestExecutionActionComponent implements ActionComponent, Af
     }
     const { hasManufacturingInformation } = standIdentificationAction.form.getRawValue();
     const stands = (standIdentificationAction as StandIdentificationAction).standArray.getRawValue();
+    this.activeStands = stands.filter(({ isActive }) => isActive);
 
-    this.reportData.standsLength = stands.filter(({ isActive }) => isActive).length;
-    console.log(stands);
-    // this.reportData.stands = stands.filter(({ isActive }) => isActive).map((s) => ({
-    //   brandModel,
-    //   result,
-    //   errorValue,
-    //   standIndex,
-    //   manofacturingInformation
-    // }));
+    this.reportData.standsLength = this.activeStands.length;
+    this.reportData.stands = [];
+    const meterIds = this.activeStands.map(({ meterId }) => meterId as number);
+    this.requestMeters$(meterIds).pipe(
+      take(1),
+      tap((meters) => {
+        this.reportData.stands = this.activeStands.map((stand) => {
+          const meter = meters.find(({ id }) => stand.meterId == id);
+          let manofacturingInformation: ManofacturingInformation | undefined = undefined;
+          if (hasManufacturingInformation) {
+            manofacturingInformation = {
+              serialNumber: stand.serialNumber as string,
+              yearOfProduction: stand.yearOfProduction as number
+            };
+          }
+          return {
+            standIndex: stand.standIndex as number,
+            brandModel: `${meter?.foreign.brand.name} - ${meter?.model}`,
+            errorValue: null,
+            result: null,
+            manofacturingInformation,
+          }
+        });
+      }),
+    ).subscribe();
 
     this.usbHandlerService.connected$.pipe(
       takeUntil(this.destroyed$),

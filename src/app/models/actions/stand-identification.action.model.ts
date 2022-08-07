@@ -33,9 +33,10 @@ export class StandIdentificationAction implements Action {
     });
     for (let i = 0; i < CompileParams.STANDS_LENGTH; i++) {
       const standGroup = new FormGroup<StandArrayForm>({
+        standIndex: new FormControl<number | null | undefined>(i+1),
         isActive: new FormControl<boolean | null | undefined>(true),
         meterId: new FormControl<number | null | undefined>(undefined),
-        serialNumber: new FormControl<number | null | undefined>(undefined),
+        serialNumber: new FormControl<string | null | undefined>(undefined),
         yearOfProduction: new FormControl<number | null | undefined>(undefined),
       });
       standGroup.get('isActive')?.valueChanges.pipe(
