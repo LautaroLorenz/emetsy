@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormArray, FormControl, FormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { filter, map, Observable, ReplaySubject, switchMap, takeUntil, tap } from 'rxjs';
+import { BehaviorSubject, filter, map, Observable, ReplaySubject, switchMap, takeUntil, tap } from 'rxjs';
 import { Action, ContrastTestStep, EssayTemplate, EssayTemplateDbTableContext, ExecutionStatus, PageUrlName, PhotocellAdjustmentStep, PreparationStep, RelationsManager, ReportBuilder, ReportStep, StepBuilder, WhereKind, WhereOperator } from 'src/app/models';
 import { EssayTemplateStep, EssayTemplateStepDbTableContext } from 'src/app/models/database/tables/essay-template-step.model';
 import { DatabaseService } from 'src/app/services/database.service';
@@ -16,6 +16,7 @@ export class ExecuteEssayComponent implements OnInit, OnDestroy {
 
   readonly title: string = 'Ensayo';
   readonly id$: Observable<number>;
+  readonly saving$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   readonly form: FormGroup;
 
   showNoStepsWarning!: boolean;
@@ -139,6 +140,11 @@ export class ExecuteEssayComponent implements OnInit, OnDestroy {
       tap(() => this.buildSteps(this.form.get('essayTemplateSteps')?.getRawValue())),
       tap(() => this.initExecution()),
     ).subscribe();
+
+    this.executionStatus$.pipe(
+      takeUntil(this.destroyed$),
+      filter(status => status === 'COMPLETED'),
+    ).subscribe();
   }
 
   exit() {
@@ -147,6 +153,10 @@ export class ExecuteEssayComponent implements OnInit, OnDestroy {
 
   executeNext(): void {
     this.executionDirectorService.executeNext();
+  }
+
+  save(): void {
+    this.saving$.next(true);
   }
 
   ngOnDestroy() {

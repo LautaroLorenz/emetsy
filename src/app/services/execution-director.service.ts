@@ -42,7 +42,7 @@ export class ExecutionDirector {
       this.executionStatus$.next('IN_PROGRESS');
       return;
     }
-    this.executionStatus$.next('COMPLETED');
+    this.executionStatus$.next('CREATED');
   }
 
   executeNext(): void {
@@ -67,7 +67,9 @@ export class ExecutionDirector {
     this.activeStepIndex$.next(null);
     this.activeActionIndex$.next(null);
     this.activeAction$.next(null);
-    this.executionStatus$.next('COMPLETED');
+    if(this.steps.length > 0) {
+      this.executionStatus$.next('COMPLETED');
+    }
     return;
   }
 

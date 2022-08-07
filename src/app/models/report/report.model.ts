@@ -5,6 +5,7 @@ export class Report {
     return this.pages.map((page) => page.get()).join("");
   }
 }
+
 export class ReportPageA4 {
   private _table: ReportTable[] = [];
 

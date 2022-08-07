@@ -1,12 +1,16 @@
-<p-button
-  label="Crear reporte PDF"
-  (click)="createPDF()"
-  [disabled]="disabled"
-  [ngClass]="{ 'pointer-events-none': disabled }"
-  styleClass="mb-4"
-></p-button>
+<div class="py-3">
+  <div
+    #container
+    [innerHtml]="preview"
+  ></div>
+</div>
 
-<div
-  #container
-  [innerHtml]="preview"
-></div>
+<div class="flex justify-content-end mb-3">
+  <p-button
+    label="Crear reporte PDF"
+    styleClass="p-button-outlined"
+    (click)="createPDF()"
+    [disabled]="disabled"
+    [ngClass]="{ 'pointer-events-none': disabled }"
+  ></p-button>
+</div>
