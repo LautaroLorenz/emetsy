@@ -27,33 +27,9 @@ export interface ReportContrastTest {
 export class ReportContrastTestBuilder extends ReportBuilder {
   private data!: ReportContrastTest;
 
-
   constructor() {
     super();
     this.reset();
-    this.pathValue({  // TODO: fake set
-      reportName: 'ENSAYO DE CONTRASTE',
-      userName: 'Lautaro Lorenz',
-      maxAllowedError: 5,
-      executionSeconds: 1600,
-      standsLength: 4,
-      executionDateString: '05/08/2022 15:30 Hs',
-      stands: [{
-        standIndex: 1,
-        brandModel: 'BETEL - XTR123',
-        errorValue: 5,
-        result: ResultEnum.APPROVED,
-      }, {
-        standIndex: 2,
-        brandModel: 'BETEL - TRESS543',
-        errorValue: 3,
-        result: ResultEnum.DISAPPROVED,
-        manofacturingInformation: {
-          serialNumber: 'SSJJ54439-231234',
-          yearOfProduction: 2010
-        }
-      }],
-    });
   }
 
   private creationDate(): string {
@@ -72,7 +48,7 @@ export class ReportContrastTestBuilder extends ReportBuilder {
     const mm = (minute < 10) ? '0' + minute : minute;
     const second = seconds % 60;
     const ss = (second < 10) ? '0' + second : second;
-    return hh + ':' + mm + ':' + ss;
+    return (hh || '00') + ':' + (mm || '00') + ':' + (ss || '00');
   }
 
   reset(): void {
@@ -111,7 +87,7 @@ export class ReportContrastTestBuilder extends ReportBuilder {
       const tr_3 = new ReportTr();
       const td_3 = new ReportTd();
       td_3.style = 'padding-top:2mm;font-size:10mm;text-align:center;';
-      td_3.text = this.data.reportName;
+      td_3.text = this.data.reportName ?? '';
       td_3.class = 'text-700';
 
       tableHeader.add(tr_1);
@@ -138,7 +114,7 @@ export class ReportContrastTestBuilder extends ReportBuilder {
       const tr_2 = new ReportTr();
       const td_2 = new ReportTd();
       td_2.style = td_header_style.concat('background-color:#FFF;text-align:left;');
-      td_2.text = this.data.userName;
+      td_2.text = this.data.userName ?? '--';
       td_2.class = 'w-6';
 
       const td_fill = new ReportTd();
@@ -187,16 +163,16 @@ export class ReportContrastTestBuilder extends ReportBuilder {
       const tr_2 = new ReportTr();
       const td_2_1 = new ReportTd();
       td_2_1.style = td_info_style.concat('border-right:unset;text-align:right;');
-      td_2_1.text = `${this.data.maxAllowedError}`;
+      td_2_1.text = `${this.data.maxAllowedError ?? '--'}`;
       const td_2_2 = new ReportTd();
       td_2_2.style = td_info_style.concat('border-right:unset;text-align:right;');
-      td_2_2.text = `${this.data.standsLength}`;
+      td_2_2.text = `${this.data.standsLength ?? '--'}`;
       const td_2_3 = new ReportTd();
       td_2_3.style = td_info_style.concat('border-right:unset;text-align:center;');
-      td_2_3.text = `${this.formatTime(this.data.executionSeconds)} Hs`;
+      td_2_3.text = `${this.formatTime(this.data.executionSeconds ?? '--')} Hs`;
       const td_2_4 = new ReportTd();
       td_2_4.style = td_info_style.concat('text-align:center;');
-      td_2_4.text = `${this.data.executionDateString}`;
+      td_2_4.text = `${this.data.executionDateString ?? '--'} Hs`;
 
       tableInfo.add(tr_2);
       tr_2.add(td_2_1);
@@ -238,6 +214,10 @@ export class ReportContrastTestBuilder extends ReportBuilder {
 
       const approvedClass = 'text-green-500';
       const disapprovedClass = 'text-red-500';
+
+      if (!this.data.stands) {
+        this.data.stands = [];
+      }
       for (const [index, stand] of this.data.stands.entries()) {
         const withBorderBottom = index === this.data.stands.length - 1;
 
@@ -248,7 +228,7 @@ export class ReportContrastTestBuilder extends ReportBuilder {
         td_2_1.text = `${stand.standIndex}`;
         const td_2_2 = new ReportTd();
         td_2_2.style = td_info_style.concat('border-right:unset;text-align:left;padding:0;').concat(withBorderBottom ? '' : 'border-bottom:unset;');
-        
+
         // PRODUCE METER INFO
         {
           const tableMeter = new ReportTable();
@@ -260,11 +240,11 @@ export class ReportContrastTestBuilder extends ReportBuilder {
           td_1.style = 'padding:1.5mm;';
           td_1.text = `Modelo: ${stand.brandModel}`;
 
-          if(stand.manofacturingInformation) {
+          if (stand.manofacturingInformation) {
             const tr_2 = new ReportTr();
             const td_2 = new ReportTd();
             const tr_3 = new ReportTr();
-            const td_3 = new ReportTd();            
+            const td_3 = new ReportTd();
             tr_2.add(td_2);
             tr_3.add(td_3);
             tableMeter.add(tr_2);

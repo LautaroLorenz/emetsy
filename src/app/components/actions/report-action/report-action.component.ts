@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, ElementRef, Input, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { Action, ActionComponent, Report } from 'src/app/models';
 import { ExecutionDirector } from 'src/app/services/execution-director.service';
@@ -13,12 +13,12 @@ import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
   styleUrls: ['./report-action.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ReportActionComponent implements ActionComponent {
+export class ReportActionComponent implements ActionComponent, OnInit {
 
   @ViewChild('container', { static: false }) container!: ElementRef;
   @Input() action!: Action;
   private _preview: string = '';
-  private _report: Report;
+  private _report!: Report;
 
   get preview(): SafeHtml {
     return this.sanitizer.bypassSecurityTrustHtml(this._preview);
@@ -41,7 +41,9 @@ export class ReportActionComponent implements ActionComponent {
   constructor(
     private readonly executionDirector: ExecutionDirector,
     private readonly sanitizer: DomSanitizer
-  ) {
+  ) { }
+
+  ngOnInit(): void {
     const report: Report = this.executionDirector.reportEssayDirector.createReport();
     this._report = report;
     this._preview = report.toString();
@@ -51,7 +53,7 @@ export class ReportActionComponent implements ActionComponent {
     this.creating$.next(true);
     const PDF = new jsPDF('p', 'mm', 'a4');
     for (const [index] of this._report.pages.entries()) {
-      if(index > 0) {
+      if (index > 0) {
         PDF.addPage();
       }
       const canvas = await html2canvas(this.container.nativeElement.children[index], { scale: 3 });

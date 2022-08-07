@@ -7,7 +7,7 @@ import { Action, ExecutionStatus, ReportEssayDirector, StepBuilder } from "../mo
   providedIn: "root"
 })
 export class ExecutionDirector {
-  
+
   public reportEssayDirector = new ReportEssayDirector();
   public activeStepIndex$ = new BehaviorSubject<number | null>(null);
   public activeActionIndex$ = new BehaviorSubject<number | null>(null);
@@ -72,12 +72,12 @@ export class ExecutionDirector {
   }
 
   getActiveStepBuilder(): StepBuilder | null {
-    if(this.activeStepIndex$.value === null) {
+    if (this.activeStepIndex$.value === null) {
       return null;
     }
     return this.steps[this.activeStepIndex$.value];
   }
-  
+
   getStepBuilderById(id: number): StepBuilder | undefined {
     return this.steps.find(step => step.essayTemplateStep.step_id === id);
   }
