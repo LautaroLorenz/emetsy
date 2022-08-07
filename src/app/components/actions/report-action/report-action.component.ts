@@ -42,7 +42,7 @@ export class ReportActionComponent implements ActionComponent, OnInit {
     private readonly executionDirector: ExecutionDirector,
     private readonly sanitizer: DomSanitizer
   ) { }
-
+ 
   ngOnInit(): void {
     const report: Report = this.executionDirector.reportEssayDirector.createReport();
     this._report = report;
@@ -64,6 +64,7 @@ export class ReportActionComponent implements ActionComponent, OnInit {
     }
     await PDF.save('report.pdf'); // TODO: essay name - ejecution ID
     this.creating$.next(false);
+    this.form.get('downloaded')?.setValue(true);
   }
 
 }
