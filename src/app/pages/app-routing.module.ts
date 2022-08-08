@@ -13,6 +13,7 @@ import { EssayTemplateBuilderComponent } from './essay-template-builder/essay-te
 import { ExecuteEssayComponent } from './execute-essay/execute-essay.component';
 import { PendingChangesGuard } from '../guards/pending-changes.guard';
 import { DevicesTurnOffGuard } from '../guards/devices-turn-off.guard';
+import { SeeReportComponent } from './see-report/see-report.component';
 
 const routes: Routes = [
   {
@@ -63,6 +64,10 @@ const routes: Routes = [
     component: ExecuteEssayComponent,
     canDeactivate: [DevicesTurnOffGuard]
   },
+  {
+    path: PageUrlName.seeReport,
+    component: SeeReportComponent,
+  }
 ];
 
 @NgModule({

@@ -1,0 +1,17 @@
+@import 'primeflex/primeflex.scss';
+
+.info-field {
+  @include styleclass('flex flex-column border border-1 border-round p-3 my-2 border-purple-100');
+
+  label {
+    @include styleclass('mb-2 text-600 text-md');
+
+    i {
+      @include styleclass('mr-2');
+    }
+  }
+
+  span {
+    @include styleclass('text-900 text-lg');
+  }
+}

@@ -10,4 +10,5 @@ export enum PageUrlName {
   newEssayTemplate = 'nuevo-template-ensayo',
   editEssayTemplate = 'editar-template-ensayo',
   executeEssay = 'ejecutar-ensayo',
+  seeReport = 'ver-reporte',
 };
