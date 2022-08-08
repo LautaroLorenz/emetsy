@@ -1,12 +1,13 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormArray, FormControl, FormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { BehaviorSubject, filter, map, Observable, ReplaySubject, switchMap, takeUntil, tap } from 'rxjs';
-import { Action, DateHelper, EssayTemplate, EssayTemplateDbTableContext, ExecutionStatus, History, HistoryItem, PageUrlName, RelationsManager, StepBuilder, WhereKind, WhereOperator } from 'src/app/models';
+import { BehaviorSubject, filter, map, Observable, ReplaySubject, switchMap, take, takeUntil, tap } from 'rxjs';
+import { Action, DateHelper, EssayTemplate, EssayTemplateDbTableContext, ExecutionStatus, History, HistoryDbTableContext, HistoryItem, PageUrlName, RelationsManager, StepBuilder, WhereKind, WhereOperator } from 'src/app/models';
 import { EssayTemplateStep, EssayTemplateStepDbTableContext } from 'src/app/models/database/tables/essay-template-step.model';
 import { StepConstructor } from 'src/app/models/steps/step-constructor.model';
 import { DatabaseService } from 'src/app/services/database.service';
 import { ExecutionDirector } from 'src/app/services/execution-director.service';
+import { MessagesService } from 'src/app/services/messages.service';
 import { NavigationService } from 'src/app/services/navigation.service';
 
 @Component({
@@ -69,6 +70,7 @@ export class ExecuteEssayComponent implements OnInit, OnDestroy {
     private readonly route: ActivatedRoute,
     private readonly executionDirectorService: ExecutionDirector,
     private readonly dbServiceHistory: DatabaseService<History>,
+    private readonly messagesService: MessagesService,
   ) {
     this.id$ = this.route.queryParams.pipe(
       filter(({ id }) => id),
@@ -146,20 +148,30 @@ export class ExecuteEssayComponent implements OnInit, OnDestroy {
     this.saving$.next(true);
 
     const history: History = {
-      essayName: this.essayName,
-      savedDate: DateHelper.getNow(),
+      essay: this.essayName,
+      saved: DateHelper.getNow(),
     } as History;
-    history.items = [];
+    history.items_raw = [];
     this.stepBuilders.forEach((stepBuilder) => {
       const historyItem: HistoryItem = {
         essayTemplateStep: stepBuilder.essayTemplateStep,
         reportData: stepBuilder.reportBuilder.data
       };
-      history.items.push(historyItem);
+      history.items_raw.push(historyItem);
     });
 
-    // TODO: guardar en la base de datos.
-    console.log(history);
+    this.dbServiceHistory.addElementToTable$(HistoryDbTableContext.tableName, {
+      ...history,
+      items_raw: JSON.stringify(history.items_raw) as any,
+    })
+      .pipe(
+        take(1),
+        tap(() => {
+          this.messagesService.success('Agregado correctamente');
+        }),
+      ).subscribe({
+        error: () => this.messagesService.error('No se pudo crear el elemento')
+      });
   }
 
   ngOnDestroy() {

@@ -62,7 +62,7 @@ export class ReportActionComponent implements ActionComponent, OnInit {
       const height = PDF.internal.pageSize.getHeight();
       PDF.addImage(imageGeneratedFromTemplate, 'PNG', 0, 0, width, height);
     }
-    await PDF.save('report.pdf'); // TODO: essay name - ejecution ID
+    await PDF.save('report.pdf'); // TODO: essay name - timestamp (Date.now() [ms])
     this.creating$.next(false);
     this.form.get('downloaded')?.setValue(true);
   }

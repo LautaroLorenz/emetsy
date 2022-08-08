@@ -10,9 +10,9 @@ export interface HistoryItem {
 
 export interface History extends DbForeignKey {
   id: number;
-  savedDate: string;
-  essayName: string;
-  items: HistoryItem[];
+  saved: string;
+  essay: string;
+  items_raw: HistoryItem[];
 }
 
 export const HistoryDbTableContext: DbTableContext = {
