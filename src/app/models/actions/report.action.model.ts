@@ -15,7 +15,7 @@ export class ReportAction implements Action {
   buildForm(): FormGroup {
     this.form = new FormGroup({
       actionName: new FormControl(this.name),
-      downloaded: new FormControl<boolean | undefined>(undefined, [Validators.required]),
+      viewed: new FormControl<boolean | undefined>(undefined, [Validators.required]),
     });
 
     return this.form;

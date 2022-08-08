@@ -20,4 +20,16 @@ export const HistoryDbTableContext: DbTableContext = {
   foreignTables: [],
 };
 
-export const HistoryTableColumns: AbmColum[] = [];
+export const HistoryTableColumns: AbmColum[] = [
+  {
+		field: 'essay',
+		header: 'Nombre del ensayo',
+		sortable: true,
+	},
+	{
+		field: 'saved',
+		header: 'Fecha de guardado',
+		sortable: false,
+    suffix: ' Hs'
+	},
+];

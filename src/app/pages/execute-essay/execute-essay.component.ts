@@ -168,6 +168,7 @@ export class ExecuteEssayComponent implements OnInit, OnDestroy {
         take(1),
         tap(() => {
           this.messagesService.success('Agregado correctamente');
+          this.navigationService.back({ targetPage: PageUrlName.historyAndReports });
         }),
       ).subscribe({
         error: () => this.messagesService.error('No se pudo crear el elemento')

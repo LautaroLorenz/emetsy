@@ -3,3 +3,34 @@
   [headerIcon]="haderIcon"
 ></app-page-title>
 <app-tab-menu-test></app-tab-menu-test>
+<ng-container *ngIf="(history$ | async) as history">
+  <app-abm
+    [dataset]="history"
+    [columns]="cols"
+    [tableColumnButtonsTemplate]="tableColumnButtonsTemplate"
+    actionColumnStyleClass="w-11rem"
+    (deleteEvent)="deleteHistory($event)"
+  >
+    <ng-template
+      #tableColumnButtonsTemplate
+      let-element="element"
+    >
+      <!-- <button
+        pButton
+        pRipple
+        icon="pi pi-play"
+        class="p-button-outlined p-button-rounded p-button-text p-button-primary mr-2 p-button-lg"
+        routerLink="/ejecutar-ensayo"
+        [queryParams]="{id: element.id}"
+      ></button>
+      <button
+        pButton
+        pRipple
+        icon="pi pi-pencil"
+        class="p-button-outlined p-button-rounded p-button-text p-button-primary mr-2 p-button-lg"
+        routerLink="/editar-template-ensayo"
+        [queryParams]="{id: element.id}"
+      ></button> -->
+    </ng-template>
+  </app-abm>
+</ng-container>

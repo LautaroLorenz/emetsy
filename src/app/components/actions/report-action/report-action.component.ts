@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { Action, ActionComponent, Report } from 'src/app/models';
 import { ExecutionDirector } from 'src/app/services/execution-director.service';
@@ -13,7 +13,7 @@ import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
   styleUrls: ['./report-action.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ReportActionComponent implements ActionComponent, OnInit {
+export class ReportActionComponent implements ActionComponent, OnInit, AfterViewInit {
 
   @ViewChild('container', { static: false }) container!: ElementRef;
   @Input() action!: Action;
@@ -41,12 +41,19 @@ export class ReportActionComponent implements ActionComponent, OnInit {
   constructor(
     private readonly executionDirector: ExecutionDirector,
     private readonly sanitizer: DomSanitizer
-  ) { }
- 
+  ) {
+  }
+
   ngOnInit(): void {
     const report: Report = this.executionDirector.reportEssayDirector.createReport();
     this._report = report;
     this._preview = report.toString();
+  }
+
+  ngAfterViewInit(): void {
+    setTimeout(() => {
+      this.form.get('viewed')?.setValue(true);
+    }, 500);
   }
 
   async createPDF() {
@@ -64,7 +71,6 @@ export class ReportActionComponent implements ActionComponent, OnInit {
     }
     await PDF.save('report.pdf'); // TODO: essay name - timestamp (Date.now() [ms])
     this.creating$.next(false);
-    this.form.get('downloaded')?.setValue(true);
   }
 
 }
