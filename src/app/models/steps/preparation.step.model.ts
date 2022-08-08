@@ -16,7 +16,7 @@ export class PreparationStep extends StepBuilder {
     const standIdentificationMinimalFieldsDecorator = new StandIdentificationMinimalFieldsDecorator(standIdentificationAction);
 
     const _actions: Action[] = [
-      // userIdentificationAction,
+      userIdentificationAction,
       standIdentificationAction,
     ];
     

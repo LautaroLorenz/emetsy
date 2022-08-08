@@ -25,7 +25,7 @@ export interface ReportContrastTest {
 }
 
 export class ReportContrastTestBuilder extends ReportBuilder {
-  private data!: ReportContrastTest;
+  override data: ReportContrastTest = {} as ReportContrastTest;
 
   constructor() {
     super();

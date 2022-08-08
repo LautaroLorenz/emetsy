@@ -46,3 +46,4 @@ export * from "./report/report.model";
 export * from "./report/report-director.model";
 export * from "./report/report-contrast-test.model";
 export * from "./report/report-builder.model";
+export * from "./date/date.model";

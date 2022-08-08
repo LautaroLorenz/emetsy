@@ -1,7 +1,7 @@
 import { AfterViewInit, ChangeDetectionStrategy, Component, Input, OnDestroy } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { BehaviorSubject, catchError, filter, forkJoin, interval, map, Observable, of, ReplaySubject, Subject, switchMap, take, takeUntil, takeWhile, tap } from 'rxjs';
-import { Action, ActionComponent, CalculatorParams, ContrastTestExecutionAction, ContrastTestParametersAction, EnterTestValuesAction, ManofacturingInformation, Meter, MeterDbTableContext, PatternParams, Phases, RelationsManager, ReportContrastTest, ReportContrastTestBuilder, ResponseStatus, ResponseStatusEnum, ResultEnum, StandArrayFormValue, StandIdentificationAction, StandResult, StepIdEnum, UserIdentificationAction, WhereKind, WhereOperator } from 'src/app/models';
+import { Action, ActionComponent, CalculatorParams, ContrastTestExecutionAction, ContrastTestParametersAction, DateHelper, EnterTestValuesAction, ManofacturingInformation, Meter, MeterDbTableContext, PatternParams, Phases, RelationsManager, ReportContrastTest, ReportContrastTestBuilder, ResponseStatus, ResponseStatusEnum, ResultEnum, StandArrayFormValue, StandIdentificationAction, StandResult, StepIdEnum, UserIdentificationAction, WhereKind, WhereOperator } from 'src/app/models';
 import { CalculatorService } from 'src/app/services/calculator.service';
 import { DatabaseService } from 'src/app/services/database.service';
 import { ExecutionDirector } from 'src/app/services/execution-director.service';
@@ -69,19 +69,6 @@ export class ContrastTestExecutionActionComponent implements ActionComponent, Af
     private readonly dbServiceMeter: DatabaseService<Meter>,
   ) {
     this.reportData.reportName = 'ENSAYO DE CONTRASTE';
-  }
-
-  private getExecutionDateString(): string {
-    const now = new Date();
-    const day = now.getDate();
-    const dd = day < 10 ? '0' + day : day;
-    const month = now.getMonth() + 1;
-    const mm = month < 10 ? '0' + month : month;
-    const hour = now.getHours();
-    const hh = (hour < 10) ? '0' + hour : hour;
-    const minute = now.getMinutes();
-    const min = (minute < 10) ? '0' + minute : minute;
-    return dd + "/" + mm + "/" + now.getFullYear() + " " + (hh || '00') + ':' + (min || '00');
   }
 
   private setReportParams(reportData: ReportContrastTest): void {
@@ -216,7 +203,7 @@ export class ContrastTestExecutionActionComponent implements ActionComponent, Af
   ngAfterViewInit(): void {
     this.timeStart();
 
-    this.reportData.executionDateString = this.getExecutionDateString();
+    this.reportData.executionDateString = DateHelper.getNow();
     const phases: Phases = this.enterTestValuesAction.getPhases();
     const { meterConstant } = this.enterTestValuesAction.form.getRawValue();
     const { maxAllowedError, meterPulses, numberOfDiscardedResults } = this.contrastTestParametersAction.form.getRawValue();
