@@ -36,7 +36,7 @@ export class ReportActionComponent implements ActionComponent, OnInit, AfterView
     return this.action.form;
   }
 
-  readonly creating$ = new BehaviorSubject<boolean>(false);
+  private readonly creating$ = new BehaviorSubject<boolean>(false);
 
   constructor(
     private readonly executionDirector: ExecutionDirector,
@@ -69,7 +69,7 @@ export class ReportActionComponent implements ActionComponent, OnInit, AfterView
       const height = PDF.internal.pageSize.getHeight();
       PDF.addImage(imageGeneratedFromTemplate, 'PNG', 0, 0, width, height);
     }
-    await PDF.save('report.pdf'); // TODO: essay name - timestamp (Date.now() [ms])
+    await PDF.save(`reporte - ${(new Date).getTime()}.pdf`);
     this.creating$.next(false);
   }
 

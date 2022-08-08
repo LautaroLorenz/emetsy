@@ -3,41 +3,19 @@
   [showBack]="true"
   (backEvent)="exit()"
 >
-  <!-- TODO: <ng-container toolbar-left>
-    <div class="ml-3">{{essayName}}</div>
-  </ng-container>
   <ng-container toolbar-right>
-    <ng-container *ngIf="(executionStatus$ | async) as executionStatus">
+    <ng-container *ngIf="(history$ | async) as history">
       <div class="mr-3">
-        <ng-container [ngSwitch]="executionStatus">
-          <ng-container *ngSwitchCase="'IN_PROGRESS'">
-            <ng-container *ngIf="activeAction$ | async as activeAction">
-              <p-button
-                label="Confirmar"
-                icon="pi pi-check"
-                styleClass="p-button-primary"
-                [disabled]="activeAction?.form?.invalid || false"
-                [ngClass]="{
-              'pointer-events-none': activeAction?.form?.invalid || false
-            }"
-                (click)="executeNext()"
-              ></p-button>
-            </ng-container>
-          </ng-container>
-          <ng-container *ngSwitchCase="'COMPLETED'">
-            <p-button
-              label="Guardar y salir"
-              icon="pi pi-check"
-              styleClass="p-button-success"
-              [disabled]="saving$.value"
-              [ngClass]="{ 'pointer-events-none': saving$.value }"
-              (click)="save()"
-            ></p-button>
-          </ng-container>
-        </ng-container>
+        <p-button
+          label="Crear reporte PDF"
+          styleClass=""
+          (click)="createPDF(history)"
+          [disabled]="disabled"
+          [ngClass]="{ 'pointer-events-none': disabled }"
+        ></p-button>
       </div>
     </ng-container>
-  </ng-container> -->
+  </ng-container>
 </app-page-title>
 
 <app-fill-available-space class="flex justify-content-evenly p-font-family">
@@ -61,20 +39,11 @@
 
     <p-divider layout="vertical"></p-divider>
 
-    <div class="flex flex-column w-8 overflow-auto py-3 mb-4 pr-3">
-      <!-- <ng-container *ngIf="activeAction$ | async as activeAction">
-      <app-action-switch-list [actions]="[activeAction]">
-      </app-action-switch-list>
-    </ng-container>
-
-    <ng-container *ngIf="(executionStatus$ | async) === 'COMPLETED'">
-      <div class="h-30rem flex justify-content-center align-items-center">
-        <p-message
-          severity="success"
-          text="Ensayo completado correctamente, ya puede Guardar."
-        ></p-message>
-      </div>
-    </ng-container> -->
+    <div class="flex flex-column w-8 overflow-auto py-3 my-4">
+      <div
+        #container
+        [innerHtml]="preview"
+      ></div>
     </div>
 
   </ng-container>

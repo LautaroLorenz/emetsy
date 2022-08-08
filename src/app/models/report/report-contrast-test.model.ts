@@ -55,7 +55,7 @@ export class ReportContrastTestBuilder extends ReportBuilder {
     this.data = {} as ReportContrastTest;
   }
 
-  pathValue(value: Partial<ReportContrastTest>) {
+  override pathValue(value: Partial<ReportContrastTest>) {
     this.data = {
       ...this.data,
       ...value

@@ -1,5 +1,10 @@
 @import 'primeflex/primeflex.scss';
 
+::ng-deep .page {
+  margin-bottom: 24px;
+  @include styleclass('border-1 border-200 bg-indigo-50');
+}
+
 .info-field {
   @include styleclass('flex flex-column border border-1 border-round p-3 my-2 border-purple-100');
 
