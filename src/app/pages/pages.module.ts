@@ -16,6 +16,7 @@ import { ExecuteEssayComponent } from './execute-essay/execute-essay.component';
 import { PendingChangesGuard } from '../guards/pending-changes.guard';
 import { DevicesTurnOffGuard } from '../guards/devices-turn-off.guard';
 import { SeeReportComponent } from './see-report/see-report.component';
+import { DashboardComponent } from './dashboard/dashboard.component';
 
 
 @NgModule({
@@ -30,6 +31,7 @@ import { SeeReportComponent } from './see-report/see-report.component';
     EssayTemplateBuilderComponent,
     ExecuteEssayComponent,
     SeeReportComponent,
+    DashboardComponent,
   ],
   imports: [
     CommonModule,

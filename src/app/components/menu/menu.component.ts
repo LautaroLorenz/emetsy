@@ -9,6 +9,8 @@ import { PageUrlName } from 'src/app/models';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class MenuComponent implements OnInit {
+  
+  PageUrlName = PageUrlName;
   items: MenuItem[] = [];
 
   constructor() { }
@@ -70,5 +72,4 @@ export class MenuComponent implements OnInit {
       }
     ];
   }
-
 }
