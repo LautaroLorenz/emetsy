@@ -1,58 +1,62 @@
 export class Report {
-  public parts: string[] = [];
+  public pages: ReportPageA4[] = [];
 
-  public listParts(): void {
-    console.log(`Product parts: ${this.parts.join(', ')}\n`);
+  toString(): string {
+    return this.pages.map((page) => page.get()).join("");
   }
 }
 
-export interface ReportBuilder {
-  produceHeader(): void;
-  produceBody(): void;
-  produceFooter(): void;
-}
+export class ReportPageA4 {
+  private _table: ReportTable[] = [];
 
-export class ReportBuilderHTML implements ReportBuilder {
-  private report!: Report;
-
-  constructor() {
-    this.reset();
+  add(table: ReportTable): ReportTable[] {
+    this._table.push(table);
+    return this._table;
   }
 
-  public reset(): void {
-    this.report = new Report();
-  }
-
-  public produceHeader(): void {
-    this.report.parts.push('<span>Header<span>');
-  }
-
-  public produceBody(): void {
-    this.report.parts.push('<span>Body<span>');
-  }
-
-  public produceFooter(): void {
-    this.report.parts.push('<span>Footer<span>');
-  }
-
-  public getProduct(): Report {
-    const result = this.report;
-    this.reset();
-    return result;
+  get(): string {
+    const content = this._table.map((table) => table.get()).join("");
+    return `<div class="page" style="width:210mm;height:297mm;">`.concat(content).concat('</div>');
   }
 }
 
-export class ReportDirector {
-  private builder!: ReportBuilder;
+export class ReportTable {
+  private _tr: ReportTr[] = [];
+  public style: string = '';
+  public attributes: string = '';
 
-  public setBuilder(builder: ReportBuilder): void {
-    this.builder = builder;
+  add(tr: ReportTr): ReportTr[] {
+    this._tr.push(tr);
+    return this._tr;
   }
 
-  public buildContrastTestReport(): void {
-    this.builder.produceHeader();
-    this.builder.produceBody();
-    this.builder.produceFooter();
+  get(): string {
+    const content = this._tr.map((tr) => tr.get()).join("");
+    return `<table ${this.attributes} style="${this.style}">`.concat(content).concat('</table>');
+  }
+}
+export class ReportTr {
+  private _td: ReportTd[] = [];
+  public style: string = '';
+
+  add(td: ReportTd): ReportTd[] {
+    this._td.push(td);
+    return this._td;
   }
 
+  get(): string {
+    const content = this._td.map((td) => td.get()).join("");
+    return `<tr style="${this.style}">`.concat(content).concat('</tr>');
+  }
+}
+
+
+export class ReportTd {
+  public text: string = '';
+  public style: string = '';
+  public class: string = '';
+
+  get(): string {
+    return `<td class="${this.class}" style="${this.style}">`.concat(this.text).concat('</td>');
+  }
 }

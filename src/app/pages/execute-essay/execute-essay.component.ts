@@ -1,11 +1,13 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormArray, FormControl, FormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { filter, map, Observable, ReplaySubject, switchMap, takeUntil, tap } from 'rxjs';
-import { Action, ContrastTestStep, EssayTemplate, EssayTemplateDbTableContext, ExecutionStatus, PageUrlName, PhotocellAdjustmentStep, PreparationStep, RelationsManager, StepBuilder, WhereKind, WhereOperator } from 'src/app/models';
+import { BehaviorSubject, filter, map, Observable, ReplaySubject, switchMap, take, takeUntil, tap } from 'rxjs';
+import { Action, DateHelper, EssayTemplate, EssayTemplateDbTableContext, ExecutionStatus, History, HistoryDbTableContext, HistoryItem, PageUrlName, RelationsManager, StepBuilder, WhereKind, WhereOperator } from 'src/app/models';
 import { EssayTemplateStep, EssayTemplateStepDbTableContext } from 'src/app/models/database/tables/essay-template-step.model';
+import { StepConstructor } from 'src/app/models/steps/step-constructor.model';
 import { DatabaseService } from 'src/app/services/database.service';
 import { ExecutionDirector } from 'src/app/services/execution-director.service';
+import { MessagesService } from 'src/app/services/messages.service';
 import { NavigationService } from 'src/app/services/navigation.service';
 
 @Component({
@@ -16,6 +18,7 @@ export class ExecuteEssayComponent implements OnInit, OnDestroy {
 
   readonly title: string = 'Ensayo';
   readonly id$: Observable<number>;
+  readonly saving$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   readonly form: FormGroup;
 
   showNoStepsWarning!: boolean;
@@ -66,6 +69,8 @@ export class ExecuteEssayComponent implements OnInit, OnDestroy {
     private readonly navigationService: NavigationService,
     private readonly route: ActivatedRoute,
     private readonly executionDirectorService: ExecutionDirector,
+    private readonly dbServiceHistory: DatabaseService<History>,
+    private readonly messagesService: MessagesService,
   ) {
     this.id$ = this.route.queryParams.pipe(
       filter(({ id }) => id),
@@ -79,23 +84,10 @@ export class ExecuteEssayComponent implements OnInit, OnDestroy {
     });
   }
 
-  private buildStepById(step_id: number, essayTemplateStep: EssayTemplateStep): StepBuilder {
-    switch (step_id) {
-      case 3:
-        return new ContrastTestStep(essayTemplateStep);
-      case 5:
-        return new PhotocellAdjustmentStep(essayTemplateStep);
-      case 6:
-        return new PreparationStep(essayTemplateStep, this.destroyed$);
-    }
-
-    return new StepBuilder(essayTemplateStep, [], []);
-  }
-
   private buildSteps(essayTemplateSteps: EssayTemplateStep[]): void {
     this.stepBuilders = [];
     essayTemplateSteps.forEach((essayTemplateStep) => {
-      const newStep: StepBuilder = this.buildStepById(essayTemplateStep.step_id, essayTemplateStep);
+      const newStep: StepBuilder = StepConstructor.buildStepById(essayTemplateStep.step_id, essayTemplateStep, this.destroyed$);
       newStep.buildStepForm();
       newStep.form.patchValue(essayTemplateStep.actions_raw_data);
       this.stepBuilders.push(newStep);
@@ -137,6 +129,11 @@ export class ExecuteEssayComponent implements OnInit, OnDestroy {
       tap(() => this.buildSteps(this.form.get('essayTemplateSteps')?.getRawValue())),
       tap(() => this.initExecution()),
     ).subscribe();
+
+    this.executionStatus$.pipe(
+      takeUntil(this.destroyed$),
+      filter(status => status === 'COMPLETED'),
+    ).subscribe();
   }
 
   exit() {
@@ -145,6 +142,37 @@ export class ExecuteEssayComponent implements OnInit, OnDestroy {
 
   executeNext(): void {
     this.executionDirectorService.executeNext();
+  }
+
+  save(): void {
+    this.saving$.next(true);
+
+    const history: History = {
+      essay: this.essayName,
+      saved: DateHelper.getNow(),
+    } as History;
+    history.items_raw = [];
+    this.stepBuilders.forEach((stepBuilder) => {
+      const historyItem: HistoryItem = {
+        essayTemplateStep: stepBuilder.essayTemplateStep,
+        reportData: stepBuilder.reportBuilder.data
+      };
+      history.items_raw.push(historyItem);
+    });
+
+    this.dbServiceHistory.addElementToTable$(HistoryDbTableContext.tableName, {
+      ...history,
+      items_raw: JSON.stringify(history.items_raw) as any,
+    })
+      .pipe(
+        take(1),
+        tap(() => {
+          this.messagesService.success('Agregado correctamente');
+          this.navigationService.back({ targetPage: PageUrlName.historyAndReports });
+        }),
+      ).subscribe({
+        error: () => this.messagesService.error('No se pudo crear el elemento')
+      });
   }
 
   ngOnDestroy() {

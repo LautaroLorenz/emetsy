@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { filter, Observable, ReplaySubject, takeUntil, tap } from 'rxjs';
-import { ContrastTestStep, PhotocellAdjustmentStep, PreparationStep, StepBuilder } from 'src/app/models';
+import { StepBuilder, StepConstructor } from 'src/app/models';
 import { EssayTemplateStep } from 'src/app/models/database/tables/essay-template-step.model';
 
 @Component({
@@ -34,26 +34,13 @@ export class StepBuildFormComponent implements OnInit, OnChanges, OnDestroy {
     if (changes) {
       if (changes['selectedIndex']) {
         if (changes['selectedIndex'].currentValue !== changes['selectedIndex'].previousValue) {
-          this.stepBuilder = this.buildStepById(this.stepId, this.essayTemplateStep);
+          this.stepBuilder = StepConstructor.buildStepById(this.stepId, this.essayTemplateStep, this.destroyed$);
           this.stepBuilder.buildStepForm();
           this.stepBuilder.form.patchValue(this.actionsRawData);
           this.formValueChanges$(this.stepBuilder.form).subscribe();
         }
       }
     }
-  }
-
-  buildStepById(step_id: number, essayTemplateStep: EssayTemplateStep): StepBuilder {
-    switch (step_id) {
-      case 3:
-        return new ContrastTestStep(essayTemplateStep);
-      case 5:
-        return new PhotocellAdjustmentStep(essayTemplateStep);
-      case 6:
-        return new PreparationStep(essayTemplateStep, this.destroyed$);
-    }
-
-    return new StepBuilder(essayTemplateStep, [], []);
   }
 
   formValueChanges$(form: FormGroup): Observable<any[]> {

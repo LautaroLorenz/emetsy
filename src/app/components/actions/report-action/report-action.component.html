@@ -1,0 +1,16 @@
+<div class="flex justify-content-end my-3">
+  <p-button
+    label="Crear reporte PDF"
+    styleClass="p-button-outlined"
+    (click)="createPDF()"
+    [disabled]="disabled"
+    [ngClass]="{ 'pointer-events-none': disabled }"
+  ></p-button>
+</div>
+
+<div class="pb-3">
+  <div
+    #container
+    [innerHtml]="preview"
+  ></div>
+</div>

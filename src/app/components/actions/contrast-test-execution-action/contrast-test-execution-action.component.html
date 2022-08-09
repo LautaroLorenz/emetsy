@@ -7,7 +7,7 @@
       <span>{{name}}</span>
     </ng-template>
 
-    <app-devices></app-devices>
+    <app-devices [canConnect]="(canConnect$ | async) ? true : false"></app-devices>
 
     <div class="flex flex-1 mb-3 mt-4">
       <ng-container *ngIf="phases$ | async as phases">
@@ -15,26 +15,22 @@
       </ng-container>
     </div>
 
-    <!-- <div class="mt-2">
-      <span>Parámetros del ensayo</span>
-      <div class="text-sm">
-        Cantidad de impulsos:
-        {{contrastTestParametersAction.form.get('meterPulses')?.value}}
-      </div>
-      <div class="text-sm">
-        Error máximo aceptado:
-        {{contrastTestParametersAction.form.get('maxAllowedError')?.value}}
-        [%]
-      </div>
-    </div> -->
     <div class="flex flex-1 mb-3 mt-4">
       <ng-container *ngIf="results$ | async as results">
         <app-stand-result [results]="results"></app-stand-result>
       </ng-container>
     </div>
 
-
-    <!-- TODO: repetir prueba -->
-
   </p-fieldset>
+
+  <div class="flex justify-content-end my-3">
+    <p-button
+      styleClass="p-button-outlined"
+      label="Volver a ejecutar"
+      (click)="restart()"
+      [disabled]="restartDisabled"
+      [ngClass]="{ 'pointer-events-none': restartDisabled }"
+    ></p-button>
+  </div>
+
 </fom>

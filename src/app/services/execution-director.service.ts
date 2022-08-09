@@ -1,20 +1,24 @@
 import { Injectable } from "@angular/core";
 import { BehaviorSubject } from "rxjs";
-import { Action, ExecutionStatus, StepBuilder } from "../models";
+import { Action, ExecutionStatus, ReportEssayDirector, StepBuilder } from "../models";
 
 
 @Injectable({
   providedIn: "root"
 })
 export class ExecutionDirector {
-  private steps: StepBuilder[] = [];
+
+  public reportEssayDirector = new ReportEssayDirector();
   public activeStepIndex$ = new BehaviorSubject<number | null>(null);
   public activeActionIndex$ = new BehaviorSubject<number | null>(null);
   public activeAction$ = new BehaviorSubject<Action | null>(null);
   public executionStatus$ = new BehaviorSubject<ExecutionStatus>('CREATED');
 
+  private steps: StepBuilder[] = [];
+
   setSteps(steps: StepBuilder[]): void {
     this.steps = steps;
+    this.reportEssayDirector.setSteps(steps);
   }
 
   resetState(): void {
@@ -38,7 +42,7 @@ export class ExecutionDirector {
       this.executionStatus$.next('IN_PROGRESS');
       return;
     }
-    this.executionStatus$.next('COMPLETED');
+    this.executionStatus$.next('CREATED');
   }
 
   executeNext(): void {
@@ -63,8 +67,17 @@ export class ExecutionDirector {
     this.activeStepIndex$.next(null);
     this.activeActionIndex$.next(null);
     this.activeAction$.next(null);
-    this.executionStatus$.next('COMPLETED');
+    if(this.steps.length > 0) {
+      this.executionStatus$.next('COMPLETED');
+    }
     return;
+  }
+
+  getActiveStepBuilder(): StepBuilder | null {
+    if (this.activeStepIndex$.value === null) {
+      return null;
+    }
+    return this.steps[this.activeStepIndex$.value];
   }
 
   getStepBuilderById(id: number): StepBuilder | undefined {

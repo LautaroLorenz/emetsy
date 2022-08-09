@@ -4,12 +4,11 @@
  */
 exports.up = function (knex) {
   return knex.schema
-    .createTable('essay_executions', (table) => {
+    .createTable('history', (table) => {
       table.increments('id').notNullable().primary();
-      table.string('essay_name');
-      table.timestamp('execution_start_timestamp');
-      table.timestamp('execution_end_timestamp');
-      table.string('report_raw_data');
+      table.string('saved');
+      table.string('essay');
+      table.string('items_raw');
     });
 };
 
@@ -19,5 +18,5 @@ exports.up = function (knex) {
  */
 exports.down = function (knex) {
   return knex.schema
-    .dropTable("essay_executions");
+    .dropTable("history");
 };

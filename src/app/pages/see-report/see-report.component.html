@@ -1,0 +1,50 @@
+<app-page-title
+  [title]="title"
+  [showBack]="true"
+  (backEvent)="exit()"
+>
+  <ng-container toolbar-right>
+    <ng-container *ngIf="(history$ | async) as history">
+      <div class="mr-3">
+        <p-button
+          label="Crear reporte PDF"
+          styleClass=""
+          (click)="createPDF(history)"
+          [disabled]="disabled"
+          [ngClass]="{ 'pointer-events-none': disabled }"
+        ></p-button>
+      </div>
+    </ng-container>
+  </ng-container>
+</app-page-title>
+
+<app-fill-available-space class="flex justify-content-evenly p-font-family">
+  <ng-container *ngIf="history$ | async as history">
+
+    <div class="flex flex-column pt-4 pl-3 w-4">
+
+      <div class="info-field">
+        <label>Nombre</label>
+        <span>{{history.essay}}</span>
+      </div>
+
+      <div class="info-field">
+        <label>
+          <i class="pi pi-calendar"></i>Fecha de guardado
+        </label>
+        <span>{{history.saved}} Hs</span>
+      </div>
+
+    </div>
+
+    <p-divider layout="vertical"></p-divider>
+
+    <div class="flex flex-column w-8 overflow-auto py-3 my-4">
+      <div
+        #container
+        [innerHtml]="preview"
+      ></div>
+    </div>
+
+  </ng-container>
+</app-fill-available-space>

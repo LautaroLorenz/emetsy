@@ -2,9 +2,46 @@ const { ipcMain } = require('electron');
 const { SerialPort, DelimiterParser } = require('serialport');
 
 let serialPort;
-const parser = new DelimiterParser({ delimiter: 'Z| ', includeDelimiter: true });
+const parser = new DelimiterParser({ delimiter: '\n', includeDelimiter: false });
 let readCommandQueue = [];
 const MAX_QUEUE_SIZE = 10;
+const EXCLUDED_CODES = {
+  BAR_N: 10,
+  CHAR_B: 66,
+  CHAR_Z: 90,
+};
+const CHECKSUM_EXCLUDED_CODES = [EXCLUDED_CODES.BAR_N, EXCLUDED_CODES.CHAR_B, EXCLUDED_CODES.CHAR_Z];
+
+function isCommandValid(buffer) {
+  let cheksum = 0;
+  for (const [index, byteHex] of buffer.entries()) {
+    if (index === buffer.length - 1) {
+      break;
+    }
+    cheksum += byteHex;
+  }
+  let checksumByte = cheksum % 256;
+  if (CHECKSUM_EXCLUDED_CODES.includes(checksumByte)) {
+    checksumByte++;
+  }
+  return checksumByte === buffer[buffer.length - 1];
+}
+
+function decimalChecksumToBuffer(checksum) {
+  return Buffer.from(checksum.toString(16), 'hex')
+}
+
+function getChecksumByte(buffer) {
+  let cheksum = 0;
+  for (const byte of buffer) {
+    cheksum += byte;
+  }
+  let checksumByte = cheksum % 256;
+  if (CHECKSUM_EXCLUDED_CODES.includes(checksumByte)) {
+    checksumByte++;
+  }
+  return checksumByte;
+}
 
 function isUsbSerialPortConnected(serialPort) {
   return serialPort && serialPort.isOpen;
@@ -37,7 +74,11 @@ ipcMain.handle('open-usb-serial-port', async (_, { productId, vendorId }) => {
   const isOpen = await new Promise((resolve) => {
     serialPort = new SerialPort({ path: port.path, baudRate: 9600 }, (err) => {
       if (err !== null && err !== undefined) {
-        console.error('No se pudo abrir el puerto', err);
+        console.error('No se pudo abrir el puerto', `${err}`);
+        if (serialPort && serialPort.isOpen) {
+          console.log('cerrar puerto');
+          serialPort.close();
+        }
       }
       resolve(err === null || err === undefined);
     });
@@ -48,6 +89,10 @@ ipcMain.handle('open-usb-serial-port', async (_, { productId, vendorId }) => {
   readCommandQueue = [];
   parser.removeAllListeners();
   initParser(parser);
+  if (!isUsbSerialPortConnected(serialPort)) {
+    console.error('No se pudo crear el puerto');
+    return false;
+  }
   serialPort.pipe(parser);
   return true;
 });
@@ -56,6 +101,7 @@ ipcMain.handle('open-usb-serial-port', async (_, { productId, vendorId }) => {
  * @return true if can close usb serial port
  */
 ipcMain.handle('close-usb-serial-port', async () => {
+  console.log('close puerto USB');
   if (!isUsbSerialPortConnected(serialPort)) {
     return true;
   }
@@ -83,7 +129,7 @@ function addCommandToQueue(command, queue, MAX_QUEUE_SIZE) {
   if (queue.length === MAX_QUEUE_SIZE) {
     queue.pop(); // discard older command
   }
-  console.log('add-command-to-queue', `[${command}]`, `total: ${queue.length}`);
+  console.log('read', `[${command}]`, `total: ${queue.length}`);
   queue.unshift(command);
 }
 
@@ -92,7 +138,11 @@ function addCommandToQueue(command, queue, MAX_QUEUE_SIZE) {
  */
 function initParser(parser) {
   parser.on('data', (data) => {
-    addCommandToQueue(data.toString(), readCommandQueue, MAX_QUEUE_SIZE);
+    if (isCommandValid(data) === false) {
+      console.error("checksum invalid", data.toString("ascii"));
+      return;
+    }
+    addCommandToQueue(data.toString("ascii"), readCommandQueue, MAX_QUEUE_SIZE);
     serialPort.flush((err) => {
       if (err !== null && err !== undefined) {
         console.error('No se pudo limpiar el buffer de entrada', err);
@@ -112,9 +162,19 @@ ipcMain.handle('get-command', async () => {
 });
 
 ipcMain.handle('post-command', async (_, { command }) => {
-  console.log('post-command', `[${command}]`);
+
+  const buffer = Buffer.from(command, 'ascii');
+  const checksum = getChecksumByte(buffer);
+  const checksumBuffer = decimalChecksumToBuffer(checksum);
+  const commandBuffer = Buffer.concat([buffer, checksumBuffer]);
+
+  console.log('write', `[${commandBuffer}]`);
+  // console.log('checksum', checksum);
+  // console.log('length', commandBuffer.length);
+  // console.log('write', commandBuffer.toString('hex').match(/../g).join(' '));
+
   const coludBeSent = await new Promise((resolve) => {
-    serialPort.write(command, (err) => {
+    serialPort.write(commandBuffer, (err) => {
       if (err !== null && err !== undefined) {
         console.error('No se pudo enviar el comando', err);
         resolve(false);

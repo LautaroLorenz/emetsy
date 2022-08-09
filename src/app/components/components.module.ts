@@ -63,6 +63,7 @@ import { ContrastTestExecutionActionComponent } from './actions/contrast-test-ex
 import { StandResultComponent } from './stand-result/stand-result.component';
 import { DevicesComponent } from './devices/devices.component';
 import { LedComponent } from './led/led.component';
+import { ReportActionComponent } from './actions/report-action/report-action.component';
 
 const PrimeNgModules = [
   MenubarModule,
@@ -127,6 +128,7 @@ const EmetsyComponents = [
   StandResultComponent,
   DevicesComponent,
   LedComponent,
+  ReportActionComponent,
 ];
 
 @NgModule({

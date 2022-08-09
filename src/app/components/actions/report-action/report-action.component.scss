@@ -1,0 +1,6 @@
+@import 'primeflex/primeflex.scss';
+
+::ng-deep .page {
+  margin-bottom: 24px;
+  @include styleclass('border-1 border-200 bg-indigo-50');
+}

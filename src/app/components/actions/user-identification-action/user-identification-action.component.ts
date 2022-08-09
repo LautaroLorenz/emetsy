@@ -1,7 +1,7 @@
 import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnDestroy } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { map, ReplaySubject, takeUntil, tap } from 'rxjs';
-import { Action, ActionComponent, User, UserDbTableContext } from 'src/app/models';
+import { Action, ActionComponent, User, UserDbTableContext, UserIdentificationAction } from 'src/app/models';
 import { DatabaseService } from 'src/app/services/database.service';
 
 @Component({
@@ -40,6 +40,11 @@ export class UserIdentificationActionComponent implements ActionComponent, After
       tap((rows) => this.dropdownUserOptions = rows),
       tap(() => this.form.updateValueAndValidity({ emitEvent: true })),
       tap(() => this.changeDetectorRef.detectChanges()),
+    ).subscribe();
+
+    this.action.form.get('userId')?.valueChanges.pipe(
+      takeUntil(this.destroyed$),
+      tap((userId) => (this.action as UserIdentificationAction).selectedUser = this.dropdownUserOptions.find((user) => user.id === userId)),
     ).subscribe();
   }
 

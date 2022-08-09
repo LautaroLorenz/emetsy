@@ -1,5 +1,5 @@
-import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/core';
-import { BehaviorSubject, debounceTime, delay, Observable, of, ReplaySubject, take, takeUntil, tap } from 'rxjs';
+import { ChangeDetectionStrategy, Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { BehaviorSubject, Observable, ReplaySubject, skip, take, takeUntil, tap } from 'rxjs';
 import { DeviceStatus, DeviceStatusEnum, LedColor, LedColorEnum } from 'src/app/models';
 import { CalculatorService } from 'src/app/services/calculator.service';
 import { GeneratorService } from 'src/app/services/generator.service';
@@ -14,6 +14,8 @@ import { UsbHandlerService } from 'src/app/services/usb-handler.service';
 })
 export class DevicesComponent implements OnInit, OnDestroy {
 
+  @Input() canConnect: boolean = true;
+
   connected$: BehaviorSubject<boolean | null> = new BehaviorSubject<boolean | null>(null);
   connectedColor$: BehaviorSubject<LedColor> = new BehaviorSubject<LedColor>(LedColorEnum.WHITE);
   transmittingColor$: BehaviorSubject<LedColor> = new BehaviorSubject<LedColor>(LedColorEnum.WHITE);
@@ -24,11 +26,9 @@ export class DevicesComponent implements OnInit, OnDestroy {
   get generatorErrorMessage$(): Observable<string | null> {
     return this.generatorService.errorMessage$;
   }
-
   get patternErrorMessage$(): Observable<string | null> {
     return this.patternService.errorMessage$;
   }
-
   get calculatorErrorMessage$(): Observable<string | null> {
     return this.calculatorService.errorMessage$;
   }
@@ -61,11 +61,10 @@ export class DevicesComponent implements OnInit, OnDestroy {
     ).subscribe();
   }
 
-  ngOnInit() {   
-    this.connected$.next(null);
+  ngOnInit() {
     this.usbHandlerService.connected$.pipe(
+      skip(1),
       takeUntil(this.destroyed$),
-      debounceTime(250),
       tap((isConnected) => this.connected$.next(isConnected)),
       tap((isConnected) => this.connectedColor$.next(isConnected ? LedColorEnum.GREEN : LedColorEnum.GREY))
     ).subscribe();

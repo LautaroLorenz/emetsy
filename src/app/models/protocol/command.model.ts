@@ -14,10 +14,6 @@ export class CommandManager {
     this.deviceTo = deviceTo;
   }
 
-  private calculateChecksum(partialCommand: Command): string {
-    return 'X';
-  }
-
   build(...args: string[]): Command {
     const commandBlocks = [];
     commandBlocks.push(this.start);
@@ -27,9 +23,7 @@ export class CommandManager {
       commandBlocks.push(arg);
     }
     commandBlocks.push(this.end);
-    const checkSum = this.calculateChecksum(commandBlocks.join(this.divider));
-    commandBlocks.push(checkSum);
-    return commandBlocks.join(this.divider);
+    return commandBlocks.join(this.divider).concat(this.divider);
   }
 
   formatNumber(value: number, start: string, zeros: number, withSignal: boolean): string {
@@ -52,13 +46,6 @@ export class CommandManager {
     const resultAsString = digits.concat('.').concat(commas);
     const result = Number(resultAsString);
     return isNaN(result) ? 0 : result;
-  }
-
-  /**
-   * TODO: validar checksum
-   */
-  isValid(command: Command): boolean {
-    return true;
   }
 
   isForMe(command: Command): boolean {
