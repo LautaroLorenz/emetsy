@@ -1,3 +1,41 @@
-<app-page-title
-  [title]="title"
-></app-page-title>
+<app-page-title [title]="title">
+  <ng-container toolbar-left>
+    <div class="ml-3 flex flex-row">
+      <div class="flex flex-column text-500 text-sm">
+        <span>Desde</span>
+        <span class="mt-1">Hasta</span>
+      </div>
+      <div class="flex flex-column ml-1 text-700 text-sm">
+        <span>{{fromDate}}</span>
+        <span class="mt-1">{{toDate}}</span>
+      </div>
+    </div>
+  </ng-container>
+</app-page-title>
+
+<div class="flex flex-1 flex-column p-font-family p-4 overflow-auto">
+
+  <div class="w-12">
+
+    <div class="w-4 border border-round border-purple-50 border-1 p-3">
+      <span class="text-md">Ejecuciónes totales por ensayo - Top {{top}}</span>
+      <div class="mt-4">
+        <ng-container *ngIf="executions$ | async as executions">
+          <app-execution-by-essay
+            [executions]="executions"
+            [max]="top"
+          >
+          </app-execution-by-essay>
+        </ng-container>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="w-12 mt-4">
+  </div>
+
+  <div class="w-12 mt-4">
+  </div>
+
+</div>

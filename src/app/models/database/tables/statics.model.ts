@@ -5,6 +5,7 @@ export type Tags = Record<string, string> | string[];
 
 export interface Static extends DbForeignKey {
 	id: number;
+	saved_time: number;
 	metric: string;
   tags_raw: Tags;
 }

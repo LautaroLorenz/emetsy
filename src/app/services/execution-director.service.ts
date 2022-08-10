@@ -67,7 +67,7 @@ export class ExecutionDirector {
     this.activeStepIndex$.next(null);
     this.activeActionIndex$.next(null);
     this.activeAction$.next(null);
-    if(this.steps.length > 0) {
+    if (this.steps.length > 0) {
       this.executionStatus$.next('COMPLETED');
     }
     return;

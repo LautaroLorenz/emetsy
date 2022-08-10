@@ -64,6 +64,8 @@ import { StandResultComponent } from './stand-result/stand-result.component';
 import { DevicesComponent } from './devices/devices.component';
 import { LedComponent } from './led/led.component';
 import { ReportActionComponent } from './actions/report-action/report-action.component';
+import { ExecutionByEssayComponent } from './dashboard/execution-by-essay/execution-by-essay.component';
+import { ChartModule } from 'primeng/chart';
 
 const PrimeNgModules = [
   MenubarModule,
@@ -96,6 +98,7 @@ const PrimeNgModules = [
   MessagesModule,
   MessageModule,
   ProgressSpinnerModule,
+  ChartModule,
 ];
 
 const PrimeNgServices = [
@@ -129,6 +132,7 @@ const EmetsyComponents = [
   DevicesComponent,
   LedComponent,
   ReportActionComponent,
+  ExecutionByEssayComponent
 ];
 
 @NgModule({

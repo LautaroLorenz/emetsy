@@ -10,7 +10,7 @@ import { ScreenService } from 'src/app/services/screen.service';
 export class FillAvailableSpaceComponent implements OnInit, OnDestroy {
 
   @Input() componentsToSubtrac: string[] = [];
-  
+
   @HostBinding('style.maxHeight.px')
   @HostBinding('style.minHeight.px')
   height: number = 0;
@@ -18,7 +18,7 @@ export class FillAvailableSpaceComponent implements OnInit, OnDestroy {
   private readonly destroyed$: ReplaySubject<boolean> = new ReplaySubject(1);
 
   constructor(
-    private readonly screenService: ScreenService,
+    private readonly screenService: ScreenService
   ) { }
 
   ngOnInit(): void {
@@ -27,12 +27,10 @@ export class FillAvailableSpaceComponent implements OnInit, OnDestroy {
       debounceTime(100),
       tap((components) => {
         const { pMenubar, appPageTitle, windowHeight } = components;
-
         let extras = 0;
-        for(const componentToSubtrac of this.componentsToSubtrac) {
+        for (const componentToSubtrac of this.componentsToSubtrac) {
           extras += components[componentToSubtrac] ?? 0;
         }
-
         this.height = windowHeight - (pMenubar + appPageTitle + extras);
       }),
     ).subscribe()
