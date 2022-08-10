@@ -44,6 +44,16 @@
     </div>
 
     <div class="w-4 border border-round border-purple-50 border-1 p-3 ml-2">
+      <span class="text-md">Puestos más utilizados - Top {{top}}</span>
+      <div class="mt-4">
+        <ng-container *ngIf="standUsed$ | async as standUsed">
+          <app-stand-used
+            [standUsed]="standUsed"
+            [max]="top"
+          >
+          </app-stand-used>
+        </ng-container>
+      </div>
     </div>
   </div>
 

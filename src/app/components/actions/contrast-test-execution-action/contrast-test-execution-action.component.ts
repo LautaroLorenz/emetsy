@@ -256,6 +256,7 @@ export class ContrastTestExecutionActionComponent implements ActionComponent, Af
               yearOfProduction: stand.yearOfProduction as number
             };
           }
+          this.staticsService.increment$(MetricEnum.standUsed, { standIndex: (stand.standIndex as number).toString() }).pipe(take(1)).subscribe();
           return {
             standIndex: stand.standIndex as number,
             brandModel: `${meter?.foreign.brand.name} - ${meter?.model}`,

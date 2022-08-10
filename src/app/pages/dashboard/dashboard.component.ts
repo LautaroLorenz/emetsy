@@ -19,6 +19,7 @@ export class DashboardComponent implements OnInit {
 
   readonly executions$ = new ReplaySubject<Static[]>(1);
   readonly meterApproves$ = new ReplaySubject<Static[]>(1);
+  readonly standUsed$ = new ReplaySubject<Static[]>(1);
 
   constructor(
     private readonly staticsService: StaticsService,
@@ -40,6 +41,7 @@ export class DashboardComponent implements OnInit {
       take(1),
       switchMap(() => this.loadMetric$(MetricEnum.execution, this.executions$)),
       switchMap(() => this.loadMetric$(MetricEnum.meterApproves, this.meterApproves$)),
+      switchMap(() => this.loadMetric$(MetricEnum.standUsed, this.standUsed$)),
     ).subscribe();
 
   }

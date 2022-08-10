@@ -67,6 +67,7 @@ import { ReportActionComponent } from './actions/report-action/report-action.com
 import { ExecutionByEssayComponent } from './dashboard/execution-by-essay/execution-by-essay.component';
 import { ChartModule } from 'primeng/chart';
 import { MeterApprovesComponent } from './dashboard/meter-approves/meter-approves.component';
+import { StandUsedComponent } from './dashboard/stand-used/stand-used.component';
 
 const PrimeNgModules = [
   MenubarModule,
@@ -135,6 +136,7 @@ const EmetsyComponents = [
   ReportActionComponent,
   ExecutionByEssayComponent,
   MeterApprovesComponent,
+  StandUsedComponent,
 ];
 
 @NgModule({
