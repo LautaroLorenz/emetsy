@@ -22,12 +22,12 @@ exports.seed = async function (knex) {
   const mockMeters = [];
 
   // generate in batches so as not to overload the query
-  for (let index = 0; index < 30; index++) {
+  for (let index = 0; index < models.length; index++) {
     const id = index + 1;
 
     mockMeters.push({
       id,
-      model: models[faker.datatype.number({ min: 0, max: 10 })],
+      model: models[index],
       maximumCurrent: faker.datatype.number({ min: 1, max: 120 }),
       ratedCurrent: faker.datatype.number({ min: 1, max: 40 }),
       ratedVoltage: faker.datatype.number({ min: 1, max: 380 }),

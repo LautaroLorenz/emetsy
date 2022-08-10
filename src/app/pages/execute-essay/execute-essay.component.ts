@@ -2,13 +2,14 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormArray, FormControl, FormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { BehaviorSubject, filter, map, Observable, ReplaySubject, switchMap, take, takeUntil, tap } from 'rxjs';
-import { Action, DateHelper, EssayTemplate, EssayTemplateDbTableContext, ExecutionStatus, History, HistoryDbTableContext, HistoryItem, PageUrlName, RelationsManager, StepBuilder, WhereKind, WhereOperator } from 'src/app/models';
+import { Action, DateHelper, EssayTemplate, EssayTemplateDbTableContext, ExecutionStatus, History, HistoryDbTableContext, HistoryItem, MetricEnum, PageUrlName, RelationsManager, StepBuilder, WhereKind, WhereOperator } from 'src/app/models';
 import { EssayTemplateStep, EssayTemplateStepDbTableContext } from 'src/app/models/database/tables/essay-template-step.model';
 import { StepConstructor } from 'src/app/models/steps/step-constructor.model';
 import { DatabaseService } from 'src/app/services/database.service';
 import { ExecutionDirector } from 'src/app/services/execution-director.service';
 import { MessagesService } from 'src/app/services/messages.service';
 import { NavigationService } from 'src/app/services/navigation.service';
+import { StaticsService } from 'src/app/services/statics.service';
 
 @Component({
   templateUrl: './execute-essay.component.html',
@@ -71,6 +72,7 @@ export class ExecuteEssayComponent implements OnInit, OnDestroy {
     private readonly executionDirectorService: ExecutionDirector,
     private readonly dbServiceHistory: DatabaseService<History>,
     private readonly messagesService: MessagesService,
+    private readonly staticsService: StaticsService,
   ) {
     this.id$ = this.route.queryParams.pipe(
       filter(({ id }) => id),
@@ -167,6 +169,7 @@ export class ExecuteEssayComponent implements OnInit, OnDestroy {
       .pipe(
         take(1),
         tap(() => {
+          this.staticsService.increment$(MetricEnum.execution, { essay: this.essayName }).pipe(take(1)).subscribe();
           this.messagesService.success('Agregado correctamente');
           this.navigationService.back({ targetPage: PageUrlName.historyAndReports });
         }),

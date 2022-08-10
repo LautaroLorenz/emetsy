@@ -14,6 +14,7 @@ import { ExecuteEssayComponent } from './execute-essay/execute-essay.component';
 import { PendingChangesGuard } from '../guards/pending-changes.guard';
 import { DevicesTurnOffGuard } from '../guards/devices-turn-off.guard';
 import { SeeReportComponent } from './see-report/see-report.component';
+import { DashboardComponent } from './dashboard/dashboard.component';
 
 const routes: Routes = [
   {
@@ -67,6 +68,10 @@ const routes: Routes = [
   {
     path: PageUrlName.seeReport,
     component: SeeReportComponent,
+  },
+  {
+    path: PageUrlName.dashboard,
+    component: DashboardComponent,
   }
 ];
 

@@ -1,13 +1,14 @@
 import { AfterViewInit, ChangeDetectionStrategy, Component, Input, OnDestroy } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { BehaviorSubject, catchError, filter, forkJoin, interval, map, Observable, of, ReplaySubject, Subject, switchMap, take, takeUntil, takeWhile, tap } from 'rxjs';
-import { Action, ActionComponent, CalculatorParams, ContrastTestExecutionAction, ContrastTestParametersAction, DateHelper, EnterTestValuesAction, ManofacturingInformation, Meter, MeterDbTableContext, PatternParams, Phases, RelationsManager, ReportContrastTest, ReportContrastTestBuilder, ResponseStatus, ResponseStatusEnum, ResultEnum, StandArrayFormValue, StandIdentificationAction, StandResult, StepIdEnum, UserIdentificationAction, WhereKind, WhereOperator } from 'src/app/models';
+import { Action, ActionComponent, CalculatorParams, ContrastTestExecutionAction, ContrastTestParametersAction, DateHelper, EnterTestValuesAction, ManofacturingInformation, Meter, MeterDbTableContext, MetricEnum, PatternParams, Phases, RelationsManager, ReportContrastTest, ReportContrastTestBuilder, ResponseStatus, ResponseStatusEnum, ResultEnum, StandArrayFormValue, StandIdentificationAction, StandResult, StepIdEnum, UserIdentificationAction, WhereKind, WhereOperator } from 'src/app/models';
 import { CalculatorService } from 'src/app/services/calculator.service';
 import { DatabaseService } from 'src/app/services/database.service';
 import { ExecutionDirector } from 'src/app/services/execution-director.service';
 import { GeneratorService } from 'src/app/services/generator.service';
 import { MessagesService } from 'src/app/services/messages.service';
 import { PatternService } from 'src/app/services/pattern.service';
+import { StaticsService } from 'src/app/services/statics.service';
 import { UsbHandlerService } from 'src/app/services/usb-handler.service';
 
 @Component({
@@ -67,6 +68,7 @@ export class ContrastTestExecutionActionComponent implements ActionComponent, Af
     private readonly calculatorService: CalculatorService,
     private readonly messagesService: MessagesService,
     private readonly dbServiceMeter: DatabaseService<Meter>,
+    private readonly staticsService: StaticsService,
   ) {
     this.reportData.reportName = 'ENSAYO DE CONTRASTE';
   }
@@ -178,9 +180,14 @@ export class ContrastTestExecutionActionComponent implements ActionComponent, Af
             if (reportStand) {
               reportStand.errorValue = calculatorErrorValue;
               reportStand.result = resultReal;
+
+              if(resultReal === ResultEnum.APPROVED) {
+                this.staticsService.increment$(MetricEnum.meterApproves, { meter: reportStand?.brandModel ?? '' }).pipe(take(1)).subscribe();
+              }
             } else {
               console.warn(`El stand ${resultStandIndex} no se pudo agregar al reporte`);
             }
+
             return {
               stand: resultStandIndex,
               calculatorErrorValue,
@@ -249,6 +256,7 @@ export class ContrastTestExecutionActionComponent implements ActionComponent, Af
               yearOfProduction: stand.yearOfProduction as number
             };
           }
+          this.staticsService.increment$(MetricEnum.standUsed, { standIndex: (stand.standIndex as number).toString() }).pipe(take(1)).subscribe();
           return {
             standIndex: stand.standIndex as number,
             brandModel: `${meter?.foreign.brand.name} - ${meter?.model}`,

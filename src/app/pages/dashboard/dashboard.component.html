@@ -1,0 +1,65 @@
+<app-page-title [title]="title">
+  <ng-container toolbar-left>
+    <div class="ml-3 flex flex-row">
+      <div class="flex flex-column text-500 text-sm">
+        <span>Desde</span>
+        <span class="mt-1">Hasta</span>
+      </div>
+      <div class="flex flex-column ml-1 text-700 text-sm">
+        <span>{{fromDate}}</span>
+        <span class="mt-1">{{toDate}}</span>
+      </div>
+    </div>
+  </ng-container>
+</app-page-title>
+
+<div class="flex flex-1 flex-column p-font-family p-4 overflow-auto">
+
+  <div class="w-12 flex">
+
+    <div class="w-4 border border-round border-purple-50 border-1 p-3 mr-2">
+      <span class="text-md">Ejecuciónes totales por ensayo - Top {{top}}</span>
+      <div class="mt-4">
+        <ng-container *ngIf="executions$ | async as executions">
+          <app-execution-by-essay
+            [executions]="executions"
+            [max]="top"
+          >
+          </app-execution-by-essay>
+        </ng-container>
+      </div>
+    </div>
+
+    <div class="w-4 border border-round border-purple-50 border-1 p-3 mx-1">
+      <span class="text-md">Más aprobados por modelo - Top {{top}}</span>
+      <div class="mt-4">
+        <ng-container *ngIf="meterApproves$ | async as meterApproves">
+          <app-meter-approves
+            [meterApproves]="meterApproves"
+            [max]="top"
+          >
+          </app-meter-approves>
+        </ng-container>
+      </div>
+    </div>
+
+    <div class="w-4 border border-round border-purple-50 border-1 p-3 ml-2">
+      <span class="text-md">Puestos más utilizados - Top {{top}}</span>
+      <div class="mt-4">
+        <ng-container *ngIf="standUsed$ | async as standUsed">
+          <app-stand-used
+            [standUsed]="standUsed"
+            [max]="top"
+          >
+          </app-stand-used>
+        </ng-container>
+      </div>
+    </div>
+  </div>
+
+
+
+  <div class="w-12 mt-4">
+  </div>
+
+</div>
