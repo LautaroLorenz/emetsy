@@ -1,13 +1,13 @@
 const colors: string[] = [
-  '#ff0000',
-  '#ffdd00',
-  '#4baaf5',
-  '#fbc02d',
+  '#6d1b7b',
+  '#1769aa',
+  '#ff9800',
+  '#009688',
   '#30c9dc',
-  '#689f38',
-  '#ed4981',
-  '#4e5fbb',
-  '#00534b'
+  '#e91e63',
+  '#852196',
+  '#ff9800',
+  '#c61a54',
 ];
 
 export class Color {
@@ -16,8 +16,8 @@ export class Color {
     return '#' + (Math.random() * 0xFFFFFF << 0).toString(16);
   }
 
-  static getColorByIndex(index: number): string {
-    return colors[index] ?? this.randomHex();
+  static getColorByIndex(index: number, alpha: string): string {
+    return (colors[index] ?? this.randomHex()) + alpha;
   }
 
 }
