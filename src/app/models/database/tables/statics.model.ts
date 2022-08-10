@@ -7,7 +7,7 @@ export interface Static extends DbForeignKey {
 	id: number;
 	saved_time: number;
 	metric: string;
-  tags_raw: Tags;
+	tags_raw: Tags;
 }
 
 export const StaticDbTableContext: DbTableContext = {
