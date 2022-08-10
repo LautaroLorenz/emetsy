@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
-import { ReplaySubject, take, tap } from 'rxjs';
-import { DateHelper, MetricEnum, Static } from 'src/app/models/index';
+import { Observable, of, ReplaySubject, switchMap, take, tap } from 'rxjs';
+import { DateHelper, Metric, MetricEnum, Static } from 'src/app/models/index';
 import { StaticsService } from 'src/app/services/statics.service';
 
 @Component({
@@ -15,9 +15,10 @@ export class DashboardComponent implements OnInit {
   readonly fromDate: string;
   readonly fromTime: number;
   readonly toDate: string;
-  readonly top: number = 3;
+  readonly top: number = 5;
 
   readonly executions$ = new ReplaySubject<Static[]>(1);
+  readonly meterApproves$ = new ReplaySubject<Static[]>(1);
 
   constructor(
     private readonly staticsService: StaticsService,
@@ -27,10 +28,19 @@ export class DashboardComponent implements OnInit {
     this.toDate = DateHelper.getNow() + ' Hs';
   }
 
-  ngOnInit(): void {
-    this.staticsService.getMetric$(MetricEnum.execution, this.fromTime).pipe(
+  private loadMetric$(metric: Metric, rs: ReplaySubject<Static[]>): Observable<Static[]> {
+    return this.staticsService.getMetric$(metric, this.fromTime).pipe(
       take(1),
-      tap((value) => this.executions$.next(value)),
+      tap((value) => rs.next(value)),
+    )
+  }
+
+  ngOnInit(): void {
+    of(true).pipe(
+      take(1),
+      switchMap(() => this.loadMetric$(MetricEnum.execution, this.executions$)),
+      switchMap(() => this.loadMetric$(MetricEnum.meterApproves, this.meterApproves$)),
     ).subscribe();
+
   }
 }

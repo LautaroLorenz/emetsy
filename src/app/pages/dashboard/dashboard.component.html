@@ -15,9 +15,9 @@
 
 <div class="flex flex-1 flex-column p-font-family p-4 overflow-auto">
 
-  <div class="w-12">
+  <div class="w-12 flex">
 
-    <div class="w-4 border border-round border-purple-50 border-1 p-3">
+    <div class="w-4 border border-round border-purple-50 border-1 p-3 mr-2">
       <span class="text-md">Ejecuciónes totales por ensayo - Top {{top}}</span>
       <div class="mt-4">
         <ng-container *ngIf="executions$ | async as executions">
@@ -30,10 +30,24 @@
       </div>
     </div>
 
+    <div class="w-4 border border-round border-purple-50 border-1 p-3 mx-1">
+      <span class="text-md">Más aprobados por marca - Top {{top}}</span>
+      <div class="mt-4">
+        <ng-container *ngIf="meterApproves$ | async as meterApproves">
+          <app-meter-approves
+            [meterApproves]="meterApproves"
+            [max]="top"
+          >
+          </app-meter-approves>
+        </ng-container>
+      </div>
+    </div>
+
+    <div class="w-4 border border-round border-purple-50 border-1 p-3 ml-2">
+    </div>
   </div>
 
-  <div class="w-12 mt-4">
-  </div>
+
 
   <div class="w-12 mt-4">
   </div>
