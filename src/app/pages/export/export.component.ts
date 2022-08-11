@@ -3,6 +3,7 @@ import { BehaviorSubject, delay, map, Observable, of, switchMap, take, tap } fro
 import { Brand, BrandDbTableContext, EssayTemplate, EssayTemplateDbTableContext, ExportTable, History, HistoryDbTableContext, Meter, MeterDbTableContext, Static, StaticDbTableContext, User, UserDbTableContext } from 'src/app/models';
 import { EssayTemplateStep, EssayTemplateStepDbTableContext } from 'src/app/models/database/tables/essay-template-step.model';
 import { DatabaseService } from 'src/app/services/database.service';
+import * as JSZip from 'jszip';
 
 @Component({
   templateUrl: './export.component.html',
@@ -66,17 +67,19 @@ export class ExportComponent {
     return table.databaseService.getTableReply$(table.tableName).pipe(map(({ rows }) => rows));
   }
 
-  private getTable$(table: ExportTable): Observable<any> {
+  private getTable$(zip: JSZip, table: ExportTable): Observable<any> {
     return of(table.progress$.next(10)).pipe(
       take(1),
       switchMap(() => this.tableRows$(table)),
-      delay(200),
       tap(() => table.progress$.next(50)),
+      delay(200),
       tap((rows) => {
-        let theJSON = JSON.stringify(rows);
-        let blob = new Blob([theJSON], { type: 'text/json' });
+        const jsonAsString = JSON.stringify(rows);
+        zip.file(table.tableName, jsonAsString);
       }),
+      delay(200),
       tap(() => table.progress$.next(100)),
+      map(() => zip),
     );
   }
 
@@ -84,14 +87,28 @@ export class ExportComponent {
     return of(this.exporting$.next(true)).pipe(
       take(1),
       delay(200),
-      // TODO: crear el zip y popularlo
-      switchMap(() => this.getTable$(this.tables[0])),
-      switchMap(() => this.getTable$(this.tables[1])),
-      switchMap(() => this.getTable$(this.tables[2])),
-      switchMap(() => this.getTable$(this.tables[3])),
-      switchMap(() => this.getTable$(this.tables[4])),
-      switchMap(() => this.getTable$(this.tables[5])),
-      switchMap(() => this.getTable$(this.tables[6])),
+      map(() => (new JSZip())),
+      switchMap((zip) => this.getTable$(zip, this.tables[0])),
+      switchMap((zip) => this.getTable$(zip, this.tables[1])),
+      switchMap((zip) => this.getTable$(zip, this.tables[2])),
+      switchMap((zip) => this.getTable$(zip, this.tables[3])),
+      switchMap((zip) => this.getTable$(zip, this.tables[4])),
+      switchMap((zip) => this.getTable$(zip, this.tables[5])),
+      switchMap((zip) => this.getTable$(zip, this.tables[6])),
+      delay(500),
+      switchMap((zip) => zip.generateAsync({ type: "blob" })),
+      tap((blob) => {
+        const timestamp = (new Date()).getTime();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        document.body.appendChild(a);
+        a.setAttribute('style', 'display: none');
+        a.href = url;
+        a.download = `backup_${timestamp}`;
+        a.click();
+        window.URL.revokeObjectURL(url);
+        a.remove();
+      }),
       delay(1000),
       tap(() => this.tables.forEach(({ progress$ }) => progress$.next(0))),
       tap(() => this.exporting$.next(false)),
