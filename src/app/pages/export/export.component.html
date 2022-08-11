@@ -1,1 +1,38 @@
-<p>export works!</p>
+<app-page-title [title]="title">
+  <ng-container toolbar-right>
+    <p-button
+      label="Exportar"
+      icon="pi pi-download"
+      styleClass="p-button-primary mr-3"
+      [disabled]="exporting$.value"
+      [ngClass]="{ 'pointer-events-none': exporting$.value }"
+      (click)="export()"
+    ></p-button>
+  </ng-container>
+</app-page-title>
+
+<app-fill-available-space class="flex p-font-family">
+
+  <div class="flex flex-column pt-4 pl-3 w-4 overflow-auto">
+    <span class="text-xl">Tablas para exportar</span>
+    <div class="mt-4">
+      <div
+        *ngFor="let table of tables"
+        class="mb-2"
+      >
+        <div class="shadow-2 p-2 m-2">
+          <span class="flex mb-3">{{table.tableReal}}</span>
+          <ng-container *ngIf="{ value: table.progress$ | async } as progress">
+            <p-progressBar
+              [showValue]="true"
+              [value]="progress.value"
+              [style]="{'height': '6px'}"
+              [ngClass]="{ 'inactive': exporting$.value === false }"
+            ></p-progressBar>
+          </ng-container>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</app-fill-available-space>

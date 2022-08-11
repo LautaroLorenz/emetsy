@@ -68,6 +68,8 @@ import { ExecutionByEssayComponent } from './dashboard/execution-by-essay/execut
 import { ChartModule } from 'primeng/chart';
 import { MeterApprovesComponent } from './dashboard/meter-approves/meter-approves.component';
 import { StandUsedComponent } from './dashboard/stand-used/stand-used.component';
+import { ProgressBarModule } from 'primeng/progressbar';
+
 
 const PrimeNgModules = [
   MenubarModule,
@@ -101,6 +103,7 @@ const PrimeNgModules = [
   MessageModule,
   ProgressSpinnerModule,
   ChartModule,
+  ProgressBarModule,
 ];
 
 const PrimeNgServices = [
