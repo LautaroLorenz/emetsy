@@ -4,6 +4,7 @@ import { Brand, BrandDbTableContext, EssayTemplate, EssayTemplateDbTableContext,
 import { EssayTemplateStep, EssayTemplateStepDbTableContext } from 'src/app/models/database/tables/essay-template-step.model';
 import { DatabaseService } from 'src/app/services/database.service';
 import * as JSZip from 'jszip';
+import { MessagesService } from 'src/app/services/messages.service';
 
 @Component({
   templateUrl: './export.component.html',
@@ -16,6 +17,7 @@ export class ExportComponent {
   readonly exporting$ = new BehaviorSubject<boolean>(false);
 
   constructor(
+    private readonly messagesService: MessagesService,
     private readonly brandDbService: DatabaseService<Brand>,
     private readonly userDbService: DatabaseService<User>,
     private readonly meterDbService: DatabaseService<Meter>,
@@ -112,6 +114,8 @@ export class ExportComponent {
       delay(1000),
       tap(() => this.tables.forEach(({ progress$ }) => progress$.next(0))),
       tap(() => this.exporting$.next(false)),
+      delay(1000),
+      tap(() => this.messagesService.success('Backup creado correctamente', 3000)),
     );
   }
 
