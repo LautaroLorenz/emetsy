@@ -50,3 +50,4 @@ export * from "./report/report-builder.model";
 export * from "./date/date.model";
 export * from "./statics/metric.model";
 export * from "./random/color.random.model";
+export * from "./backup/export.model";

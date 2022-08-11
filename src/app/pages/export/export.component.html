@@ -13,20 +13,20 @@
 
 <app-fill-available-space class="flex p-font-family">
 
-  <div class="flex flex-column pt-4 pl-3 w-4 overflow-auto">
+  <div class="flex flex-column pt-4 pl-3 w-12 overflow-auto">
     <span class="text-xl">Tablas para exportar</span>
-    <div class="mt-4">
+    <div class="mt-4 flex flex-wrap">
       <div
         *ngFor="let table of tables"
-        class="mb-2"
+        class="mb-3 w-19rem"
       >
-        <div class="shadow-2 p-2 m-2">
-          <span class="flex mb-3">{{table.tableReal}}</span>
+        <div class="shadow-2 p-3 m-2">
+          <span class="flex mb-2">{{table.tableReal}}</span>
           <ng-container *ngIf="{ value: table.progress$ | async } as progress">
             <p-progressBar
               [showValue]="true"
               [value]="progress.value"
-              [style]="{'height': '6px'}"
+              [style]="{'height': '8px'}"
               [ngClass]="{ 'inactive': exporting$.value === false }"
             ></p-progressBar>
           </ng-container>
