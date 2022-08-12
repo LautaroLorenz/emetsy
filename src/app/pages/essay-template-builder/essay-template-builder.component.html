@@ -30,7 +30,13 @@
       </div>
     </ng-container>
     <ng-container toolbar-right>
-      <div>
+      <div class="flex align-items-center">
+        <div class="mr-2">
+          <app-validator-messages
+            *ngIf="form.errors && form.dirty"
+            [errors]="form.errors"
+          ></app-validator-messages>
+        </div>
         <p-splitButton
           label="Guardar"
           styleClass="p-button-success"
