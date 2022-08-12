@@ -2,6 +2,7 @@ export * from "./database/tables/active-constant-unit.model";
 export * from "./database/tables/brand.model";
 export * from "./database/tables/connection.model";
 export * from "./database/tables/essay-template.model";
+export * from "./database/tables/essay-template-step.model";
 export * from "./database/tables/meter.model";
 export * from "./database/tables/reactive-constant-unit.model";
 export * from "./database/tables/step.model";

@@ -38,8 +38,12 @@ ipcMain.handle('delete-from-table', async (_, { tableName, ids }) => {
 });
 
 ipcMain.handle('add-to-table', async (_, { tableName, element }) => {
-  const newElementsIds = await knex(tableName).insert(element);
-  return newElementsIds;
+  try {
+    const newElementsIds = await knex(tableName).insert(element);
+    return newElementsIds;
+  } catch {
+    return null;
+  }
 });
 
 ipcMain.handle('edit-from-table', async (_, { tableName, element }) => {

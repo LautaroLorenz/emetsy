@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import { BehaviorSubject, delay, map, Observable, of, switchMap, take, tap } from 'rxjs';
-import { Brand, BrandDbTableContext, EssayTemplate, EssayTemplateDbTableContext, ExportTable, History, HistoryDbTableContext, Meter, MeterDbTableContext, Static, StaticDbTableContext, User, UserDbTableContext } from 'src/app/models';
-import { EssayTemplateStep, EssayTemplateStepDbTableContext } from 'src/app/models/database/tables/essay-template-step.model';
+import { Brand, BrandDbTableContext, EssayTemplate, EssayTemplateDbTableContext, EssayTemplateStep, EssayTemplateStepDbTableContext, ExportTable, History, HistoryDbTableContext, Meter, MeterDbTableContext, Static, StaticDbTableContext, User, UserDbTableContext } from 'src/app/models';
 import { DatabaseService } from 'src/app/services/database.service';
 import * as JSZip from 'jszip';
 import { MessagesService } from 'src/app/services/messages.service';
@@ -106,7 +105,7 @@ export class ExportComponent {
         document.body.appendChild(a);
         a.setAttribute('style', 'display: none');
         a.href = url;
-        a.download = `backup_${timestamp}`;
+        a.download = `EMETSY_backup_${timestamp}`;
         a.click();
         window.URL.revokeObjectURL(url);
         a.remove();

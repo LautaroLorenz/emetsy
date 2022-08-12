@@ -8,3 +8,13 @@ export interface ExportTable {
   progress$: BehaviorSubject<number>;
   databaseService: DatabaseService<any>;
 }
+
+
+export interface ImportResult {
+  imported: number;
+  ignored: number;
+}
+
+export interface ImportTable extends ExportTable {
+  result$: BehaviorSubject<ImportResult>;
+}
