@@ -1,6 +1,7 @@
 import { Injectable } from "@angular/core";
 import { BehaviorSubject, delay, filter, map, Observable, of, Subject, switchMap, take, takeUntil, takeWhile, tap } from "rxjs";
-import { CalculatorParams, Command, CommandManager, Device, DeviceStatus, DeviceStatusEnum, PROTOCOL, ResponseStatus, ResponseStatusEnum, WorkingParamsStatus, WorkingParamsStatusEnum } from "../models";
+import { CalculatorParams, Command, CommandManager, Device, DeviceStatus, DeviceStatusEnum, PROTOCOL, ResponseStatus, ResponseStatusEnum } from "../models";
+import { DeviceErrorCode } from "../pipes/device-error-code.pipe";
 import { UsbHandlerService } from "./usb-handler.service";
 
 @Injectable({
@@ -19,6 +20,7 @@ export class CalculatorService implements Device {
 
   constructor(
     private readonly usbHandlerService: UsbHandlerService,
+    private readonly deviceErrorCodePipe: DeviceErrorCode,
   ) {
     this.sendStoper$ = new Subject<void>();
     this.errorMessage$ = new BehaviorSubject<string | null>(null);
@@ -40,7 +42,7 @@ export class CalculatorService implements Device {
         this.errorMessage$.next('Error: No responde');
         return status;
       case ResponseStatusEnum.ERROR:
-        this.errorMessage$.next('Error: '.concat(errorCode ? errorCode.toString() : 'sin código'));
+        this.errorMessage$.next('Error: '.concat(errorCode ? this.deviceErrorCodePipe.transform(errorCode) : 'sin código'));
         return status;
       case ResponseStatusEnum.UNKNOWN:
         this.errorMessage$.next('Error: no se pudo procesar el comando');
