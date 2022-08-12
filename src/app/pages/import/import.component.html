@@ -1,1 +1,134 @@
-<p>import works!</p>
+<app-page-title [title]="title">
+  <ng-container toolbar-right>
+    <p-button
+      label="Importar backup"
+      icon="pi pi-upload"
+      styleClass="p-button-primary mr-3"
+      [disabled]="activeIndex$.value !== 1 || importing$.value"
+      [ngClass]="{ 'pointer-events-none': activeIndex$.value !== 1 || importing$.value }"
+      (click)="import()"
+    ></p-button>
+  </ng-container>
+</app-page-title>
+
+
+<ng-container *ngIf="{ value: activeIndex$ | async } as activeIndex">
+  <ng-container *ngIf="activeIndex.value !== null">
+
+    <div
+      class="p-3"
+      appTrackHeight="steps-wrapper"
+    >
+      <p-steps
+        [model]="items"
+        [readonly]="false"
+        [activeIndex]="activeIndex.value"
+      ></p-steps>
+    </div>
+
+    <app-fill-available-space
+      [componentsToSubtrac]="['steps-wrapper']"
+      class="flex p-font-family"
+    >
+
+      <div class="flex flex-column pt-4 p-4 w-12 overflow-auto">
+        <ng-container [ngSwitch]="activeIndex.value">
+
+          <ng-container *ngSwitchCase="0">
+            <p-fileUpload
+              name="backup[]"
+              accept=".zip"
+              [customUpload]="true"
+              (uploadHandler)="uploadHandler($event)"
+              [auto]="true"
+              chooseLabel="Elegir archivo de backup"
+            >
+              <ng-template
+                pTemplate="content"
+                let-files
+              >
+                <p-message
+                  severity="info"
+                  text="La extención del archivo de backup es .zip"
+                  styleClass="mb-4"
+                ></p-message>
+              </ng-template>
+            </p-fileUpload>
+          </ng-container>
+
+          <ng-container *ngSwitchCase="1">
+            <span class="text-xl">Tablas para importar</span>
+            <ng-container *ngIf="zipFiles$ | async as zipFiles">
+              <div class="mt-4 flex flex-wrap">
+                <div
+                  *ngFor="let table of tables"
+                  class="mb-3 w-19rem"
+                >
+                  <ng-container *ngIf="zipFiles[table.tableName]">
+                    <div class="shadow-2 p-3 m-2">
+                      <span class="flex mb-2">{{table.tableReal}}</span>
+                      <ng-container
+                        *ngIf="{ value: table.progress$ | async } as progress"
+                      >
+                        <p-progressBar
+                          [showValue]="true"
+                          [value]="progress.value"
+                          [style]="{'height': '8px'}"
+                          [ngClass]="{ 'inactive': importing$.value === false }"
+                        ></p-progressBar>
+                      </ng-container>
+                    </div>
+                  </ng-container>
+                </div>
+              </div>
+            </ng-container>
+          </ng-container>
+
+          <ng-container *ngSwitchCase="2">
+            <span class="text-xl">Resultados</span>
+            <p-message
+              severity="warn"
+              text="Los datos ignorados no puedieron importarse, posiblemente estén duplicados."
+              styleClass="my-2"
+            ></p-message>
+            <ng-container *ngIf="zipFiles$ | async as zipFiles">
+              <div class="mt-4 flex flex-wrap">
+                <div
+                  *ngFor="let table of tables"
+                  class="mb-3 w-19rem"
+                >
+                  <ng-container *ngIf="zipFiles[table.tableName]">
+                    <div class="shadow-2 p-3 m-2">
+                      <span class="flex mb-2">{{table.tableReal}}</span>
+                      <ng-container
+                        *ngIf="{ value: table.progress$ | async } as progress"
+                      >
+                        <ng-container *ngIf="table.result$ | async as result">
+                          <span
+                            *ngIf="result.imported > 0"
+                            class="inline-flex mr-2 text-green-600"
+                          >
+                            Importados {{result.imported}}
+                          </span>
+                          <span
+                            *ngIf="result.ignored > 0"
+                            class="inline-flex text-yellow-600"
+                          >
+                            Ignorados {{result.ignored}}
+                          </span>
+                        </ng-container>
+                      </ng-container>
+                    </div>
+                  </ng-container>
+                </div>
+              </div>
+            </ng-container>
+          </ng-container>
+
+        </ng-container>
+      </div>
+
+    </app-fill-available-space>
+
+  </ng-container>
+</ng-container>

@@ -1,8 +1,7 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { filter, Observable, ReplaySubject, takeUntil, tap } from 'rxjs';
-import { StepBuilder, StepConstructor } from 'src/app/models';
-import { EssayTemplateStep } from 'src/app/models/database/tables/essay-template-step.model';
+import { EssayTemplateStep, StepBuilder, StepConstructor } from 'src/app/models';
 
 @Component({
   selector: 'app-step-build-form',

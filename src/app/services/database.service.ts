@@ -1,5 +1,5 @@
 import { Injectable, NgZone } from "@angular/core";
-import { catchError, filter, from, map, Observable, Subject, throwError } from "rxjs";
+import { catchError, filter, from, map, Observable, Subject, tap, throwError } from "rxjs";
 import { RequestTableResponse, TableName, Where } from "../models";
 import { IpcService } from "./ipc.service";
 
@@ -31,7 +31,7 @@ export class DatabaseService<T> {
   private _deleteRowFromDatabaseTable = (tableName: string, ids: any[]): Promise<number> => {
     return this.ipcService.invoke('delete-from-table', { tableName, ids });
   }
-  private _addRowToTable = (tableName: string, element: T): Promise<number[]> => {
+  private _addRowToTable = (tableName: string, element: T): Promise<number[] | null> => {
     return this.ipcService.invoke('add-to-table', { tableName, element });
   }
   private _editTableRow = (tableName: string, element: T): Promise<number> => {
@@ -78,7 +78,15 @@ export class DatabaseService<T> {
   }
 
   addElementToTable$(tableName: string, element: T): Observable<number> {
-    return from(this._addRowToTable(tableName, element)).pipe(map(([newElementId]) => newElementId));
+    return from(this._addRowToTable(tableName, element)).pipe(
+      tap((result) => {
+        if (result === null) {
+          throw new Error('Error al agregar el elemento a la tabla');
+        }
+      }),
+      map((result) => result as number[]),
+      map(([newElementId]) => newElementId),
+    );
   }
 
   editElementFromTable$(tableName: string, element: T): Observable<number> {

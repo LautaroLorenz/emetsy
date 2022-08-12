@@ -32,12 +32,12 @@ export class MessagesService {
     });
   }
 
-  public success(message: string): void {
+  public success(message: string, extraLife: number = 0): void {
     this.messageService.add({
       severity: 'success',
       summary: 'Realizado',
       detail: message,
-      life: this.messageSuccessLifeMs
+      life: this.messageSuccessLifeMs + extraLife
     });
   }
 

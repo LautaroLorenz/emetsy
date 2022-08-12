@@ -20,6 +20,7 @@
             "allowedCommonJsDependencies": [
               "dot-object",
               "jspdf",
+              "jszip",
               "raf",
               "dompurify",
               "html2canvas",
@@ -68,8 +69,8 @@
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "7mb",
-                  "maximumError": "10mb"
+                  "maximumWarning": "15mb",
+                  "maximumError": "30mb"
                 },
                 {
                   "type": "anyComponentStyle",

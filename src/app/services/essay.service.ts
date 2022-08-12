@@ -1,7 +1,6 @@
 import { Injectable } from "@angular/core";
 import { from, Observable } from "rxjs";
-import { EssayTemplate } from "../models";
-import { EssayTemplateStep } from "../models/database/tables/essay-template-step.model";
+import { EssayTemplate, EssayTemplateStep } from "../models";
 import { IpcService } from "./ipc.service";
 
 @Injectable({

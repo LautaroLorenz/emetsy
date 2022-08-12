@@ -68,6 +68,10 @@ import { ExecutionByEssayComponent } from './dashboard/execution-by-essay/execut
 import { ChartModule } from 'primeng/chart';
 import { MeterApprovesComponent } from './dashboard/meter-approves/meter-approves.component';
 import { StandUsedComponent } from './dashboard/stand-used/stand-used.component';
+import { ProgressBarModule } from 'primeng/progressbar';
+import { StepsModule } from 'primeng/steps';
+import { FileUploadModule } from 'primeng/fileupload';
+import { HttpClientModule } from '@angular/common/http';
 
 const PrimeNgModules = [
   MenubarModule,
@@ -101,6 +105,9 @@ const PrimeNgModules = [
   MessageModule,
   ProgressSpinnerModule,
   ChartModule,
+  ProgressBarModule,
+  StepsModule,
+  FileUploadModule,
 ];
 
 const PrimeNgServices = [
@@ -147,6 +154,7 @@ const EmetsyComponents = [
     PipesModule,
     ReactiveFormsModule,
     DirectivesModule,
+    HttpClientModule,
   ],
   exports: [EmetsyComponents, PrimeNgModules],
   providers: [PrimeNgServices]
