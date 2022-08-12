@@ -159,6 +159,7 @@ export class ImportComponent implements OnInit, OnDestroy {
       delay(1000),
       tap(() => this.activeIndex$.next(2)),
       tap(() => this.importing$.next(false)),
+      tap(() => this.messagesService.success('Backup importado correctamente', 3000)),
     );
   }
 
