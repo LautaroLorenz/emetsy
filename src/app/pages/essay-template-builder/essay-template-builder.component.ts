@@ -4,11 +4,12 @@ import { ActivatedRoute } from '@angular/router';
 import { ConfirmationService, MenuItem, PrimeIcons } from 'primeng/api';
 import { catchError, filter, first, map, Observable, of, ReplaySubject, switchMap, takeUntil, tap, throwError } from 'rxjs';
 import { ComponentCanDeactivate } from 'src/app/guards/pending-changes.guard';
-import { EssayTemplate, EssayTemplateDbTableContext, EssayTemplateStep, EssayTemplateStepDbTableContext, PageUrlName, RelationsManager, Step, StepDbTableContext, WhereKind, WhereOperator } from 'src/app/models';
+import { EssayTemplate, EssayTemplateDbTableContext, EssayTemplateForm, EssayTemplateStep, EssayTemplateStepDbTableContext, PageUrlName, RelationsManager, Step, StepDbTableContext, WhereKind, WhereOperator } from 'src/app/models';
 import { DatabaseService } from 'src/app/services/database.service';
 import { EssayService } from 'src/app/services/essay.service';
 import { MessagesService } from 'src/app/services/messages.service';
 import { NavigationService } from 'src/app/services/navigation.service';
+import { essayTemplateValidator } from 'src/app/validators';
 
 @Component({
   templateUrl: './essay-template-builder.component.html',
@@ -126,13 +127,13 @@ export class EssayTemplateBuilderComponent implements OnInit, OnDestroy, Compone
         StepDbTableContext.foreignTables
       ))
     );
-    this.form = new FormGroup({
+    this.form = new FormGroup<EssayTemplateForm>({
       essayTemplate: new FormGroup({
         id: new FormControl(),
         name: new FormControl(),
       }),
-      essayTemplateSteps: new FormArray([])
-    });
+      essayTemplateSteps: new FormArray<FormControl<any>>([])
+    }, essayTemplateValidator());
     this.saveButtonMenuItems = [
       {
         label: 'Guardar y Salir',
@@ -175,7 +176,7 @@ export class EssayTemplateBuilderComponent implements OnInit, OnDestroy, Compone
   }
 
   getEssaytemplateStepControls(): FormArray<FormControl> {
-    return (this.form.get('essayTemplateSteps') as FormArray);
+    return (this.form.get('essayTemplateSteps') as FormArray<FormControl<EssayTemplateStep>>);
   }
 
   addEssayTemplateStep(step: Step): void {

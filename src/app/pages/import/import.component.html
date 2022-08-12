@@ -47,11 +47,20 @@
                 pTemplate="content"
                 let-files
               >
-                <p-message
-                  severity="info"
-                  text="La extención del archivo de backup es .zip"
-                  styleClass="mb-4"
-                ></p-message>
+                <ng-container *ngIf="showHelp$ | async as showHelp">
+                  <div class="flex flex-column">
+                    <p-message
+                      severity="info"
+                      text="La extención del archivo de backup es .zip"
+                      styleClass="my-2"
+                    ></p-message>
+                    <p-message
+                      severity="warn"
+                      text="Selecciona un archivo previamente generado por el sistema."
+                      styleClass="my-2"
+                    ></p-message>
+                  </div>
+                </ng-container>
               </ng-template>
             </p-fileUpload>
           </ng-container>

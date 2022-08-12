@@ -72,6 +72,7 @@ import { ProgressBarModule } from 'primeng/progressbar';
 import { StepsModule } from 'primeng/steps';
 import { FileUploadModule } from 'primeng/fileupload';
 import { HttpClientModule } from '@angular/common/http';
+import { ValidatorMessagesComponent } from './validator-messages/validator-messages.component';
 
 const PrimeNgModules = [
   MenubarModule,
@@ -144,6 +145,7 @@ const EmetsyComponents = [
   ExecutionByEssayComponent,
   MeterApprovesComponent,
   StandUsedComponent,
+  ValidatorMessagesComponent,
 ];
 
 @NgModule({
