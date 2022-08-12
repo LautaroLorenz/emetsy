@@ -20,6 +20,7 @@ export class ImportComponent implements OnInit, OnDestroy {
   readonly activeIndex$ = new BehaviorSubject<number>(0);
   readonly zipFiles$ = new BehaviorSubject<Record<string, JSZip.JSZipObject> | null>(null);
   readonly showIgnoredAlert$ = new BehaviorSubject<boolean>(false);
+  readonly showHelp$ = new BehaviorSubject<boolean>(false);
   private readonly file$ = new BehaviorSubject<File | null>(null);
   private readonly destroyed$: ReplaySubject<boolean> = new ReplaySubject(1);
 
@@ -98,6 +99,7 @@ export class ImportComponent implements OnInit, OnDestroy {
         const acceptedFileNames = this.tables.map(({ tableName }) => tableName);
         if (uploadedFileNames.some((fileName) => acceptedFileNames.includes(fileName)) === false) {
           this.messagesService.error('Backup no aceptado, seleccione un archivo exportado por el sistema.');
+          this.showHelp$.next(true);
           return;
         }
         this.activeIndex$.next(1);
@@ -168,6 +170,7 @@ export class ImportComponent implements OnInit, OnDestroy {
     const [file] = event.files;
     this.importing$.next(false);
     this.showIgnoredAlert$.next(false);
+    this.showHelp$.next(false);
     this.tables.forEach(({ result$, progress$ }) => {
       progress$.next(0);
       result$.next({ imported: 0, ignored: 0 });
