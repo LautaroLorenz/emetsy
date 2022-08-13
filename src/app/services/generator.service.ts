@@ -1,6 +1,7 @@
 import { Injectable } from "@angular/core";
 import { BehaviorSubject, delay, map, Observable, of, Subject, switchMap, takeUntil, tap } from "rxjs";
 import { Command, CommandManager, PROTOCOL, ResponseStatus, ResponseStatusEnum, Phases, Device, DeviceStatus, DeviceStatusEnum } from "../models";
+import { DeviceErrorCode } from "../pipes/device-error-code.pipe";
 import { UsbHandlerService } from "./usb-handler.service";
 
 @Injectable({
@@ -18,6 +19,7 @@ export class GeneratorService implements Device {
 
   constructor(
     private readonly usbHandlerService: UsbHandlerService,
+    private readonly deviceErrorCodePipe: DeviceErrorCode,
   ) {
     this.sendStoper$ = new Subject<void>();
     this.errorMessage$ = new BehaviorSubject<string | null>(null);
@@ -37,7 +39,7 @@ export class GeneratorService implements Device {
         this.errorMessage$.next('Error: No responde');
         return status;
       case ResponseStatusEnum.ERROR:
-        this.errorMessage$.next('Error: '.concat(errorCode ? errorCode.toString() : 'sin código'));
+        this.errorMessage$.next('Error: '.concat(errorCode ? this.deviceErrorCodePipe.transform(errorCode) : 'sin código'));
         return status;
       case ResponseStatusEnum.UNKNOWN:
         this.errorMessage$.next('Error: no se pudo procesar el comando');
