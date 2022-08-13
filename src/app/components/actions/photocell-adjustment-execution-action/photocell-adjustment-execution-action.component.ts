@@ -71,12 +71,12 @@ export class PhotocellAdjustmentExecutionActionComponent implements ActionCompon
     this.usbHandlerService.connected$.pipe(
       takeUntil(this.destroyed$),
       takeWhile(() => !this.photocellAdjustmentExecutionComplete),
+      tap(() => this.initialized$.next(false)),
+      filter((isConnected) => isConnected),
       tap(() => {
-        this.initialized$.next(false);
         this.generatorService.clearStatus();
         this.patternService.clearStatus();
       }),
-      filter((isConnected) => isConnected),
       switchMap(() => this.generatorService.turnOn$(phases).pipe(
         filter(status => status === ResponseStatusEnum.ACK),
         switchMap(() => this.generatorService.getStatus$()),

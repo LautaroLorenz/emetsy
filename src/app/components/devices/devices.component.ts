@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, Input, OnDestroy, OnInit } from '@angular/core';
-import { BehaviorSubject, Observable, ReplaySubject, skip, take, takeUntil, tap } from 'rxjs';
+import { BehaviorSubject, filter, Observable, ReplaySubject, skip, switchMap, take, takeUntil, tap } from 'rxjs';
 import { DeviceStatus, DeviceStatusEnum, LedColor, LedColorEnum } from 'src/app/models';
 import { CalculatorService } from 'src/app/services/calculator.service';
 import { GeneratorService } from 'src/app/services/generator.service';
@@ -82,6 +82,8 @@ export class DevicesComponent implements OnInit, OnDestroy {
     this.patternService.deviceStatus$.pipe(
       takeUntil(this.destroyed$),
       tap((status) => this.patternStatusColor$.next(this.colorByStatus(status))),
+      filter((status) => status === DeviceStatusEnum.FAIL),
+      switchMap(() => this.usbHandlerService.disconnect$()),
     ).subscribe();
 
     this.calculatorService.deviceStatus$.pipe(
