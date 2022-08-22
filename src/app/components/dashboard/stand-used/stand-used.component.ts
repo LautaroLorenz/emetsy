@@ -39,7 +39,7 @@ export class StandUsedComponent implements OnChanges {
     for (const [index, key] of Object.keys(standUsedCounters).entries()) {
       const value = standUsedCounters[key];
       metric.push({
-        color: Color.getColorByIndex(index, '33'),
+        color: Color.getColorByIndex(index, '77'),
         label: 'Puesto ' + key,
         value: value,
       });

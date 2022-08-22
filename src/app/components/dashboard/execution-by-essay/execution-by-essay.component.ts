@@ -36,7 +36,7 @@ export class ExecutionByEssayComponent implements OnChanges {
     for (const [index, key] of Object.keys(executionsByEssay).entries()) {
       const value = executionsByEssay[key];
       metric.push({
-        color: Color.getColorByIndex(index, '33'),
+        color: Color.getColorByIndex(index, '77'),
         label: key,
         value: value,
       });

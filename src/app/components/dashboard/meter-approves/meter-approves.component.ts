@@ -36,7 +36,7 @@ export class MeterApprovesComponent implements OnChanges {
     for (const [index, key] of Object.keys(approvesByMeter).entries()) {
       const value = approvesByMeter[key];
       metric.push({
-        color: Color.getColorByIndex(index, '33'),
+        color: Color.getColorByIndex(index, '77'),
         label: key,
         value: value,
       });
