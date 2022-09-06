@@ -6,6 +6,7 @@ import { PhotocellAdjustmentStep } from "./photocell-adjustment.step.model";
 import { PreparationStep } from "./preparation.step.model";
 import { ReportStep } from "./report.step.model";
 import { StepBuilder } from "./step-builder.model";
+import { UserIdentificationStep } from "./user-identification.step.model";
 
 export enum StepIdEnum {
   ReportBuilder = 0, // default
@@ -16,6 +17,7 @@ export enum StepIdEnum {
   _5 = 5,
   PhotocellAdjustmentStep = 6,
   PreparationStep = 7,
+  UserIdentificationStep = 8,
 }
 export type StepId = StepIdEnum;
 
@@ -30,8 +32,10 @@ export class StepConstructor {
         return new PhotocellAdjustmentStep(essayTemplateStep);
       case StepIdEnum.PreparationStep:
         return new PreparationStep(essayTemplateStep, destroyed$);
+      case StepIdEnum.UserIdentificationStep:
+        return new UserIdentificationStep(essayTemplateStep);
     }
-  
+
     return new StepBuilder(essayTemplateStep, [], [], new ReportBuilder());
   }
 }

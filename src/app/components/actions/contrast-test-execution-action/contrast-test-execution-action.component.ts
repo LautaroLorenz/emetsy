@@ -225,14 +225,6 @@ export class ContrastTestExecutionActionComponent implements ActionComponent, Af
     if (!preparationStep) {
       throw new Error('Paso de preparación no encontrado');
     }
-    const userIdentificationAction: UserIdentificationAction = preparationStep.actions.find((ac) => ac instanceof UserIdentificationAction) as UserIdentificationAction;
-    if (userIdentificationAction) {
-      const { selectedUser } = userIdentificationAction;
-      if (selectedUser) {
-        const { surname, name, identification } = selectedUser;
-        this.reportData.userName = `${surname}, ${name} - ${identification}`;
-      }
-    }
     const standIdentificationAction = preparationStep.actions.find((ac) => ac instanceof StandIdentificationAction);
     if (!standIdentificationAction) {
       throw new Error('Paso de identificación no encontrado');

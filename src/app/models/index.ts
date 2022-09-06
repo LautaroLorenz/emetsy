@@ -34,6 +34,7 @@ export * from "./steps/step-constructor.model";
 export * from "./steps/preparation.step.model";
 export * from "./steps/photocell-adjustment.step.model";
 export * from "./steps/contrast-test.step.model";
+export * from "./steps/user-identification.step.model";
 export * from "./steps/report.step.model";
 export * from "./protocol/command.model";
 export * from "./protocol/protocol.model";

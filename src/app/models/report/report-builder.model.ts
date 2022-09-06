@@ -1,4 +1,4 @@
-import { Report } from "./report.model";
+import { ReportTable } from "./report.model";
 
 export class ReportBuilder {
   data: any = {};
@@ -10,7 +10,7 @@ export class ReportBuilder {
     };
   }
 
-  produce(): Report {
-    return new Report();
+  produce(): ReportTable {
+    return new ReportTable();
   }
 }
