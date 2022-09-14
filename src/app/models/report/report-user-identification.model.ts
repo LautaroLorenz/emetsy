@@ -17,7 +17,7 @@ export class ReportUserIdentificationBuilder extends ReportBuilder {
     this.data = {} as ReportUser;
   }
 
-  override pathValue(value: Partial<ReportUser>) {
+  override patchValue(value: Partial<ReportUser>) {
     this.data = {
       ...this.data,
       ...value

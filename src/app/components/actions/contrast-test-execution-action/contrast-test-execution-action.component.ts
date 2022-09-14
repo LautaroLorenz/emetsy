@@ -76,7 +76,7 @@ export class ContrastTestExecutionActionComponent implements ActionComponent, Af
   private setReportParams(reportData: ReportContrastTest): void {
     const stepBuilder = this.executionDirectorService.getActiveStepBuilder();
     const reportBuilder: ReportContrastTestBuilder = stepBuilder?.reportBuilder as ReportContrastTestBuilder;
-    reportBuilder.pathValue(reportData);
+    reportBuilder.patchValue(reportData);
   }
 
   private requestMeters$(meterIds: number[]): Observable<Meter[]> {
@@ -232,7 +232,6 @@ export class ContrastTestExecutionActionComponent implements ActionComponent, Af
     const { hasManufacturingInformation } = standIdentificationAction.form.getRawValue();
     const stands = (standIdentificationAction as StandIdentificationAction).standArray.getRawValue();
     this.activeStands = stands.filter(({ isActive }) => isActive);
-
     this.reportData.standsLength = this.activeStands.length;
     this.reportData.stands = [];
     const meterIds = this.activeStands.map(({ meterId }) => meterId as number);

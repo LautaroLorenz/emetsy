@@ -14,6 +14,7 @@ export interface ReportStand {
   result: Result | null;
   manofacturingInformation?: ManofacturingInformation;
 }
+
 export interface ReportContrastTest {
   reportName: string;
   maxAllowedError: number;
@@ -45,7 +46,7 @@ export class ReportContrastTestBuilder extends ReportBuilder {
     this.data = {} as ReportContrastTest;
   }
 
-  override pathValue(value: Partial<ReportContrastTest>) {
+  override patchValue(value: Partial<ReportContrastTest>) {
     this.data = {
       ...this.data,
       ...value
@@ -55,6 +56,7 @@ export class ReportContrastTestBuilder extends ReportBuilder {
   override produce(): ReportTable {
     return new ReportTable();
 
+    // TODO: seguir revisando desde aca el reporte
     // // PRODUCE INFO TABLE
     // {
     //   const tableInfo = new ReportTable();

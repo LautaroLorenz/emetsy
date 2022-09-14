@@ -54,7 +54,7 @@ export class UserIdentificationActionComponent implements ActionComponent, After
         if (selectedUser) {
           const { surname, name, identification } = selectedUser;
           this.reportData.userName = `${surname}, ${name} - ${identification}`;
-          this.reportBuilder.pathValue(this.reportData);
+          this.reportBuilder.patchValue(this.reportData);
         }
       })
     ).subscribe();
