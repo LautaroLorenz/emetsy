@@ -79,8 +79,4 @@ export class ExecutionDirector {
     }
     return this.steps[this.activeStepIndex$.value];
   }
-
-  getStepBuilderById(id: number): StepBuilder | undefined {
-    return this.steps.find(step => step.essayTemplateStep.step_id === id);
-  }
 }

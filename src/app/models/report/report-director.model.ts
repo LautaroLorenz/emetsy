@@ -9,6 +9,13 @@ export class ReportEssayDirector {
     this.steps = steps;
   }
 
+  /*
+  * TODO:
+  * - Nombre del reporte como título del reporte.
+  * - un único ensayo por página
+  * - número de página
+  * - identificación del reporte (puede ser el id de ejecución)
+  */
   public createReport(): Report {
     const report: Report = new Report();
 
@@ -16,13 +23,12 @@ export class ReportEssayDirector {
     const reportHeaderBuilder = new ReportHeaderBuilder();
     const header = reportHeaderBuilder.produce();
     pageA4.add(header);
-
     this.steps.forEach(({ reportBuilder }) => {
       const stepReportTable: ReportTable = reportBuilder.produce();
       pageA4.add(stepReportTable);
     });
-
     report.pages.push(pageA4);
+
     return report;
   }
 }
