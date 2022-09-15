@@ -10,6 +10,6 @@ exports.seed = async function (knex) {
     { id: 4, name: 'Prueba de constraste' },
     { id: 5, name: 'Prueba de arranque' },
     { id: 6, name: 'Ajuste de fotocélulas' },
-    { id: 7, name: 'Preparación' },
+    { id: 7, name: 'Identificación de usuario' },
   ]);
 };

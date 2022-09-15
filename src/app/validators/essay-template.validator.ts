@@ -10,33 +10,6 @@ const atLeastOneStep = (steps: EssayTemplateStep[]): boolean => {
   return steps.length === 0;
 };
 
-const preparationRequired = (steps: EssayTemplateStep[]): boolean => {
-  const hasPreparationStep = steps.some(({ step_id }) => step_id === StepIdEnum.PreparationStep);
-  const requiredPreparationSteps = [StepIdEnum.ContrastTestStep];
-  return !hasPreparationStep && steps.some(({ step_id }) => requiredPreparationSteps.includes(step_id));
-};
-
-const preparationOrderAfter = (steps: EssayTemplateStep[]): boolean => {
-  let hasError = false;
-  const requiredPreparationSteps = [StepIdEnum.ContrastTestStep];
-  let preparationStep = false;
-  for (let i = 0; i < steps.length; i++) {
-    const { step_id } = steps[i];
-    if (!preparationStep && step_id === StepIdEnum.PreparationStep) {
-      preparationStep = true;
-    }
-    if (requiredPreparationSteps.includes(step_id)) {
-      if (preparationStep) {
-        preparationStep = false;
-      } else {
-        hasError = true;
-        break;
-      }
-    }
-  }
-  return hasError;
-};
-
 const reportAtEnd = (steps: EssayTemplateStep[]): boolean => {
   const hasReport = steps.some(({ step_id }) => step_id === StepIdEnum.ReportStep);
   const reportIndex = steps.findIndex(({ step_id }) => step_id === StepIdEnum.ReportStep);
@@ -58,14 +31,6 @@ export function essayTemplateValidator(): ValidatorFn {
 
     if (atLeastOneStep(steps)) {
       errors = { ...errors, [EssayErrorCodeEnum.AtLeastOneStep]: EssayErrorMessages[EssayErrorCodeEnum.AtLeastOneStep] };
-    }
-
-    if (preparationRequired(steps)) {
-      errors = { ...errors, [EssayErrorCodeEnum.PreparationRequired]: EssayErrorMessages[EssayErrorCodeEnum.PreparationRequired] };
-    }
-
-    if (preparationOrderAfter(steps)) {
-      errors = { ...errors, [EssayErrorCodeEnum.PreparationOrderAfter]: EssayErrorMessages[EssayErrorCodeEnum.PreparationOrderAfter] };
     }
 
     if (reportAtEnd(steps)) {

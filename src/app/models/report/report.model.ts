@@ -55,8 +55,9 @@ export class ReportTd {
   public text: string = '';
   public style: string = '';
   public class: string = '';
+  public colspan: number = 1;
 
   get(): string {
-    return `<td class="${this.class}" style="${this.style}">`.concat(this.text).concat('</td>');
+    return `<td colspan="${this.colspan}" class="${this.class}" style="${this.style}">`.concat(this.text).concat('</td>');
   }
 }

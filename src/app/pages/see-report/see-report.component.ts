@@ -53,7 +53,7 @@ export class SeeReportComponent implements OnInit, OnDestroy {
       tap((history) => this.history$.next(history)),
       tap(({ items_raw }) => {
         const stepBuilders: StepBuilder[] = items_raw.map(({ essayTemplateStep }) => StepConstructor.buildStepById(essayTemplateStep.step_id, essayTemplateStep, this.destroyed$));
-        stepBuilders.forEach(({ reportBuilder }, index) => reportBuilder.pathValue(items_raw[index].reportData));
+        stepBuilders.forEach(({ reportBuilder }, index) => reportBuilder.patchValue(items_raw[index].reportData));
         this.reportEssayDirector.setSteps(stepBuilders);
       }),
       tap(() => {

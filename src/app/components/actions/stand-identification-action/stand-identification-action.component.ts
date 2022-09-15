@@ -26,9 +26,6 @@ export class StandIdentificationActionComponent implements ActionComponent, Afte
   get standArray(): FormArray<FormGroup> {
     return (this.action as StandIdentificationAction).standArray;
   }
-  get hiddenFields(): Record<string, boolean> {
-    return (this.action as StandIdentificationAction).hiddenFields;
-  }
 
   protected readonly destroyed$: ReplaySubject<boolean> = new ReplaySubject(1);
 

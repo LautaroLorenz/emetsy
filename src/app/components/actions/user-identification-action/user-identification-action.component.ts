@@ -2,7 +2,9 @@ import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, I
 import { FormGroup } from '@angular/forms';
 import { map, ReplaySubject, takeUntil, tap } from 'rxjs';
 import { Action, ActionComponent, User, UserDbTableContext, UserIdentificationAction } from 'src/app/models';
+import { ReportUser, ReportUserIdentificationBuilder } from 'src/app/models/report/report-user-identification.model';
 import { DatabaseService } from 'src/app/services/database.service';
+import { ExecutionDirector } from 'src/app/services/execution-director.service';
 
 @Component({
   selector: 'app-user-identification-action',
@@ -24,6 +26,8 @@ export class UserIdentificationActionComponent implements ActionComponent, After
     return this.action.form;
   }
 
+  private readonly reportData: ReportUser = {} as ReportUser;
+  private readonly reportBuilder: ReportUserIdentificationBuilder;
   protected readonly destroyed$: ReplaySubject<boolean> = new ReplaySubject(1);
 
   private readonly lisenRequestReplyDropdownOptions = (): void => {
@@ -45,6 +49,14 @@ export class UserIdentificationActionComponent implements ActionComponent, After
     this.action.form.get('userId')?.valueChanges.pipe(
       takeUntil(this.destroyed$),
       tap((userId) => (this.action as UserIdentificationAction).selectedUser = this.dropdownUserOptions.find((user) => user.id === userId)),
+      tap((userId) => {
+        const selectedUser = this.dropdownUserOptions.find((user) => user.id === userId);
+        if (selectedUser) {
+          const { surname, name, identification } = selectedUser;
+          this.reportData.userName = `${surname}, ${name} - ${identification}`;
+          this.reportBuilder.patchValue(this.reportData);
+        }
+      })
     ).subscribe();
   }
 
@@ -53,9 +65,13 @@ export class UserIdentificationActionComponent implements ActionComponent, After
   }
 
   constructor(
+    private readonly executionDirectorService: ExecutionDirector,
     private readonly dbServiceUsers: DatabaseService<User>,
     private readonly changeDetectorRef: ChangeDetectorRef,
-  ) { }
+  ) {
+    const stepBuilder = this.executionDirectorService.getActiveStepBuilder();
+    this.reportBuilder = stepBuilder?.reportBuilder as ReportUserIdentificationBuilder;
+  }
 
   ngAfterViewInit(): void {
     this.lisenRequestReplyDropdownOptions();

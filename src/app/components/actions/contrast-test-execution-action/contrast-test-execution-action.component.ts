@@ -1,7 +1,7 @@
 import { AfterViewInit, ChangeDetectionStrategy, Component, Input, OnDestroy } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { BehaviorSubject, catchError, filter, forkJoin, interval, map, Observable, of, ReplaySubject, Subject, switchMap, take, takeUntil, takeWhile, tap } from 'rxjs';
-import { Action, ActionComponent, CalculatorParams, ContrastTestExecutionAction, ContrastTestParametersAction, DateHelper, EnterTestValuesAction, ManofacturingInformation, Meter, MeterDbTableContext, MetricEnum, PatternParams, Phases, RelationsManager, ReportContrastTest, ReportContrastTestBuilder, ResponseStatus, ResponseStatusEnum, ResultEnum, StandArrayFormValue, StandIdentificationAction, StandResult, StepIdEnum, UserIdentificationAction, WhereKind, WhereOperator } from 'src/app/models';
+import { Action, ActionComponent, CalculatorParams, ContrastTestExecutionAction, ContrastTestParametersAction, DateHelper, EnterTestValuesAction, Meter, MeterDbTableContext, MetricEnum, PatternParams, Phases, RelationsManager, ReportContrastTest, ReportContrastTestBuilder, ResponseStatus, ResponseStatusEnum, ResultEnum, StandArrayFormValue, StandIdentificationAction, StandResult, StepIdEnum, UserIdentificationAction, WhereKind, WhereOperator } from 'src/app/models';
 import { CalculatorService } from 'src/app/services/calculator.service';
 import { DatabaseService } from 'src/app/services/database.service';
 import { ExecutionDirector } from 'src/app/services/execution-director.service';
@@ -76,7 +76,7 @@ export class ContrastTestExecutionActionComponent implements ActionComponent, Af
   private setReportParams(reportData: ReportContrastTest): void {
     const stepBuilder = this.executionDirectorService.getActiveStepBuilder();
     const reportBuilder: ReportContrastTestBuilder = stepBuilder?.reportBuilder as ReportContrastTestBuilder;
-    reportBuilder.pathValue(reportData);
+    reportBuilder.patchValue(reportData);
   }
 
   private requestMeters$(meterIds: number[]): Observable<Meter[]> {
@@ -221,26 +221,17 @@ export class ContrastTestExecutionActionComponent implements ActionComponent, Af
       throw new Error('No se configuró el número de resultados para descartar');
     }
     this.reportData.maxAllowedError = maxAllowedError ?? 0;
-    const preparationStep = this.executionDirectorService.getStepBuilderById(StepIdEnum.PreparationStep);
+    const preparationStep = [this.executionDirectorService.getActiveStepBuilder()?.actions];
     if (!preparationStep) {
       throw new Error('Paso de preparación no encontrado');
     }
-    const userIdentificationAction: UserIdentificationAction = preparationStep.actions.find((ac) => ac instanceof UserIdentificationAction) as UserIdentificationAction;
-    if (userIdentificationAction) {
-      const { selectedUser } = userIdentificationAction;
-      if (selectedUser) {
-        const { surname, name, identification } = selectedUser;
-        this.reportData.userName = `${surname}, ${name} - ${identification}`;
-      }
-    }
-    const standIdentificationAction = preparationStep.actions.find((ac) => ac instanceof StandIdentificationAction);
+    const standIdentificationAction: StandIdentificationAction = this.executionDirectorService.getActiveStepBuilder()!.actions[0] as StandIdentificationAction;
     if (!standIdentificationAction) {
       throw new Error('Paso de identificación no encontrado');
     }
-    const { hasManufacturingInformation } = standIdentificationAction.form.getRawValue();
-    const stands = (standIdentificationAction as StandIdentificationAction).standArray.getRawValue();
+  
+    const stands = (standIdentificationAction).standArray.getRawValue();
     this.activeStands = stands.filter(({ isActive }) => isActive);
-
     this.reportData.standsLength = this.activeStands.length;
     this.reportData.stands = [];
     const meterIds = this.activeStands.map(({ meterId }) => meterId as number);
@@ -249,20 +240,14 @@ export class ContrastTestExecutionActionComponent implements ActionComponent, Af
       tap((meters) => {
         this.reportData.stands = this.activeStands.map((stand) => {
           const meter = meters.find(({ id }) => stand.meterId == id);
-          let manofacturingInformation: ManofacturingInformation | undefined = undefined;
-          if (hasManufacturingInformation) {
-            manofacturingInformation = {
-              serialNumber: stand.serialNumber as string,
-              yearOfProduction: stand.yearOfProduction as number
-            };
-          }
           this.staticsService.increment$(MetricEnum.standUsed, { standIndex: (stand.standIndex as number).toString() }).pipe(take(1)).subscribe();
           return {
             standIndex: stand.standIndex as number,
             brandModel: `${meter?.foreign.brand.name} - ${meter?.model}`,
             errorValue: null,
             result: null,
-            manofacturingInformation,
+            serialNumber: stand.serialNumber as string,
+            yearOfProduction: stand.yearOfProduction as number
           }
         });
       }),
