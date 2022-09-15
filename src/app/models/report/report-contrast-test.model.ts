@@ -23,6 +23,7 @@ export interface ReportContrastTest {
 
 export class ReportContrastTestBuilder extends ReportBuilder {
   override data: ReportContrastTest = {} as ReportContrastTest;
+  override requireAnEmptyPage: boolean = true;
 
   constructor() {
     super();

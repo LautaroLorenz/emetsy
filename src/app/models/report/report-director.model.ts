@@ -6,6 +6,18 @@ export class ReportEssayDirector {
   private steps!: StepBuilder[];
   private name!: string;
 
+  private addHeaderToPages(pages: ReportPageA4[]): void {
+    const reportHeaderBuilder = new ReportHeaderBuilder();
+    if (this.name) {
+      reportHeaderBuilder.patchValue({ name: this.name })
+    } else {
+      throw new Error('Reporte sin nombre');
+    }
+    const header = reportHeaderBuilder.produce();
+
+    pages.forEach((page) => page.addHeader(header));
+  }
+
   public setSteps(steps: StepBuilder[]): void {
     this.steps = steps;
   }
@@ -16,27 +28,32 @@ export class ReportEssayDirector {
 
   /*
   * TODO:
-  * - un único ensayo por página
   * - número de página
   * - identificación del reporte (puede ser el id de ejecución)
   */
   public createReport(): Report {
     const report: Report = new Report();
 
-    const pageA4 = new ReportPageA4();
-    const reportHeaderBuilder = new ReportHeaderBuilder();
-    if (this.name) {
-      reportHeaderBuilder.patchValue({ name: this.name })
-    } else {
-      throw new Error('Reporte sin nombre');
-    }
-    const header = reportHeaderBuilder.produce();
-    pageA4.add(header);
-    this.steps.forEach(({ reportBuilder }) => {
+    const pages: ReportPageA4[] = [];
+    let currentPageIndex = 0;
+    this.steps.forEach(({ reportBuilder }, index) => {
+      if(index === this.steps.length - 1) {
+        return; // break report step
+      }
+
+      console.log(reportBuilder.requireAnEmptyPage, reportBuilder.constructor.name)
+      if (pages[currentPageIndex] === undefined) {
+        pages.push((new ReportPageA4()));
+      }
       const stepReportTable: ReportTable = reportBuilder.produce();
-      pageA4.add(stepReportTable);
+      pages[currentPageIndex].add(stepReportTable);
+      if (reportBuilder.requireAnEmptyPage) {
+        currentPageIndex++;
+      }
     });
-    report.pages.push(pageA4);
+
+    this.addHeaderToPages(pages);
+    pages.forEach((page) => report.pages.push(page));
 
     return report;
   }

@@ -9,6 +9,11 @@ export class Report {
 export class ReportPageA4 {
   private _table: ReportTable[] = [];
 
+  addHeader(table: ReportTable): ReportTable[] {
+    this._table.unshift(table);
+    return this._table;
+  }
+  
   add(table: ReportTable): ReportTable[] {
     this._table.push(table);
     return this._table;
