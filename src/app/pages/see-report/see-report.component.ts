@@ -51,10 +51,11 @@ export class SeeReportComponent implements OnInit, OnDestroy {
       switchMap((id) => this.dbServiceHistory.getTableElement$(HistoryDbTableContext.tableName, id)),
       tap((history) => history.items_raw = JSON.parse(history.items_raw as unknown as string)), // parse raw data
       tap((history) => this.history$.next(history)),
-      tap(({ items_raw }) => {
+      tap(({ items_raw, essay }) => {
         const stepBuilders: StepBuilder[] = items_raw.map(({ essayTemplateStep }) => StepConstructor.buildStepById(essayTemplateStep.step_id, essayTemplateStep, this.destroyed$));
         stepBuilders.forEach(({ reportBuilder }, index) => reportBuilder.patchValue(items_raw[index].reportData));
         this.reportEssayDirector.setSteps(stepBuilders);
+        this.reportEssayDirector.setName(essay);
       }),
       tap(() => {
         const report: Report = this.reportEssayDirector.createReport();

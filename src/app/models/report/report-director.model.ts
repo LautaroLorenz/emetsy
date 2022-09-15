@@ -4,14 +4,18 @@ import { Report, ReportPageA4, ReportTable } from "./report.model";
 
 export class ReportEssayDirector {
   private steps!: StepBuilder[];
+  private name!: string;
 
   public setSteps(steps: StepBuilder[]): void {
     this.steps = steps;
   }
 
+  public setName(name: string): void {
+    this.name = name;
+  }
+
   /*
   * TODO:
-  * - Nombre del reporte como título del reporte.
   * - un único ensayo por página
   * - número de página
   * - identificación del reporte (puede ser el id de ejecución)
@@ -21,6 +25,11 @@ export class ReportEssayDirector {
 
     const pageA4 = new ReportPageA4();
     const reportHeaderBuilder = new ReportHeaderBuilder();
+    if (this.name) {
+      reportHeaderBuilder.patchValue({ name: this.name })
+    } else {
+      throw new Error('Reporte sin nombre');
+    }
     const header = reportHeaderBuilder.produce();
     pageA4.add(header);
     this.steps.forEach(({ reportBuilder }) => {

@@ -16,9 +16,10 @@ export class ExecutionDirector {
 
   private steps: StepBuilder[] = [];
 
-  setSteps(steps: StepBuilder[]): void {
+  setSteps(steps: StepBuilder[], reportName: string): void {
     this.steps = steps;
     this.reportEssayDirector.setSteps(steps);
+    this.reportEssayDirector.setName(reportName);
   }
 
   resetState(): void {

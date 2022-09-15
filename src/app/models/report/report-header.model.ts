@@ -28,10 +28,18 @@ export class ReportHeaderBuilder extends ReportBuilder {
     td_2.style = 'padding-top:16mm;text-align:center;';
     td_2.text = `<img src="./assets/img/logo.png" />`;
 
+    const tr_3 = new ReportTr();
+    const td_3 = new ReportTd();
+    td_3.style = 'padding-top:2mm;font-size:10mm;text-align:center;';
+    td_3.text = this.data.name ?? '';
+    td_3.class = 'text-700';
+
     tableHeader.add(tr_1);
     tableHeader.add(tr_2);
+    tableHeader.add(tr_3);
     tr_1.add(td_1);
     tr_2.add(td_2);
+    tr_3.add(td_3);
 
     return tableHeader;
   }

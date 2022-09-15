@@ -96,7 +96,7 @@ export class ExecuteEssayComponent implements OnInit, OnDestroy {
   }
 
   private initExecution(): void {
-    this.executionDirectorService.setSteps(this.stepBuilders);
+    this.executionDirectorService.setSteps(this.stepBuilders, this.form.get('essayTemplate')?.value.name);
     this.executionDirectorService.prepareStepsToExecute();
     this.executionDirectorService.executeNext();
   }
