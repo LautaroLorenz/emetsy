@@ -8,9 +8,11 @@
   ></p-button>
 </div>
 
-<div class="pb-3">
-  <div
-    #container
-    [innerHtml]="preview"
-  ></div>
-</div>
+<ng-container *ngIf="preview">
+  <div class="pb-3">
+    <div
+      #container
+      [innerHtml]="preview"
+    ></div>
+  </div>
+</ng-container>
