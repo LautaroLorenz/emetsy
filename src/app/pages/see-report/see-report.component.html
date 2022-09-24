@@ -23,6 +23,12 @@
 
     <div class="flex flex-column pt-4 pl-3 w-4">
 
+
+      <div class="info-field">
+        <label>Número de reporte</label>
+        <span>{{history.id}}</span>
+      </div>
+
       <div class="info-field">
         <label>Nombre</label>
         <span>{{history.essay}}</span>
@@ -33,6 +39,11 @@
           <i class="pi pi-calendar"></i>Fecha de guardado
         </label>
         <span>{{history.saved}} Hs</span>
+      </div>
+
+      <div class="info-field">
+        <label>Cantidad de pasos</label>
+        <span>{{history.items_raw.length}}</span>
       </div>
 
     </div>

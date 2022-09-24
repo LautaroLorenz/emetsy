@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
 import { BehaviorSubject } from "rxjs";
-import { Action, ExecutionStatus, ReportEssayDirector, StepBuilder } from "../models";
+import { Action, ExecutionStatus, StepBuilder } from "../models";
 
 
 @Injectable({
@@ -8,20 +8,15 @@ import { Action, ExecutionStatus, ReportEssayDirector, StepBuilder } from "../mo
 })
 export class ExecutionDirector {
 
-  public reportEssayDirector = new ReportEssayDirector();
   public activeStepIndex$ = new BehaviorSubject<number | null>(null);
   public activeActionIndex$ = new BehaviorSubject<number | null>(null);
   public activeAction$ = new BehaviorSubject<Action | null>(null);
   public executionStatus$ = new BehaviorSubject<ExecutionStatus>('CREATED');
-
-  private steps: StepBuilder[] = [];
-
-  setSteps(steps: StepBuilder[]): void {
-    this.steps = steps;
-    this.reportEssayDirector.setSteps(steps);
-  }
+  public steps: StepBuilder[] = [];
+  public reportName: string = '';
 
   resetState(): void {
+    this.reportName = '';
     this.steps = [];
     this.activeStepIndex$.next(null);
     this.activeActionIndex$.next(null);

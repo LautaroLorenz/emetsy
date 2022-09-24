@@ -30,7 +30,6 @@ export class SeeReportComponent implements OnInit, OnDestroy {
   }
 
   private readonly creating$ = new BehaviorSubject<boolean>(false);
-  private readonly reportEssayDirector = new ReportEssayDirector();
   private readonly destroyed$: ReplaySubject<boolean> = new ReplaySubject(1);
 
   constructor(
@@ -51,13 +50,9 @@ export class SeeReportComponent implements OnInit, OnDestroy {
       switchMap((id) => this.dbServiceHistory.getTableElement$(HistoryDbTableContext.tableName, id)),
       tap((history) => history.items_raw = JSON.parse(history.items_raw as unknown as string)), // parse raw data
       tap((history) => this.history$.next(history)),
-      tap(({ items_raw }) => {
-        const stepBuilders: StepBuilder[] = items_raw.map(({ essayTemplateStep }) => StepConstructor.buildStepById(essayTemplateStep.step_id, essayTemplateStep, this.destroyed$));
-        stepBuilders.forEach(({ reportBuilder }, index) => reportBuilder.patchValue(items_raw[index].reportData));
-        this.reportEssayDirector.setSteps(stepBuilders);
-      }),
-      tap(() => {
-        const report: Report = this.reportEssayDirector.createReport();
+      tap((history) => {
+        const reportDirector = new ReportEssayDirector(history, this.destroyed$);
+        const report: Report = reportDirector.createReport();
         this._report = report;
         this._preview = report.toString();
       }),

@@ -1,12 +1,11 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormArray, FormControl, FormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { BehaviorSubject, filter, map, Observable, ReplaySubject, switchMap, take, takeUntil, tap } from 'rxjs';
-import { Action, DateHelper, EssayTemplate, EssayTemplateDbTableContext, EssayTemplateStep, EssayTemplateStepDbTableContext, ExecutionStatus, History, HistoryDbTableContext, HistoryItem, MetricEnum, PageUrlName, RelationsManager, StepBuilder, WhereKind, WhereOperator } from 'src/app/models';
+import { filter, map, Observable, ReplaySubject, switchMap, take, takeUntil, tap } from 'rxjs';
+import { Action, EssayTemplate, EssayTemplateDbTableContext, EssayTemplateStep, EssayTemplateStepDbTableContext, ExecutionStatus, MetricEnum, PageUrlName, RelationsManager, StepBuilder, WhereKind, WhereOperator } from 'src/app/models';
 import { StepConstructor } from 'src/app/models/steps/step-constructor.model';
 import { DatabaseService } from 'src/app/services/database.service';
 import { ExecutionDirector } from 'src/app/services/execution-director.service';
-import { MessagesService } from 'src/app/services/messages.service';
 import { NavigationService } from 'src/app/services/navigation.service';
 import { StaticsService } from 'src/app/services/statics.service';
 
@@ -18,7 +17,6 @@ export class ExecuteEssayComponent implements OnInit, OnDestroy {
 
   readonly title: string = 'Ensayo';
   readonly id$: Observable<number>;
-  readonly saving$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   readonly form: FormGroup;
 
   showNoStepsWarning!: boolean;
@@ -69,8 +67,6 @@ export class ExecuteEssayComponent implements OnInit, OnDestroy {
     private readonly navigationService: NavigationService,
     private readonly route: ActivatedRoute,
     private readonly executionDirectorService: ExecutionDirector,
-    private readonly dbServiceHistory: DatabaseService<History>,
-    private readonly messagesService: MessagesService,
     private readonly staticsService: StaticsService,
   ) {
     this.id$ = this.route.queryParams.pipe(
@@ -96,7 +92,8 @@ export class ExecuteEssayComponent implements OnInit, OnDestroy {
   }
 
   private initExecution(): void {
-    this.executionDirectorService.setSteps(this.stepBuilders);
+    this.executionDirectorService.reportName = this.form.get('essayTemplate')?.value.name;
+    this.executionDirectorService.steps = this.stepBuilders;
     this.executionDirectorService.prepareStepsToExecute();
     this.executionDirectorService.executeNext();
   }
@@ -145,36 +142,15 @@ export class ExecuteEssayComponent implements OnInit, OnDestroy {
     this.executionDirectorService.executeNext();
   }
 
-  save(): void {
-    this.saving$.next(true);
-
-    const history: History = {
-      essay: this.essayName,
-      saved: DateHelper.getNow(),
-    } as History;
-    history.items_raw = [];
-    this.stepBuilders.forEach((stepBuilder) => {
-      const historyItem: HistoryItem = {
-        essayTemplateStep: stepBuilder.essayTemplateStep,
-        reportData: stepBuilder.reportBuilder.data
-      };
-      history.items_raw.push(historyItem);
-    });
-
-    this.dbServiceHistory.addElementToTable$(HistoryDbTableContext.tableName, {
-      ...history,
-      items_raw: JSON.stringify(history.items_raw) as any,
-    })
-      .pipe(
-        take(1),
-        tap(() => {
-          this.staticsService.increment$(MetricEnum.execution, { essay: this.essayName }).pipe(take(1)).subscribe();
-          this.messagesService.success('Agregado correctamente');
+  goToHistory(): void {
+    this.staticsService.increment$(MetricEnum.execution, { essay: this.essayName }).pipe(
+      take(1),
+      tap(() => {
+        setTimeout(() => {
           this.navigationService.back({ targetPage: PageUrlName.historyAndReports });
-        }),
-      ).subscribe({
-        error: () => this.messagesService.error('No se pudo crear el elemento')
-      });
+        })
+      })
+    ).subscribe();
   }
 
   ngOnDestroy() {
