@@ -162,10 +162,19 @@ function getMockResponse(command) {
         essayType = ESSAY_TYPES.CONTRAST;
         response = 'B| CAL| PCS| ACK00000| Z| ';
         break;
+      case 'TS2xxxxx':
+        essayType = ESSAY_TYPES.VACUUM;
+        // TODO: reset/prepare counters
+        response = 'B| CAL| PCS| ACK00000| Z| ';
+        break;
       case 'STD00000':
         switch (essayType) {
           case ESSAY_TYPES.CONTRAST:
             response = getContrastResult();
+            break;
+          case ESSAY_TYPES.VACUUM:
+            // TODO: response = getContrastResult();
+            break;
         }
         break;
       case 'STP00000':

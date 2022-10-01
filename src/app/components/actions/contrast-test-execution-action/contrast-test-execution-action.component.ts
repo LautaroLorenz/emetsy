@@ -1,7 +1,7 @@
 import { AfterViewInit, ChangeDetectionStrategy, Component, Input, OnDestroy } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { BehaviorSubject, catchError, filter, forkJoin, interval, map, Observable, of, ReplaySubject, Subject, switchMap, take, takeUntil, takeWhile, tap } from 'rxjs';
-import { Action, ActionComponent, CalculatorParams, ContrastTestExecutionAction, ContrastTestParametersAction, DateHelper, EnterTestValuesAction, Meter, MeterDbTableContext, MetricEnum, PatternParams, Phases, RelationsManager, ReportContrastTest, ReportContrastTestBuilder, ResponseStatus, ResponseStatusEnum, ResultEnum, StandArrayFormValue, StandIdentificationAction, StandResult, StepIdEnum, UserIdentificationAction, WhereKind, WhereOperator } from 'src/app/models';
+import { Action, ActionComponent, CalculatorParams, ContrastTestExecutionAction, ContrastTestParametersAction, DateHelper, EnterTestValuesAction, Meter, MeterDbTableContext, MetricEnum, PatternParams, Phases, RelationsManager, ReportContrastTest, ReportContrastTestBuilder, ResponseStatus, ResponseStatusEnum, ResultEnum, StandArrayFormValue, StandIdentificationAction, StandResult, WhereKind, WhereOperator } from 'src/app/models';
 import { CalculatorService } from 'src/app/services/calculator.service';
 import { DatabaseService } from 'src/app/services/database.service';
 import { ExecutionDirector } from 'src/app/services/execution-director.service';
@@ -38,6 +38,9 @@ export class ContrastTestExecutionActionComponent implements ActionComponent, Af
   }
   get enterTestValuesAction(): EnterTestValuesAction {
     return (this.action as ContrastTestExecutionAction).enterTestValuesAction;
+  }
+  get standIdentificationAction(): StandIdentificationAction {
+    return (this.action as ContrastTestExecutionAction).standIdentificationAction;
   }
   get connected(): boolean {
     return this.usbHandlerService.connected$.value;
@@ -221,16 +224,8 @@ export class ContrastTestExecutionActionComponent implements ActionComponent, Af
       throw new Error('No se configuró el número de resultados para descartar');
     }
     this.reportData.maxAllowedError = maxAllowedError ?? 0;
-    const preparationStep = [this.executionDirectorService.getActiveStepBuilder()?.actions];
-    if (!preparationStep) {
-      throw new Error('Paso de preparación no encontrado');
-    }
-    const standIdentificationAction: StandIdentificationAction = this.executionDirectorService.getActiveStepBuilder()!.actions[0] as StandIdentificationAction;
-    if (!standIdentificationAction) {
-      throw new Error('Paso de identificación no encontrado');
-    }
   
-    const stands = (standIdentificationAction).standArray.getRawValue();
+    const stands = this.standIdentificationAction.standArray.getRawValue();
     this.activeStands = stands.filter(({ isActive }) => isActive);
     this.reportData.standsLength = this.activeStands.length;
     this.reportData.stands = [];

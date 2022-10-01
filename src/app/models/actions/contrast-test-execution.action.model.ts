@@ -3,6 +3,7 @@ import { BehaviorSubject } from "rxjs";
 import { Action, ActionEnum, ExecutionStatus } from "./action.model";
 import { ContrastTestParametersAction } from "./contrast-test-parameters.action.model";
 import { EnterTestValuesAction } from "./enter-test-values.action.model";
+import { StandIdentificationAction } from "./stand-identification.action.model";
 
 export class ContrastTestExecutionAction implements Action {
 
@@ -10,13 +11,16 @@ export class ContrastTestExecutionAction implements Action {
   form!: FormGroup;
   actionEnum: ActionEnum = ActionEnum.ContrastTestExecution;
   executionStatus$ = new BehaviorSubject<ExecutionStatus>('CREATED');
+  readonly standIdentificationAction: StandIdentificationAction;
   readonly enterTestValuesAction: EnterTestValuesAction;
   readonly contrastTestParametersAction: ContrastTestParametersAction;
 
   constructor(
+    standIdentificationAction: StandIdentificationAction,
     enterTestValuesAction: EnterTestValuesAction,
     contrastTestParametersAction: ContrastTestParametersAction,
   ) {
+    this.standIdentificationAction = standIdentificationAction;
     this.enterTestValuesAction = enterTestValuesAction;
     this.contrastTestParametersAction = contrastTestParametersAction;
   }

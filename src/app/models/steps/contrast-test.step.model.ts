@@ -18,7 +18,11 @@ export class ContrastTestStep extends StepBuilder {
     const standIdentificationAction = new StandIdentificationAction(destroyed$);
     const enterTestValuesAction = new EnterTestValuesAction(0);
     const contrastTestParametersAction = new ContrastTestParametersAction(3);
-    const contrastTestExecutionAction = new ContrastTestExecutionAction(enterTestValuesAction, contrastTestParametersAction);
+    const contrastTestExecutionAction = new ContrastTestExecutionAction(
+      standIdentificationAction,
+      enterTestValuesAction,
+      contrastTestParametersAction
+    );
 
     const _actions: Action[] = [
       standIdentificationAction,
