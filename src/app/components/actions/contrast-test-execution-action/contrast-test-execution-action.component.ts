@@ -24,8 +24,8 @@ export class ContrastTestExecutionActionComponent implements ActionComponent, Af
   readonly results$: BehaviorSubject<StandResult[]> = new BehaviorSubject<StandResult[]>([]);
   readonly initialized$: BehaviorSubject<boolean | null> = new BehaviorSubject<boolean | null>(null);
   readonly canConnect$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
-  get contrastTestExecutionComplete(): boolean {
-    return this.form.get('contrastTestExecutionComplete')?.value;
+  get executionComplete(): boolean {
+    return this.form.get('executionComplete')?.value;
   }
   get name(): string {
     return this.action.name;
@@ -46,7 +46,7 @@ export class ContrastTestExecutionActionComponent implements ActionComponent, Af
     return this.usbHandlerService.connected$.value;
   }
   get restartDisabled(): boolean {
-    return !this.form.get('contrastTestExecutionComplete')?.value;
+    return !this.form.get('executionComplete')?.value;
   }
 
   private executionParams = {
@@ -132,7 +132,7 @@ export class ContrastTestExecutionActionComponent implements ActionComponent, Af
       }),
       tap(() => this.reportData.executionSeconds = this.executionTime$.value),
       tap(() => this.setReportParams(this.reportData)),
-      tap(() => this.form.get('contrastTestExecutionComplete')?.setValue(true)),
+      tap(() => this.form.get('executionComplete')?.setValue(true)),
       switchMap((value) => this.usbHandlerService.disconnect$().pipe(
         tap(() => this.canConnect$.next(false)),
         map(() => value)
@@ -162,7 +162,7 @@ export class ContrastTestExecutionActionComponent implements ActionComponent, Af
     this.calculatorService.params$.pipe(
       takeUntil(this.lisenResultsControl$),
       takeUntil(this.destroyed$),
-      takeWhile(() => !this.contrastTestExecutionComplete),
+      takeWhile(() => !this.executionComplete),
       filter((value) => value !== null),
       map((value) => value as CalculatorParams),
       tap(() => {
@@ -297,7 +297,7 @@ export class ContrastTestExecutionActionComponent implements ActionComponent, Af
   }
 
   restart(): void {
-    this.form.get('contrastTestExecutionComplete')?.setValue(undefined);
+    this.form.get('executionComplete')?.setValue(undefined);
     this.usbHandlerService.connect$().pipe(take(1)).subscribe();
   }
 

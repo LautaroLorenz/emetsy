@@ -6,11 +6,12 @@ import { PhotocellAdjustmentStep } from "./photocell-adjustment.step.model";
 import { ReportStep } from "./report.step.model";
 import { StepBuilder } from "./step-builder.model";
 import { UserIdentificationStep } from "./user-identification.step.model";
+import { VacuumTestStep } from "./vacuum-test.step.model";
 
 export enum StepIdEnum {
   ReportBuilder = 0, // default
   ReportStep = 1,
-  _2 = 2,
+  VacuumTestStep = 2,
   _3 = 3,
   ContrastTestStep = 4,
   _5 = 5,
@@ -24,6 +25,8 @@ export class StepConstructor {
     switch (step_id) {
       case StepIdEnum.ReportStep:
         return new ReportStep(essayTemplateStep);
+      case StepIdEnum.VacuumTestStep:
+        return new VacuumTestStep(essayTemplateStep, destroyed$);
       case StepIdEnum.ContrastTestStep:
         return new ContrastTestStep(essayTemplateStep, destroyed$);
       case StepIdEnum.PhotocellAdjustmentStep:
