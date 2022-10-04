@@ -1,0 +1,48 @@
+<fom
+  novalidate
+  [formGroup]="form"
+>
+  <p-fieldset>
+    <ng-template pTemplate="header">
+      <span>{{name}}</span>
+    </ng-template>
+
+    <app-devices [canConnect]="(canConnect$ | async) ? true : false">
+    </app-devices>
+
+    <div class="flex flex-1 mb-3 mt-4">
+      <ng-container *ngIf="phases$ | async as phases">
+        <app-phases [phases]="phases"></app-phases>
+      </ng-container>
+    </div>
+
+    <ng-container
+      *ngIf="{ value: vacuumTimer.progressPercentage$ | async } as progress"
+    >
+      <div class="flex flex-1 mb-1 mt-4">
+        <p-progressBar
+          [value]="progress.value"
+          class="w-full"
+        ></p-progressBar>
+      </div>
+    </ng-container>
+
+    <div *ngIf="form.get('executionComplete')?.value" class="flex flex-1 mb-3 mt-4">
+      <ng-container *ngIf="results$ | async as results">
+        <app-stand-result [results]="results"></app-stand-result>
+      </ng-container>
+    </div>
+
+  </p-fieldset>
+
+  <div class="flex justify-content-end my-3">
+    <p-button
+      styleClass="p-button-outlined"
+      label="Volver a ejecutar"
+      (click)="restart()"
+      [disabled]="restartDisabled"
+      [ngClass]="{ 'pointer-events-none': restartDisabled }"
+    ></p-button>
+  </div>
+
+</fom>

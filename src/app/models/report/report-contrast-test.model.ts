@@ -1,16 +1,8 @@
-import { Result, ResultEnum } from "../components/stand-result.model";
+import { ResultEnum } from "../components/stand-result.model";
 import { ReportBuilder } from "./report-builder.model";
+import { ReportStand } from "./report-stand.model";
 import { ReportTable, ReportTd, ReportTr } from "./report.model";
 
-
-export interface ReportStand {
-  standIndex: number;
-  brandModel: string | null;
-  errorValue: number | null;
-  result: Result | null;
-  serialNumber: string;
-  yearOfProduction: number;
-}
 
 export interface ReportContrastTest {
   reportName: string;
@@ -190,7 +182,7 @@ export class ReportContrastTestBuilder extends ReportBuilder {
 
         const td_2_3 = new ReportTd();
         td_2_3.style = td_info_style.concat('border-right:unset;text-align:right;').concat(withBorderBottom ? '' : 'border-bottom:unset;');
-        td_2_3.text = `${stand.errorValue}`;
+        td_2_3.text = `${stand.value}`;
         const td_2_4 = new ReportTd();
         td_2_4.style = td_info_style.concat('text-align:center;').concat(withBorderBottom ? '' : 'border-bottom:unset;');
         td_2_4.text = `${stand.result === ResultEnum.APPROVED ? 'Aprobado' : 'Desaprobado'}`;

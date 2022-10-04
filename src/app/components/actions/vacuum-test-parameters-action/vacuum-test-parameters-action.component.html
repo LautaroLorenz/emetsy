@@ -1,0 +1,68 @@
+<fom
+  novalidate
+  [formGroup]="form"
+>
+  <p-fieldset>
+    <ng-template pTemplate="header">
+      <span>{{name}}</span>
+    </ng-template>
+
+    <div class="flex flex-1 flex-column">
+      <label
+        for="maxAllowedPulses"
+        class="mb-2"
+      >Cantidad de impulsos máxima permitida<span
+          class="ml-1 text-red-300">*</span>
+      </label>
+      <div class="p-inputgroup">
+        <span
+          class="p-inputgroup-addon"
+          #helpIcon2
+        >
+          <i
+            class="pi pi-info-circle"
+            (mouseenter)="op2.show($event, helpIcon2)"
+            (mouseleave)="op2.hide()"
+          ></i>
+        </span>
+        <p-overlayPanel
+          #op2
+          [appendTo]="helpIcon2"
+        >
+          <ng-template pTemplate>
+            <div class="text-sm text-700 flex flex-column">
+              Para superar la prueba la cantidad de impulsos debe ser menor o
+              igual al máximo permitido.
+            </div>
+          </ng-template>
+        </p-overlayPanel>
+        <p-inputNumber
+          styleClass="flex flex-1"
+          id="maxAllowedPulses"
+          formControlName="maxAllowedPulses"
+          autofocus
+          [useGrouping]="false"
+        ></p-inputNumber>
+      </div>
+    </div>
+
+    <div class="flex flex-1 flex-column mt-3">
+      <label
+        for="durationSeconds"
+        class="mb-2"
+      >Tiempo de ejecución [s]<span
+          class="ml-1 text-red-300">*</span>
+      </label>
+      <div class="p-inputgroup">
+        <p-inputNumber
+          styleClass="flex flex-1"
+          id="durationSeconds"
+          formControlName="durationSeconds"
+          autofocus
+          [useGrouping]="false"
+        ></p-inputNumber>
+      </div>
+    </div>
+
+  </p-fieldset>
+</fom>

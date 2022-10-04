@@ -5,8 +5,8 @@ import { ReportVacuumTestBuilder } from "../report/report-vacuum-test.model";
 import { EssayTemplateStep } from "../database/tables/essay-template-step.model";
 import { StandIdentificationAction } from "../actions/stand-identification.action.model";
 import { ReplaySubject } from "rxjs";
-import { VacuumTestParametersAction } from "../actions/vacuum-test-parameters-action.model";
-import { VacuumTestExecutionAction } from "../actions/vacuum-test-execution-action.model";
+import { VacuumTestParametersAction } from "../actions/vacuum-test-parameters.action.model";
+import { VacuumTestExecutionAction } from "../actions/vacuum-test-execution.action.model";
 
 export class VacuumTestStep extends StepBuilder {
 

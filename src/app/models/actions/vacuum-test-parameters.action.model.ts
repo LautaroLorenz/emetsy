@@ -16,6 +16,7 @@ export class VacuumTestParametersAction implements Action {
     this.form = new FormGroup<VacuumTestParametersActionForm>({
       actionName: new FormControl(this.name),
       maxAllowedPulses: new FormControl<number | null | undefined>(undefined, [Validators.required]),
+      durationSeconds: new FormControl<number | null | undefined>(undefined, [Validators.required]),
     }, []);
 
     return this.form;

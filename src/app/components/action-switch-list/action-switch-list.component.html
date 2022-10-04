@@ -15,6 +15,11 @@
       [action]="action"
       class="mb-3"
     ></app-contrast-test-parameters-action>
+    <app-contrast-test-execution-action
+      *ngSwitchCase="ActionEnum.ContrastTestExecution"
+      [action]="action"
+      class="mb-3"
+    ></app-contrast-test-execution-action>
     <app-enter-test-values-action
       *ngSwitchCase="ActionEnum.EnterTestValues"
       [action]="action"
@@ -30,11 +35,16 @@
       [action]="action"
       class="mb-3"
     ></app-photocell-adjustment-execution-action>
-    <app-contrast-test-execution-action
-      *ngSwitchCase="ActionEnum.ContrastTestExecution"
+    <app-vacuum-test-parameters-action
+      *ngSwitchCase="ActionEnum.VacuumTestParameters"
       [action]="action"
       class="mb-3"
-    ></app-contrast-test-execution-action>
+    ></app-vacuum-test-parameters-action>
+    <app-vacuum-test-execution-action
+      *ngSwitchCase="ActionEnum.VacuumTestExecution"
+      [action]="action"
+      class="mb-3"
+    ></app-vacuum-test-execution-action>
     <app-report-action
       *ngSwitchCase="ActionEnum.Report"
       [action]="action"

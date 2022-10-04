@@ -4,6 +4,7 @@ const { SerialPortStream } = require('@serialport/stream')
 const { DelimiterParser } = require('serialport');
 const { getRandomInt } = require('../resources/mock/random');
 const { getContrastResult } = require('../resources/mock/essay/essay-contrast-mock');
+const { prepareCounters, incrementCounter, getVacuumResult } = require('../resources/mock/essay/essay-vacuum-mock');
 
 let serialPort;
 const parser = new DelimiterParser({ delimiter: '\n', includeDelimiter: false });
@@ -164,7 +165,7 @@ function getMockResponse(command) {
         break;
       case 'TS2xxxxx':
         essayType = ESSAY_TYPES.VACUUM;
-        // TODO: reset/prepare counters
+        prepareCounters();
         response = 'B| CAL| PCS| ACK00000| Z| ';
         break;
       case 'STD00000':
@@ -173,7 +174,8 @@ function getMockResponse(command) {
             response = getContrastResult();
             break;
           case ESSAY_TYPES.VACUUM:
-            // TODO: response = getContrastResult();
+            incrementCounter();
+            response = getVacuumResult();
             break;
         }
         break;

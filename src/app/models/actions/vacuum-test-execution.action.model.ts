@@ -3,7 +3,7 @@ import { BehaviorSubject } from "rxjs";
 import { Action, ActionEnum, ExecutionStatus } from "./action.model";
 import { EnterTestValuesAction } from "./enter-test-values.action.model";
 import { StandIdentificationAction } from "./stand-identification.action.model";
-import { VacuumTestParametersAction } from "./vacuum-test-parameters-action.model";
+import { VacuumTestParametersAction } from "./vacuum-test-parameters.action.model";
 
 export class VacuumTestExecutionAction implements Action {
 
