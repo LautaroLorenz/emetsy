@@ -1,6 +1,6 @@
 # Emetsy
 
-Proyecto EMeTSy
+El proyecto EMETSY es un software que sirve para realizar pruebas de calibración.
 
 ## Puesta en marcha
 
@@ -9,6 +9,19 @@ La primera vez clonar el repositorio y ejecutar `npm install` para descargar las
 Luego con el comando `npm start` podemos levantar el proyecto para desarrollar.
 - Los cambios en el frontend AngularJs generan refresco automático (Hot Reload).
 - Si se cambia el backend hay que matar el proceso y volver a ejecutarlo para ver los cambios.
+
+## Simulador virtual
+
+El simulador virtual sirve para usar el proyecto sin contar con un simulador físico.
+
+#### Para usar el simulador virtual
+
+En el archivo `app/index.js` se debe editar la siguiente linea 
+- `require('./commands/usb-serial-port');`
+
+Agregando "-mock" al final, resultando 
+- `require('./commands/usb-serial-port-mock');`
+
 
 ## Comandos disponibles
 
@@ -21,6 +34,7 @@ Luego con el comando `npm start` podemos levantar el proyecto para desarrollar.
 | `npm run migrate` | Crear tablas en la base de datos en base a los migrations creados |
 | `npm run seed` | Iniciar las tablas de la BBDD con datos de prueba en base a los seeds creados |
 | `npm run migrate:rollback` | Ejecuta la función down de un migrate, vuelve un estado hacia atras |
+
 
 ## Scaffolding
 
