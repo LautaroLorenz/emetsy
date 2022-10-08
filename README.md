@@ -1,6 +1,6 @@
 # Emetsy
 
-Proyecto EMeTSy
+El proyecto EMETSY es un software que sirve para realizar pruebas de calibración.
 
 ## Puesta en marcha
 
