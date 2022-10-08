@@ -50,6 +50,7 @@ export const PROTOCOL = {
         STOP: 'STP00000',
         ESSAY: {
           CONTRAST: 'TS1xxxxx',
+          VACUUM: 'TS2xxxxx',
         },
       }
     },

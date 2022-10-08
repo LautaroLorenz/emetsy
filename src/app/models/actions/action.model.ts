@@ -21,6 +21,8 @@ export enum ActionEnum {
   EnterTestValues = 'EnterTestValues',
   ContrastTestParameters = 'ContrastTestParameters',
   ContrastTestExecution = 'ContrastTestExecution',
+  VacuumTestParameters = 'VacuumTestParameters',
+  VacuumTestExecution = 'VacuumTestExecution',
   PhotocellAdjustmentExecution = 'PhotocellAdjustmentExecution',
   UserIdentification = 'UserIdentification',
   Report = 'Report',

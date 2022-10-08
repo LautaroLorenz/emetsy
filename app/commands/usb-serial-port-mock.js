@@ -2,6 +2,9 @@ const { ipcMain } = require('electron');
 const { MockBinding } = require('@serialport/binding-mock')
 const { SerialPortStream } = require('@serialport/stream')
 const { DelimiterParser } = require('serialport');
+const { getRandomInt } = require('../resources/mock/random');
+const { getContrastResult } = require('../resources/mock/essay/essay-contrast-mock');
+const { prepareCounters, incrementCounter, getVacuumResult } = require('../resources/mock/essay/essay-vacuum-mock');
 
 let serialPort;
 const parser = new DelimiterParser({ delimiter: '\n', includeDelimiter: false });
@@ -118,11 +121,11 @@ function logFromSimulatorToSoftware(command, queue) {
 * --------------------------------------------------------------------------------
 */
 
-function getRandomInt(min, max) {
-  min = Math.ceil(min);
-  max = Math.floor(max);
-  return Math.floor(Math.random() * (max - min) + min); // The maximum is exclusive and the minimum is inclusive
-}
+const ESSAY_TYPES = {
+  CONTRAST: 'CONTRAST',
+  VACUUM: 'VACUUM',
+};
+let essayType = '';
 
 function getMockResponse(command) {
   const parts = command.split('| ');
@@ -155,21 +158,30 @@ function getMockResponse(command) {
   }
 
   if (to === 'CAL') {
-    if (type === 'TS1xxxxx') {
-      response = 'B| CAL| PCS| ACK00000| Z| ';
-    }
-    if (type === 'STD00000') {
-      response = `B| CAL| PCS|`;
-      for (let i = 0; i < 20; i++) {
-        const index = String(i + 1).padStart(2, '0');
-        const simbol = getRandomInt(1, 3) % 2 === 0 ? '+' : '-';
-        const result = String(getRandomInt(0, 200)).padStart(3, '0');
-        response += ` P${index}${simbol}0${result}|`;
-      }
-      response += ' Z';
-    }
-    if (type === 'STP00000') {
-      response = 'B| CAL| PCS| ACK00000| Z| ';
+    switch (type) {
+      case 'TS1xxxxx':
+        essayType = ESSAY_TYPES.CONTRAST;
+        response = 'B| CAL| PCS| ACK00000| Z| ';
+        break;
+      case 'TS2xxxxx':
+        essayType = ESSAY_TYPES.VACUUM;
+        prepareCounters();
+        response = 'B| CAL| PCS| ACK00000| Z| ';
+        break;
+      case 'STD00000':
+        switch (essayType) {
+          case ESSAY_TYPES.CONTRAST:
+            response = getContrastResult();
+            break;
+          case ESSAY_TYPES.VACUUM:
+            incrementCounter();
+            response = getVacuumResult();
+            break;
+        }
+        break;
+      case 'STP00000':
+        response = 'B| CAL| PCS| ACK00000| Z| ';
+        break;
     }
   }
 

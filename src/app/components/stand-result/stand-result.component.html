@@ -1,7 +1,7 @@
 <div class="flex flex-1 flex-column">
   <div class="flex w-full">
     <div class="flex w-4 cell cell-header">Puesto</div>
-    <div class="flex w-4 cell cell-header">Error calculado [%]</div>
+    <div class="flex w-4 cell cell-header">Calculado</div>
     <div class="flex w-4 cell cell-header">Resultado</div>
   </div>
 
@@ -11,7 +11,7 @@
         {{standResult.stand}}
       </div>
       <div class="flex w-4 cell justify-content-end">
-        {{standResult.calculatorErrorValue}}
+        {{standResult.calculatorValue}}
       </div>
       <div class="flex w-4 cell justify-content-center">
         <ng-container [ngSwitch]="standResult.result">

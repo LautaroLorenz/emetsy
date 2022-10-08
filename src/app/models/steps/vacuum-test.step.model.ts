@@ -1,40 +1,40 @@
 import { Action } from "../actions/action.model";
 import { StepBuilder } from "./step-builder.model";
-import { ContrastTestParametersAction } from "../actions/contrast-test-parameters.action.model";
 import { EnterTestValuesAction } from "../actions/enter-test-values.action.model";
-import { ContrastTestExecutionAction } from "../actions/contrast-test-execution.action.model";
-import { ReportContrastTestBuilder } from "../report/report-contrast-test.model";
+import { ReportVacuumTestBuilder } from "../report/report-vacuum-test.model";
 import { EssayTemplateStep } from "../database/tables/essay-template-step.model";
 import { StandIdentificationAction } from "../actions/stand-identification.action.model";
 import { ReplaySubject } from "rxjs";
+import { VacuumTestParametersAction } from "../actions/vacuum-test-parameters.action.model";
+import { VacuumTestExecutionAction } from "../actions/vacuum-test-execution.action.model";
 
-export class ContrastTestStep extends StepBuilder {
+export class VacuumTestStep extends StepBuilder {
 
   constructor(
     essayTemplateStep: EssayTemplateStep,
     destroyed$: ReplaySubject<boolean>
   ) {
-    const reportBuilder = new ReportContrastTestBuilder();
+    const reportBuilder = new ReportVacuumTestBuilder();
     const standIdentificationAction = new StandIdentificationAction(destroyed$);
     const enterTestValuesAction = new EnterTestValuesAction(0);
-    const contrastTestParametersAction = new ContrastTestParametersAction(3);
-    const contrastTestExecutionAction = new ContrastTestExecutionAction(
+    const vacuumTestParametersAction = new VacuumTestParametersAction();
+    const vacuumTestExecutionAction = new VacuumTestExecutionAction(
       standIdentificationAction,
       enterTestValuesAction,
-      contrastTestParametersAction
+      vacuumTestParametersAction
     );
 
     const _actions: Action[] = [
       standIdentificationAction,
       enterTestValuesAction,
-      contrastTestParametersAction,
-      contrastTestExecutionAction,
+      vacuumTestParametersAction,
+      vacuumTestExecutionAction,
     ];
 
     const _buildActions: Action[] = [
       standIdentificationAction,
       enterTestValuesAction,
-      contrastTestParametersAction,
+      vacuumTestParametersAction,
     ];
 
     super(essayTemplateStep, _actions, _buildActions, reportBuilder);

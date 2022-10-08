@@ -1,7 +1,7 @@
 import { AfterViewInit, ChangeDetectionStrategy, Component, Input, OnDestroy } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { BehaviorSubject, catchError, filter, forkJoin, interval, map, Observable, of, ReplaySubject, Subject, switchMap, take, takeUntil, takeWhile, tap } from 'rxjs';
-import { Action, ActionComponent, CalculatorParams, ContrastTestExecutionAction, ContrastTestParametersAction, DateHelper, EnterTestValuesAction, Meter, MeterDbTableContext, MetricEnum, PatternParams, Phases, PROTOCOL, RelationsManager, ReportContrastTest, ReportContrastTestBuilder, ResponseStatus, ResponseStatusEnum, ResultEnum, StandArrayFormValue, StandIdentificationAction, StandResult, WhereKind, WhereOperator } from 'src/app/models';
+import { Action, ActionComponent, CalculatorParams, DateHelper, EnterTestValuesAction, Meter, MeterDbTableContext, MetricEnum, PatternParams, Phases, PROTOCOL, RelationsManager, ReportVacuumTest, ReportVacuumTestBuilder, ResponseStatus, ResponseStatusEnum, ResultEnum, StandArrayFormValue, StandIdentificationAction, StandResult, VacuumTestExecutionAction, VacuumTestParametersAction, WhereKind, WhereOperator } from 'src/app/models';
 import { CalculatorService } from 'src/app/services/calculator.service';
 import { DatabaseService } from 'src/app/services/database.service';
 import { ExecutionDirector } from 'src/app/services/execution-director.service';
@@ -12,18 +12,23 @@ import { StaticsService } from 'src/app/services/statics.service';
 import { UsbHandlerService } from 'src/app/services/usb-handler.service';
 
 @Component({
-  selector: 'app-contrast-test-execution-action',
-  templateUrl: './contrast-test-execution-action.component.html',
-  styleUrls: ['./contrast-test-execution-action.component.scss'],
+  selector: 'app-vacuum-test-execution-action',
+  templateUrl: './vacuum-test-execution-action.component.html',
+  styleUrls: ['./vacuum-test-execution-action.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ContrastTestExecutionActionComponent implements ActionComponent, AfterViewInit, OnDestroy {
+export class VacuumTestExecutionActionComponent implements ActionComponent, AfterViewInit, OnDestroy {
 
   @Input() action!: Action;
   readonly phases$: BehaviorSubject<Phases | null> = new BehaviorSubject<Phases | null>(null);
   readonly results$: BehaviorSubject<StandResult[]> = new BehaviorSubject<StandResult[]>([]);
   readonly initialized$: BehaviorSubject<boolean | null> = new BehaviorSubject<boolean | null>(null);
   readonly canConnect$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+  readonly vacuumTimer = {
+    progressPercentage$: new BehaviorSubject<number>(0),
+    progressSeconds: 0,
+    durationSeconds: 0,
+  };
   get executionComplete(): boolean {
     return this.form.get('executionComplete')?.value;
   }
@@ -33,14 +38,14 @@ export class ContrastTestExecutionActionComponent implements ActionComponent, Af
   get form(): FormGroup {
     return this.action.form;
   }
-  get contrastTestParametersAction(): ContrastTestParametersAction {
-    return (this.action as ContrastTestExecutionAction).contrastTestParametersAction;
+  get vacuumTestParametersAction(): VacuumTestParametersAction {
+    return (this.action as VacuumTestExecutionAction).vacuumTestParametersAction;
   }
   get enterTestValuesAction(): EnterTestValuesAction {
-    return (this.action as ContrastTestExecutionAction).enterTestValuesAction;
+    return (this.action as VacuumTestExecutionAction).enterTestValuesAction;
   }
   get standIdentificationAction(): StandIdentificationAction {
-    return (this.action as ContrastTestExecutionAction).standIdentificationAction;
+    return (this.action as VacuumTestExecutionAction).standIdentificationAction;
   }
   get connected(): boolean {
     return this.usbHandlerService.connected$.value;
@@ -52,13 +57,13 @@ export class ContrastTestExecutionActionComponent implements ActionComponent, Af
   private executionParams = {
     phases: {} as Phases,
     stands: [] as StandArrayFormValue[],
-    maxAllowedError: 0,
-    numberOfDiscardedResults: 0
+    maxAllowedPulses: 0,
+    durationSeconds: 0
   };
   private activeStands: StandArrayFormValue[] = [];
   private readonly destroyed$: ReplaySubject<boolean> = new ReplaySubject(1);
   private readonly listenPatternParams$ = new Subject<void>();
-  private readonly reportData: ReportContrastTest = {} as ReportContrastTest;
+  private readonly reportData: ReportVacuumTest = {} as ReportVacuumTest;
   private readonly executionTime$ = new BehaviorSubject<number>(0);
   private readonly executionControl$ = new Subject<void>();
   private readonly lisenResultsControl$ = new Subject<void>();
@@ -73,12 +78,12 @@ export class ContrastTestExecutionActionComponent implements ActionComponent, Af
     private readonly dbServiceMeter: DatabaseService<Meter>,
     private readonly staticsService: StaticsService,
   ) {
-    this.reportData.reportName = 'ENSAYO DE CONTRASTE';
+    this.reportData.reportName = 'ENSAYO DE VACÍO';
   }
 
-  private setReportParams(reportData: ReportContrastTest): void {
+  private setReportParams(reportData: ReportVacuumTest): void {
     const stepBuilder = this.executionDirectorService.getActiveStepBuilder();
-    const reportBuilder: ReportContrastTestBuilder = stepBuilder?.reportBuilder as ReportContrastTestBuilder;
+    const reportBuilder: ReportVacuumTestBuilder = stepBuilder?.reportBuilder as ReportVacuumTestBuilder;
     reportBuilder.patchValue(reportData);
   }
 
@@ -150,14 +155,48 @@ export class ContrastTestExecutionActionComponent implements ActionComponent, Af
     ).subscribe();
   }
 
+  private setResultStatic(standResults: StandResult[]): void {
+    standResults.forEach(({ result, stand, calculatorValue }) => {
+      const reportStand = this.reportData.stands.find(({ standIndex }) => standIndex === stand);
+      if (reportStand) {
+        reportStand.value = calculatorValue;
+        reportStand.result = result;
+
+        if (result === ResultEnum.APPROVED) {
+          this.staticsService.increment$(MetricEnum.meterApproves, { meter: reportStand?.brandModel ?? '' }).pipe(take(1)).subscribe();
+        }
+      } else {
+        console.warn(`El stand ${stand} no se pudo agregar al reporte`);
+      };
+    })
+  }
+
   private lisenResults(
     stands: StandArrayFormValue[],
-    maxAllowedError: number,
-    numberOfDiscardedResults: number
+    maxAllowedPulses: number,
+    durationSeconds: number
   ): void {
     this.lisenResultsControl$.next();
     this.results$.next([]);
-    let remainingDiscartedResultsCounter = numberOfDiscardedResults;
+    this.vacuumTimer.progressPercentage$.next(0);
+    this.vacuumTimer.progressSeconds = 0;
+    this.vacuumTimer.durationSeconds = durationSeconds;
+    const timerControl$ = new Subject<void>();
+
+    interval(1000).pipe(
+      takeUntil(timerControl$),
+      tap(() => {
+        this.vacuumTimer.progressSeconds = this.vacuumTimer.progressSeconds + 1;
+        const progressPercetange = Math.floor(100 * this.vacuumTimer.progressSeconds / this.vacuumTimer.durationSeconds);
+        this.vacuumTimer.progressPercentage$.next(progressPercetange);
+        if (progressPercetange >= 100) {
+          timerControl$.next();
+          this.lisenResultsControl$.next();
+          this.completeAction$().subscribe();
+          this.setResultStatic(this.results$.value);
+        }
+      }),
+    ).subscribe();
 
     this.calculatorService.params$.pipe(
       takeUntil(this.lisenResultsControl$),
@@ -165,35 +204,15 @@ export class ContrastTestExecutionActionComponent implements ActionComponent, Af
       takeWhile(() => !this.executionComplete),
       filter((value) => value !== null),
       map((value) => value as CalculatorParams),
-      tap(() => {
-        if (remainingDiscartedResultsCounter > 0) {
-          remainingDiscartedResultsCounter--;
-        }
-      }),
-      filter(() => remainingDiscartedResultsCounter === 0),
       map(({ results }) => {
         const standResults: StandResult[] = results
           .map((result, index) => {
-            const calculatorErrorValue: number = Number(result.slice(3, 9)) / 100;
-            const calculatorErrorValueAbs: number = Math.abs(calculatorErrorValue);
-            const resultReal = calculatorErrorValueAbs < maxAllowedError ? ResultEnum.APPROVED : ResultEnum.DISAPPROVED;
-
+            const calculatorPulsesValue: number = Number(result.slice(3, 9));
+            const resultReal = calculatorPulsesValue <= maxAllowedPulses ? ResultEnum.APPROVED : ResultEnum.DISAPPROVED;
             const resultStandIndex: number = index + 1;
-            const reportStand = this.reportData.stands.find(({ standIndex }) => standIndex === resultStandIndex);
-            if (reportStand) {
-              reportStand.value = calculatorErrorValue;
-              reportStand.result = resultReal;
-
-              if(resultReal === ResultEnum.APPROVED) {
-                this.staticsService.increment$(MetricEnum.meterApproves, { meter: reportStand?.brandModel ?? '' }).pipe(take(1)).subscribe();
-              }
-            } else {
-              console.warn(`El stand ${resultStandIndex} no se pudo agregar al reporte`);
-            }
-
             return {
               stand: resultStandIndex,
-              calculatorValue: calculatorErrorValue,
+              calculatorValue: calculatorPulsesValue,
               result: resultReal,
             };
           }).filter((standResult) => stands[standResult.stand - 1]?.isActive);
@@ -201,7 +220,6 @@ export class ContrastTestExecutionActionComponent implements ActionComponent, Af
         return standResults;
       }),
       tap((standResults) => this.results$.next(standResults)),
-      switchMap(() => this.completeAction$()),
       catchError((error) => {
         console.error(error);
         this.messagesService.error('Ocurrió un error durante el calculo de resultados.');
@@ -215,10 +233,11 @@ export class ContrastTestExecutionActionComponent implements ActionComponent, Af
 
     this.reportData.executionDateString = DateHelper.getNow();
     const phases: Phases = this.enterTestValuesAction.getPhases();
-    const { maxAllowedError, numberOfDiscardedResults } = this.contrastTestParametersAction.form.getRawValue();
-    this.reportData.maxAllowedError = maxAllowedError ?? 0;
-  
+    const { maxAllowedPulses, durationSeconds } = this.vacuumTestParametersAction.form.getRawValue();
     const stands = this.standIdentificationAction.standArray.getRawValue();
+
+    this.reportData.maxAllowedPulses = maxAllowedPulses as number;
+    this.reportData.durationSeconds = durationSeconds as number;
     this.activeStands = stands.filter(({ isActive }) => isActive);
     this.reportData.standsLength = this.activeStands.length;
     this.reportData.stands = [];
@@ -243,8 +262,8 @@ export class ContrastTestExecutionActionComponent implements ActionComponent, Af
 
     this.executionParams = {
       phases,
-      maxAllowedError: maxAllowedError as number,
-      numberOfDiscardedResults: numberOfDiscardedResults as number,
+      maxAllowedPulses: maxAllowedPulses as number,
+      durationSeconds: durationSeconds as number,
       stands,
     };
 
@@ -273,7 +292,7 @@ export class ContrastTestExecutionActionComponent implements ActionComponent, Af
         }),
       )),
       filter(status => status === ResponseStatusEnum.ACK),
-      switchMap(() => this.calculatorService.turnOn$(PROTOCOL.DEVICE.CALCULATOR.COMMAND.ESSAY.CONTRAST).pipe(
+      switchMap(() => this.calculatorService.turnOn$(PROTOCOL.DEVICE.CALCULATOR.COMMAND.ESSAY.VACUUM).pipe(
         filter(status => status === ResponseStatusEnum.ACK),
         tap(() => {
           this.calculatorService.startRerporting();
@@ -282,8 +301,8 @@ export class ContrastTestExecutionActionComponent implements ActionComponent, Af
       filter(status => status === ResponseStatusEnum.ACK),
       tap(() => this.lisenResults(
         this.executionParams.stands,
-        this.executionParams.maxAllowedError,
-        this.executionParams.numberOfDiscardedResults
+        this.executionParams.maxAllowedPulses,
+        this.executionParams.durationSeconds
       )),
       tap(() => this.initialized$.next(true)),
     ).subscribe();
