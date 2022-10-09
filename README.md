@@ -28,7 +28,7 @@ Agregando "-mock" al final, resultando
 | Comando | Descripción |
 | :--- | :--- |
 | `npm start` | Sirve para desarrollar con el Hot Reload de Angular |
-| `npm run release` | Con este comando se puede publicar un release en Git |
+| `npm run release` | Generar versión productiva, se debe comentar dev en index.js y luego ejecutarlo |
 | `knex migrate:make users --knexfile app/resources/data/knexfile.js` | Crear el migrations de una tabla, es decir la información necesaria para crear la tabla |
 | `knex seed:make users --knexfile app/resources/data/knexfile.js` | Crear el seed de una tabla, es decir el juego de datos de prueba de la tabla |
 | `npm run migrate` | Crear tablas en la base de datos en base a los migrations creados |
