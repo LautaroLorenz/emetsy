@@ -1,7 +1,7 @@
 {
   "name": "emetsy",
   "version": "0.0.0",
-  "main": "dist/emetsy/index.js",
+  "main": "index.js",
   "author": {
     "name": "Lautaro Lorenz",
     "email": "lautaro.lorenz@gmail.com"
@@ -11,10 +11,32 @@
     "appId": "com.emetsy.EMeTSy",
     "productName": "EMeTSy",
     "files": [
-      "dist/emetsy",
-      "app/**/*",
-      "package.json"
-    ]
+      "dist/**/*",
+      {
+        "from": "app",
+        "to": "app/**/*"
+      },
+      "**/*",
+      "!**/*.ts",
+      "!*.map",
+      "!package.json",
+      "!package-lock.json"
+    ],
+    "directories": {
+      "output": "release",
+      "buildResources": "dist"
+    },
+    "asar": false,
+    "win": {
+      "target": [
+        "portable"
+      ]
+    },
+    "mac": {
+      "target": [
+        "dmg"
+      ]
+    }
   },
   "scripts": {
     "ng": "ng serve",
@@ -28,7 +50,7 @@
     "start": "concurrently -k \"ng serve\" \"npm run electron\"",
     "git:remove:local:branch": "git branch -D `git branch | awk '{ if ($0 !~ /master/) printf \"%s\", $0 }'`",
     "prerelease": "npm run build --prod",
-    "release": "electron-builder",
+    "release": "electron-builder --publish=never",
     "electron": "wait-on http://localhost:4200 && electron .",
     "rebuild": "electron-rebuild -f -w sqlite3",
     "postinstall": "electron-builder install-app-deps",

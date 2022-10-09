@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain } = require('electron');
+const { app, BrowserWindow, ipcMain, protocol } = require('electron');
 const { connect: databaseConnect } = require('./resources/database');
 require('./commands/ping');
 require('./commands/usb-serial-port-mock');
@@ -49,6 +49,15 @@ module.exports = {
     // initialization and is ready to create browser windows.
     // Some APIs can only be used after this event occurs.
     app.on('ready', createWindow);
+
+    app.whenReady().then(() => {
+      // prevent csp security
+      protocol.registerSchemesAsPrivileged([
+        { scheme: 'http', privileges: { standard: true, bypassCSP: true, allowServiceWorkers: true, supportFetchAPI: true, corsEnabled: true, stream: true } },
+        { scheme: 'https', privileges: { standard: true, bypassCSP: true, allowServiceWorkers: true, supportFetchAPI: true, corsEnabled: true, stream: true } },
+        { scheme: 'mailto', privileges: { standard: true } },
+      ]);
+    })
 
     // Quit when all windows are closed.
     app.on('window-all-closed', () => {
