@@ -23,6 +23,22 @@ module.exports = {
     }
   },
 
-  production: {}
+  production: {
+    client: 'sqlite3',
+    connection: `${__dirname}/../../../src/assets/database.db`,
+    useNullAsDefault: true,
+    migrations: {
+      // Will create your migrations in the data folder automatically
+      directory: `./migrations`
+    },
+    seeds: {
+      // Will create your seeds in the data folder automatically
+      directory: `./seeds`
+    },
+    pool: {
+      // activate foreign keys check
+      afterCreate: (conn, cb) => conn.run('PRAGMA foreign_keys = ON', cb)
+    }
+  }
 
 };
