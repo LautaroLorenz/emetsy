@@ -24,7 +24,7 @@ export class VacuumTestExecutionActionComponent implements ActionComponent, Afte
   readonly results$: BehaviorSubject<StandResult[]> = new BehaviorSubject<StandResult[]>([]);
   readonly initialized$: BehaviorSubject<boolean | null> = new BehaviorSubject<boolean | null>(null);
   readonly canConnect$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
-  readonly vacuumTimer = {
+  readonly essayTimer = {
     progressPercentage$: new BehaviorSubject<number>(0),
     progressSeconds: 0,
     durationSeconds: 0,
@@ -168,27 +168,24 @@ export class VacuumTestExecutionActionComponent implements ActionComponent, Afte
       } else {
         console.warn(`El stand ${stand} no se pudo agregar al reporte`);
       };
-    })
+    });
   }
 
-  private lisenResults(
-    stands: StandArrayFormValue[],
-    maxAllowedPulses: number,
-    durationSeconds: number
-  ): void {
+  private lisenResults(executionParams: typeof this.executionParams): void {
+    const { durationSeconds, maxAllowedPulses, stands } = executionParams;
     this.lisenResultsControl$.next();
     this.results$.next([]);
-    this.vacuumTimer.progressPercentage$.next(0);
-    this.vacuumTimer.progressSeconds = 0;
-    this.vacuumTimer.durationSeconds = durationSeconds;
+    this.essayTimer.progressPercentage$.next(0);
+    this.essayTimer.progressSeconds = 0;
+    this.essayTimer.durationSeconds = durationSeconds;
     const timerControl$ = new Subject<void>();
 
     interval(1000).pipe(
       takeUntil(timerControl$),
       tap(() => {
-        this.vacuumTimer.progressSeconds = this.vacuumTimer.progressSeconds + 1;
-        const progressPercetange = Math.floor(100 * this.vacuumTimer.progressSeconds / this.vacuumTimer.durationSeconds);
-        this.vacuumTimer.progressPercentage$.next(progressPercetange);
+        this.essayTimer.progressSeconds = this.essayTimer.progressSeconds + 1;
+        const progressPercetange = Math.floor(100 * this.essayTimer.progressSeconds / this.essayTimer.durationSeconds);
+        this.essayTimer.progressPercentage$.next(progressPercetange);
         if (progressPercetange >= 100) {
           timerControl$.next();
           this.lisenResultsControl$.next();
@@ -262,9 +259,9 @@ export class VacuumTestExecutionActionComponent implements ActionComponent, Afte
 
     this.executionParams = {
       phases,
+      stands,
       maxAllowedPulses: maxAllowedPulses as number,
       durationSeconds: durationSeconds as number,
-      stands,
     };
 
     this.usbHandlerService.connected$.pipe(
@@ -299,11 +296,7 @@ export class VacuumTestExecutionActionComponent implements ActionComponent, Afte
         }),
       )),
       filter(status => status === ResponseStatusEnum.ACK),
-      tap(() => this.lisenResults(
-        this.executionParams.stands,
-        this.executionParams.maxAllowedPulses,
-        this.executionParams.durationSeconds
-      )),
+      tap(() => this.lisenResults(this.executionParams)),
       tap(() => this.initialized$.next(true)),
     ).subscribe();
   }

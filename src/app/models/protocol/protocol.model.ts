@@ -51,6 +51,7 @@ export const PROTOCOL = {
         ESSAY: {
           CONTRAST: 'TS1xxxxx',
           VACUUM: 'TS2xxxxx',
+          BOOT: 'TS3xxxxx',
         },
       }
     },

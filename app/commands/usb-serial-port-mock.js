@@ -3,8 +3,9 @@ const { MockBinding } = require('@serialport/binding-mock')
 const { SerialPortStream } = require('@serialport/stream')
 const { DelimiterParser } = require('serialport');
 const { getRandomInt } = require('../resources/mock/random');
-const { getContrastResult } = require('../resources/mock/essay/essay-contrast-mock');
-const { prepareCounters, incrementCounter, getVacuumResult } = require('../resources/mock/essay/essay-vacuum-mock');
+const { getResult: contrastGetResult } = require('../resources/mock/essay/essay-contrast-mock');
+const { prepareCounters: vacuumPrepareCounter, incrementCounter: vacuumIncrementCounter, getResult: vacuumGetResult } = require('../resources/mock/essay/essay-vacuum-mock');
+const { prepareCounters: bootPrepareCounter, incrementCounter: bootIncrementCounter, getResult: bootGetResult } = require('../resources/mock/essay/essay-boot-mock');
 
 let serialPort;
 const parser = new DelimiterParser({ delimiter: '\n', includeDelimiter: false });
@@ -124,6 +125,7 @@ function logFromSimulatorToSoftware(command, queue) {
 const ESSAY_TYPES = {
   CONTRAST: 'CONTRAST',
   VACUUM: 'VACUUM',
+  BOOT: 'BOOT',
 };
 let essayType = '';
 
@@ -165,17 +167,26 @@ function getMockResponse(command) {
         break;
       case 'TS2xxxxx':
         essayType = ESSAY_TYPES.VACUUM;
-        prepareCounters();
+        vacuumPrepareCounter();
+        response = 'B| CAL| PCS| ACK00000| Z| ';
+        break;
+      case 'TS3xxxxx':
+        essayType = ESSAY_TYPES.BOOT;
+        bootPrepareCounter();
         response = 'B| CAL| PCS| ACK00000| Z| ';
         break;
       case 'STD00000':
         switch (essayType) {
           case ESSAY_TYPES.CONTRAST:
-            response = getContrastResult();
+            response = contrastGetResult();
             break;
           case ESSAY_TYPES.VACUUM:
-            incrementCounter();
-            response = getVacuumResult();
+            vacuumIncrementCounter();
+            response = vacuumGetResult();
+            break;
+          case ESSAY_TYPES.BOOT:
+            bootIncrementCounter();
+            response = bootGetResult();
             break;
         }
         break;
