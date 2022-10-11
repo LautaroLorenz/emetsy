@@ -15,6 +15,7 @@ import { PendingChangesGuard } from '../guards/pending-changes.guard';
 import { DevicesTurnOffGuard } from '../guards/devices-turn-off.guard';
 import { SeeReportComponent } from './see-report/see-report.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
+import { TerminalComponent } from './terminal/terminal.component';
 
 const routes: Routes = [
   {
@@ -72,6 +73,10 @@ const routes: Routes = [
   {
     path: PageUrlName.dashboard,
     component: DashboardComponent,
+  },
+  {
+    path: PageUrlName.terminal,
+    component: TerminalComponent,
   }
 ];
 

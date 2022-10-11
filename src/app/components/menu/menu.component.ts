@@ -69,6 +69,11 @@ export class MenuComponent implements OnInit {
             routerLink: '/'.concat(PageUrlName.export),
           }
         ]
+      },
+      {
+        label: 'Terminal',
+        icon: PrimeIcons.DESKTOP,
+        routerLink: '/'.concat(PageUrlName.terminal)
       }
     ];
   }

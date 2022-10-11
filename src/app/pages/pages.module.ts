@@ -17,6 +17,7 @@ import { PendingChangesGuard } from '../guards/pending-changes.guard';
 import { DevicesTurnOffGuard } from '../guards/devices-turn-off.guard';
 import { SeeReportComponent } from './see-report/see-report.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
+import { TerminalComponent } from './terminal/terminal.component';
 
 
 @NgModule({
@@ -32,6 +33,7 @@ import { DashboardComponent } from './dashboard/dashboard.component';
     ExecuteEssayComponent,
     SeeReportComponent,
     DashboardComponent,
+    TerminalComponent,
   ],
   imports: [
     CommonModule,

@@ -75,6 +75,8 @@ import { HttpClientModule } from '@angular/common/http';
 import { ValidatorMessagesComponent } from './validator-messages/validator-messages.component';
 import { VacuumTestExecutionActionComponent } from './actions/vacuum-test-execution-action/vacuum-test-execution-action.component';
 import { VacuumTestParametersActionComponent } from './actions/vacuum-test-parameters-action/vacuum-test-parameters-action.component';
+import { TerminalModule } from 'primeng/terminal';
+import { CommandLineComponent } from './command-line/command-line.component';
 
 const PrimeNgModules = [
   MenubarModule,
@@ -111,6 +113,7 @@ const PrimeNgModules = [
   ProgressBarModule,
   StepsModule,
   FileUploadModule,
+  TerminalModule,
 ];
 
 const PrimeNgServices = [
@@ -150,6 +153,7 @@ const EmetsyComponents = [
   ValidatorMessagesComponent,
   VacuumTestExecutionActionComponent,
   VacuumTestParametersActionComponent,
+  CommandLineComponent,
 ];
 
 @NgModule({
