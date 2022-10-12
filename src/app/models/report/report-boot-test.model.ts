@@ -5,8 +5,9 @@ import { ReportTable, ReportTd, ReportTr } from "./report.model";
 
 export interface ReportBootTest {
   reportName: string;
-  maxAllowedPulses: number;
-  durationSeconds: number;
+  allowedPulses: number;
+  minDurationSeconds: number;
+  maxDurationSeconds: number;
   executionSeconds: number;
   standsLength: number;
   executionDateString: string;
@@ -92,10 +93,14 @@ export class ReportBootTestBuilder extends ReportBuilder {
       const tr_2 = new ReportTr();
       const td_2_1 = new ReportTd();
       td_2_1.style = td_info_style.concat('border-right:unset;text-align:right;');
-      td_2_1.text = `${this.data.maxAllowedPulses ?? '--'}`;
+      td_2_1.text = `${this.data.allowedPulses ?? '--'}`;
       const td_2_2 = new ReportTd();
-      td_2_2.style = td_info_style.concat('border-right:unset;text-align:center;');
-      td_2_2.text = `${this.formatTime(this.data.durationSeconds ?? '--')} Hs`;
+      td_2_2.style = td_info_style.concat('border-right:unset;text-align:left;');
+      td_2_2.text = `
+        Min:&nbsp;&nbsp;${this.formatTime(this.data.minDurationSeconds ?? '--')} Hs
+        <br/>
+        Max:&nbsp;${this.formatTime(this.data.maxDurationSeconds ?? '--')} Hs
+      `;
       const td_2_3 = new ReportTd();
       td_2_3.style = td_info_style.concat('border-right:unset;text-align:right;');
       td_2_3.text = `${this.data.standsLength ?? '--'}`;

@@ -285,13 +285,14 @@ export class BootTestExecutionActionComponent implements ActionComponent, AfterV
   ngAfterViewInit(): void {
     this.timeStart();
 
-    // FIXME: this.reportData.executionDateString = DateHelper.getNow();
+    this.reportData.executionDateString = DateHelper.getNow();
     const phases: Phases = this.enterTestValuesAction.getPhases();
     const { allowedPulses, minDurationSeconds, maxDurationSeconds } = this.bootTestParametersAction.form.getRawValue();
     const stands = this.standIdentificationAction.standArray.getRawValue();
 
-    // FIXME: this.reportData.maxAllowedPulses = maxAllowedPulses as number;
-    // FIXME: this.reportData.durationSeconds = durationSeconds as number;
+    this.reportData.allowedPulses = allowedPulses as number;
+    this.reportData.minDurationSeconds = minDurationSeconds as number;
+    this.reportData.maxDurationSeconds = maxDurationSeconds as number;
     this.activeStands = stands.filter(({ isActive }) => isActive);
     this.reportData.standsLength = this.activeStands.length;
     this.reportData.stands = [];
