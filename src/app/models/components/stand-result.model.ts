@@ -1,6 +1,7 @@
 export enum ResultEnum {
   APPROVED = 'APPROVED',
   DISAPPROVED = 'DISAPPROVED',
+  PARTIAL = 'PARTIAL',
 }
 
 export type Result = ResultEnum;

@@ -150,11 +150,8 @@ export class ContrastTestExecutionActionComponent implements ActionComponent, Af
     ).subscribe();
   }
 
-  private lisenResults(
-    stands: StandArrayFormValue[],
-    maxAllowedError: number,
-    numberOfDiscardedResults: number
-  ): void {
+  private lisenResults(executionParams: typeof this.executionParams): void {
+    const { numberOfDiscardedResults, maxAllowedError, stands } = executionParams;
     this.lisenResultsControl$.next();
     this.results$.next([]);
     let remainingDiscartedResultsCounter = numberOfDiscardedResults;
@@ -184,7 +181,7 @@ export class ContrastTestExecutionActionComponent implements ActionComponent, Af
               reportStand.value = calculatorErrorValue;
               reportStand.result = resultReal;
 
-              if(resultReal === ResultEnum.APPROVED) {
+              if (resultReal === ResultEnum.APPROVED) {
                 this.staticsService.increment$(MetricEnum.meterApproves, { meter: reportStand?.brandModel ?? '' }).pipe(take(1)).subscribe();
               }
             } else {
@@ -217,7 +214,7 @@ export class ContrastTestExecutionActionComponent implements ActionComponent, Af
     const phases: Phases = this.enterTestValuesAction.getPhases();
     const { maxAllowedError, numberOfDiscardedResults } = this.contrastTestParametersAction.form.getRawValue();
     this.reportData.maxAllowedError = maxAllowedError ?? 0;
-  
+
     const stands = this.standIdentificationAction.standArray.getRawValue();
     this.activeStands = stands.filter(({ isActive }) => isActive);
     this.reportData.standsLength = this.activeStands.length;
@@ -243,9 +240,9 @@ export class ContrastTestExecutionActionComponent implements ActionComponent, Af
 
     this.executionParams = {
       phases,
+      stands,
       maxAllowedError: maxAllowedError as number,
       numberOfDiscardedResults: numberOfDiscardedResults as number,
-      stands,
     };
 
     this.usbHandlerService.connected$.pipe(
@@ -280,11 +277,7 @@ export class ContrastTestExecutionActionComponent implements ActionComponent, Af
         }),
       )),
       filter(status => status === ResponseStatusEnum.ACK),
-      tap(() => this.lisenResults(
-        this.executionParams.stands,
-        this.executionParams.maxAllowedError,
-        this.executionParams.numberOfDiscardedResults
-      )),
+      tap(() => this.lisenResults(this.executionParams)),
       tap(() => this.initialized$.next(true)),
     ).subscribe();
   }

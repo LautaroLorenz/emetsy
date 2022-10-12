@@ -45,6 +45,16 @@
       [action]="action"
       class="mb-3"
     ></app-vacuum-test-execution-action>
+    <app-boot-test-parameters-action
+      *ngSwitchCase="ActionEnum.BootTestParameters"
+      [action]="action"
+      class="mb-3"
+    ></app-boot-test-parameters-action>
+    <app-boot-test-execution-action
+      *ngSwitchCase="ActionEnum.BootTestExecution"
+      [action]="action"
+      class="mb-3"
+    ></app-boot-test-execution-action>
     <app-report-action
       *ngSwitchCase="ActionEnum.Report"
       [action]="action"

@@ -1,7 +1,7 @@
 import { AfterViewInit, ChangeDetectionStrategy, Component, Input, OnDestroy } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { BehaviorSubject, catchError, filter, forkJoin, interval, map, Observable, of, ReplaySubject, Subject, switchMap, take, takeUntil, takeWhile, tap } from 'rxjs';
-import { Action, ActionComponent, CalculatorParams, DateHelper, EnterTestValuesAction, Meter, MeterDbTableContext, MetricEnum, PatternParams, Phases, PROTOCOL, RelationsManager, ReportVacuumTest, ReportVacuumTestBuilder, ResponseStatus, ResponseStatusEnum, ResultEnum, StandArrayFormValue, StandIdentificationAction, StandResult, VacuumTestExecutionAction, VacuumTestParametersAction, WhereKind, WhereOperator } from 'src/app/models';
+import { Action, ActionComponent, BootTestExecutionAction, BootTestParametersAction, CalculatorParams, DateHelper, EnterTestValuesAction, Meter, MeterDbTableContext, MetricEnum, PatternParams, Phases, PROTOCOL, RelationsManager, ReportBootTest, ReportBootTestBuilder, ResponseStatus, ResponseStatusEnum, ResultEnum, StandArrayFormValue, StandIdentificationAction, StandResult, WhereKind, WhereOperator } from 'src/app/models';
 import { CalculatorService } from 'src/app/services/calculator.service';
 import { DatabaseService } from 'src/app/services/database.service';
 import { ExecutionDirector } from 'src/app/services/execution-director.service';
@@ -12,12 +12,12 @@ import { StaticsService } from 'src/app/services/statics.service';
 import { UsbHandlerService } from 'src/app/services/usb-handler.service';
 
 @Component({
-  selector: 'app-vacuum-test-execution-action',
-  templateUrl: './vacuum-test-execution-action.component.html',
-  styleUrls: ['./vacuum-test-execution-action.component.scss'],
+  selector: 'app-boot-test-execution-action',
+  templateUrl: './boot-test-execution-action.component.html',
+  styleUrls: ['./boot-test-execution-action.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class VacuumTestExecutionActionComponent implements ActionComponent, AfterViewInit, OnDestroy {
+export class BootTestExecutionActionComponent implements ActionComponent, AfterViewInit, OnDestroy {
 
   @Input() action!: Action;
   readonly phases$: BehaviorSubject<Phases | null> = new BehaviorSubject<Phases | null>(null);
@@ -25,9 +25,18 @@ export class VacuumTestExecutionActionComponent implements ActionComponent, Afte
   readonly initialized$: BehaviorSubject<boolean | null> = new BehaviorSubject<boolean | null>(null);
   readonly canConnect$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   readonly essayTimer = {
-    progressPercentage$: new BehaviorSubject<number>(0),
-    progressSeconds: 0,
-    durationSeconds: 0,
+    parts: {
+      min: {
+        progressPercentage$: new BehaviorSubject<number>(0),
+        progressSeconds: 0,
+        durationSeconds: 0,
+      },
+      max: {
+        progressPercentage$: new BehaviorSubject<number>(0),
+        progressSeconds: 0,
+        durationSeconds: 0,
+      }
+    }
   };
   get executionComplete(): boolean {
     return this.form.get('executionComplete')?.value;
@@ -38,14 +47,14 @@ export class VacuumTestExecutionActionComponent implements ActionComponent, Afte
   get form(): FormGroup {
     return this.action.form;
   }
-  get vacuumTestParametersAction(): VacuumTestParametersAction {
-    return (this.action as VacuumTestExecutionAction).vacuumTestParametersAction;
+  get bootTestParametersAction(): BootTestParametersAction {
+    return (this.action as BootTestExecutionAction).bootTestParametersAction;
   }
   get enterTestValuesAction(): EnterTestValuesAction {
-    return (this.action as VacuumTestExecutionAction).enterTestValuesAction;
+    return (this.action as BootTestExecutionAction).enterTestValuesAction;
   }
   get standIdentificationAction(): StandIdentificationAction {
-    return (this.action as VacuumTestExecutionAction).standIdentificationAction;
+    return (this.action as BootTestExecutionAction).standIdentificationAction;
   }
   get connected(): boolean {
     return this.usbHandlerService.connected$.value;
@@ -57,13 +66,14 @@ export class VacuumTestExecutionActionComponent implements ActionComponent, Afte
   private executionParams = {
     phases: {} as Phases,
     stands: [] as StandArrayFormValue[],
-    maxAllowedPulses: 0,
-    durationSeconds: 0
+    allowedPulses: 0,
+    minDurationSeconds: 0,
+    maxDurationSeconds: 0,
   };
   private activeStands: StandArrayFormValue[] = [];
   private readonly destroyed$: ReplaySubject<boolean> = new ReplaySubject(1);
   private readonly listenPatternParams$ = new Subject<void>();
-  private readonly reportData: ReportVacuumTest = {} as ReportVacuumTest;
+  private readonly reportData: ReportBootTest = {} as ReportBootTest;
   private readonly executionTime$ = new BehaviorSubject<number>(0);
   private readonly executionControl$ = new Subject<void>();
   private readonly lisenResultsControl$ = new Subject<void>();
@@ -81,9 +91,9 @@ export class VacuumTestExecutionActionComponent implements ActionComponent, Afte
     this.reportData.reportName = 'ENSAYO DE VACÍO';
   }
 
-  private setReportParams(reportData: ReportVacuumTest): void {
+  private setReportParams(reportData: ReportBootTest): void {
     const stepBuilder = this.executionDirectorService.getActiveStepBuilder();
-    const reportBuilder: ReportVacuumTestBuilder = stepBuilder?.reportBuilder as ReportVacuumTestBuilder;
+    const reportBuilder: ReportBootTestBuilder = stepBuilder?.reportBuilder as ReportBootTestBuilder;
     reportBuilder.patchValue(reportData);
   }
 
@@ -172,25 +182,72 @@ export class VacuumTestExecutionActionComponent implements ActionComponent, Afte
   }
 
   private lisenResults(executionParams: typeof this.executionParams): void {
-    const { durationSeconds, maxAllowedPulses, stands } = executionParams;
+    const { stands, allowedPulses, minDurationSeconds, maxDurationSeconds } = executionParams;
     this.lisenResultsControl$.next();
     this.results$.next([]);
-    this.essayTimer.progressPercentage$.next(0);
-    this.essayTimer.progressSeconds = 0;
-    this.essayTimer.durationSeconds = durationSeconds;
+    this.essayTimer.parts.min.progressPercentage$.next(0);
+    this.essayTimer.parts.min.progressSeconds = 0;
+    this.essayTimer.parts.min.durationSeconds = minDurationSeconds;
+    this.essayTimer.parts.max.progressPercentage$.next(0);
+    this.essayTimer.parts.max.progressSeconds = 0;
+    this.essayTimer.parts.max.durationSeconds = maxDurationSeconds - minDurationSeconds;
+
     const timerControl$ = new Subject<void>();
+    let activePartMin = true;
+    let activePartMax = false;
+    let resultsMin: StandResult[];
+    let resultsMax: StandResult[];
 
     interval(1000).pipe(
       takeUntil(timerControl$),
       tap(() => {
-        this.essayTimer.progressSeconds = this.essayTimer.progressSeconds + 1;
-        const progressPercetange = Math.floor(100 * this.essayTimer.progressSeconds / this.essayTimer.durationSeconds);
-        this.essayTimer.progressPercentage$.next(progressPercetange);
-        if (progressPercetange >= 100) {
-          timerControl$.next();
-          this.lisenResultsControl$.next();
-          this.completeAction$().subscribe();
-          this.setResultStatic(this.results$.value);
+        if (minDurationSeconds === 0) {
+          this.essayTimer.parts.min.progressPercentage$.next(100);
+          resultsMin = this.results$.value.map((x) => ({
+            ...x,
+            result: ResultEnum.APPROVED,
+          }));
+          activePartMin = false;
+          activePartMax = true;
+        }
+        if (activePartMax) {
+          this.essayTimer.parts.max.progressSeconds = this.essayTimer.parts.max.progressSeconds + 1;
+          const progressPercetange = Math.floor(100 * this.essayTimer.parts.max.progressSeconds / this.essayTimer.parts.max.durationSeconds);
+          this.essayTimer.parts.max.progressPercentage$.next(progressPercetange);
+          if (progressPercetange >= 100) {
+            resultsMax = this.results$.value.map((x) => ({
+              ...x,
+              result: x.calculatorValue >= allowedPulses ? ResultEnum.APPROVED : ResultEnum.DISAPPROVED,
+            }));
+            // approved === approved max and min
+            // disapproved === disapproved max or min
+            const results = this.results$.value.map((x) => ({
+              ...x,
+              result:
+                resultsMin.find(({ stand }) => stand === x.stand)?.result === ResultEnum.APPROVED &&
+                  resultsMax.find(({ stand }) => stand === x.stand)?.result === ResultEnum.APPROVED ?
+                  ResultEnum.APPROVED :
+                  ResultEnum.DISAPPROVED,
+            }))
+            this.results$.next(results);
+            timerControl$.next();
+            this.lisenResultsControl$.next();
+            this.completeAction$().subscribe();
+            this.setResultStatic(this.results$.value);
+          }
+        }
+        if (activePartMin) {
+          this.essayTimer.parts.min.progressSeconds = this.essayTimer.parts.min.progressSeconds + 1;
+          const progressPercetange = Math.floor(100 * this.essayTimer.parts.min.progressSeconds / this.essayTimer.parts.min.durationSeconds);
+          this.essayTimer.parts.min.progressPercentage$.next(progressPercetange);
+          if (progressPercetange >= 100) {
+            resultsMin = this.results$.value.map((x) => ({
+              ...x,
+              result: x.calculatorValue < allowedPulses ? ResultEnum.APPROVED : ResultEnum.DISAPPROVED,
+            }));
+            activePartMin = false;
+            activePartMax = true;
+          }
         }
       }),
     ).subscribe();
@@ -205,7 +262,7 @@ export class VacuumTestExecutionActionComponent implements ActionComponent, Afte
         const standResults: StandResult[] = results
           .map((result, index) => {
             const calculatorPulsesValue: number = Math.abs(Number(result.slice(3, 9)));
-            const resultReal = calculatorPulsesValue <= maxAllowedPulses ? ResultEnum.APPROVED : ResultEnum.DISAPPROVED;
+            const resultReal = ResultEnum.PARTIAL;
             const resultStandIndex: number = index + 1;
             return {
               stand: resultStandIndex,
@@ -230,11 +287,12 @@ export class VacuumTestExecutionActionComponent implements ActionComponent, Afte
 
     this.reportData.executionDateString = DateHelper.getNow();
     const phases: Phases = this.enterTestValuesAction.getPhases();
-    const { maxAllowedPulses, durationSeconds } = this.vacuumTestParametersAction.form.getRawValue();
+    const { allowedPulses, minDurationSeconds, maxDurationSeconds } = this.bootTestParametersAction.form.getRawValue();
     const stands = this.standIdentificationAction.standArray.getRawValue();
 
-    this.reportData.maxAllowedPulses = maxAllowedPulses as number;
-    this.reportData.durationSeconds = durationSeconds as number;
+    this.reportData.allowedPulses = allowedPulses as number;
+    this.reportData.minDurationSeconds = minDurationSeconds as number;
+    this.reportData.maxDurationSeconds = maxDurationSeconds as number;
     this.activeStands = stands.filter(({ isActive }) => isActive);
     this.reportData.standsLength = this.activeStands.length;
     this.reportData.stands = [];
@@ -260,8 +318,9 @@ export class VacuumTestExecutionActionComponent implements ActionComponent, Afte
     this.executionParams = {
       phases,
       stands,
-      maxAllowedPulses: maxAllowedPulses as number,
-      durationSeconds: durationSeconds as number,
+      allowedPulses: allowedPulses as number,
+      minDurationSeconds: minDurationSeconds as number,
+      maxDurationSeconds: maxDurationSeconds as number,
     };
 
     this.usbHandlerService.connected$.pipe(
@@ -289,7 +348,7 @@ export class VacuumTestExecutionActionComponent implements ActionComponent, Afte
         }),
       )),
       filter(status => status === ResponseStatusEnum.ACK),
-      switchMap(() => this.calculatorService.turnOn$(PROTOCOL.DEVICE.CALCULATOR.COMMAND.ESSAY.VACUUM).pipe(
+      switchMap(() => this.calculatorService.turnOn$(PROTOCOL.DEVICE.CALCULATOR.COMMAND.ESSAY.BOOT).pipe(
         filter(status => status === ResponseStatusEnum.ACK),
         tap(() => {
           this.calculatorService.startRerporting();
