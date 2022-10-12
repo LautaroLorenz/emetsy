@@ -195,44 +195,59 @@ export class BootTestExecutionActionComponent implements ActionComponent, AfterV
     const timerControl$ = new Subject<void>();
     let activePartMin = true;
     let activePartMax = false;
+    let resultsMin: StandResult[];
+    let resultsMax: StandResult[];
 
     interval(1000).pipe(
       takeUntil(timerControl$),
       tap(() => {
-        if (activePartMin) {
-          // FIXME: this.essayTimer.parts.min.progressSeconds = this.essayTimer.parts.min.progressSeconds + 1;
-          // const progressPercetange = Math.floor(100 * this.essayTimer.parts.min.progressSeconds / this.essayTimer.parts.min.durationSeconds);
-          // this.essayTimer.parts.min.progressPercentage$.next(progressPercetange);
-          // if (progressPercetange >= 100) {
-          //   this.results$.value.forEach(({ stand, calculatorValue }) => {
-          //     const reportStand = this.reportData.stands.find(({ standIndex }) => standIndex === stand);
-          //     if (reportStand) {
-          //       reportStand.result = calculatorValue >= allowedPulses ? ResultEnum.DISAPPROVED : ResultEnum.PARTIAL;
-          //       console.log(stand, calculatorValue, allowedPulses);
-          //     }
-          //   });
-          //   if (this.results$.value.some(({ result }) => result === ResultEnum.DISAPPROVED)) {
-          //     timerControl$.next();
-          //     this.lisenResultsControl$.next();
-          //     this.completeAction$().subscribe();
-          //     this.setResultStatic(this.results$.value);
-          //   } else {
-          //     activePartMin = false;
-          //     activePartMax = true;
-          //   }
-          // }
+        if (minDurationSeconds === 0) {
+          this.essayTimer.parts.min.progressPercentage$.next(100);
+          resultsMin = this.results$.value.map((x) => ({
+            ...x,
+            result: ResultEnum.APPROVED,
+          }));
+          activePartMin = false;
+          activePartMax = true;
         }
         if (activePartMax) {
-          // TODO:
-          // this.essayTimer.progressSeconds = this.essayTimer.progressSeconds + 1;
-          // const progressPercetange = Math.floor(100 * this.essayTimer.progressSeconds / this.essayTimer.durationSeconds);
-          // this.essayTimer.progressPercentage$.next(progressPercetange);
-          // if (progressPercetange >= 100) {
-          //   timerControl$.next();
-          //   this.lisenResultsControl$.next();
-          //   this.completeAction$().subscribe();
-          //   this.setResultStatic(this.results$.value);
-          // }
+          this.essayTimer.parts.max.progressSeconds = this.essayTimer.parts.max.progressSeconds + 1;
+          const progressPercetange = Math.floor(100 * this.essayTimer.parts.max.progressSeconds / this.essayTimer.parts.max.durationSeconds);
+          this.essayTimer.parts.max.progressPercentage$.next(progressPercetange);
+          if (progressPercetange >= 100) {
+            resultsMax = this.results$.value.map((x) => ({
+              ...x,
+              result: x.calculatorValue >= allowedPulses ? ResultEnum.APPROVED : ResultEnum.DISAPPROVED,
+            }));
+            // approved === approved max and min
+            // disapproved === disapproved max or min
+            const results = this.results$.value.map((x) => ({
+              ...x,
+              result:
+                resultsMin.find(({ stand }) => stand === x.stand)?.result === ResultEnum.APPROVED &&
+                  resultsMax.find(({ stand }) => stand === x.stand)?.result === ResultEnum.APPROVED ?
+                  ResultEnum.APPROVED :
+                  ResultEnum.DISAPPROVED,
+            }))
+            this.results$.next(results);
+            timerControl$.next();
+            this.lisenResultsControl$.next();
+            this.completeAction$().subscribe();
+            this.setResultStatic(this.results$.value);
+          }
+        }
+        if (activePartMin) {
+          this.essayTimer.parts.min.progressSeconds = this.essayTimer.parts.min.progressSeconds + 1;
+          const progressPercetange = Math.floor(100 * this.essayTimer.parts.min.progressSeconds / this.essayTimer.parts.min.durationSeconds);
+          this.essayTimer.parts.min.progressPercentage$.next(progressPercetange);
+          if (progressPercetange >= 100) {
+            resultsMin = this.results$.value.map((x) => ({
+              ...x,
+              result: x.calculatorValue < allowedPulses ? ResultEnum.APPROVED : ResultEnum.DISAPPROVED,
+            }));
+            activePartMin = false;
+            activePartMax = true;
+          }
         }
       }),
     ).subscribe();
@@ -246,7 +261,7 @@ export class BootTestExecutionActionComponent implements ActionComponent, AfterV
       map(({ results }) => {
         const standResults: StandResult[] = results
           .map((result, index) => {
-            const calculatorPulsesValue: number = Number(result.slice(3, 9));
+            const calculatorPulsesValue: number = Math.abs(Number(result.slice(3, 9)));
             const resultReal = ResultEnum.PARTIAL;
             const resultStandIndex: number = index + 1;
             return {

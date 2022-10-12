@@ -204,7 +204,7 @@ export class VacuumTestExecutionActionComponent implements ActionComponent, Afte
       map(({ results }) => {
         const standResults: StandResult[] = results
           .map((result, index) => {
-            const calculatorPulsesValue: number = Number(result.slice(3, 9));
+            const calculatorPulsesValue: number = Math.abs(Number(result.slice(3, 9)));
             const resultReal = calculatorPulsesValue <= maxAllowedPulses ? ResultEnum.APPROVED : ResultEnum.DISAPPROVED;
             const resultStandIndex: number = index + 1;
             return {

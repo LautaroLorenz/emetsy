@@ -166,13 +166,13 @@ function getMockResponse(command) {
         response = 'B| CAL| PCS| ACK00000| Z| ';
         break;
       case 'TS2xxxxx':
-        essayType = ESSAY_TYPES.VACUUM;
-        vacuumPrepareCounter();
+        essayType = ESSAY_TYPES.BOOT;
+        bootPrepareCounter();
         response = 'B| CAL| PCS| ACK00000| Z| ';
         break;
       case 'TS3xxxxx':
-        essayType = ESSAY_TYPES.BOOT;
-        bootPrepareCounter();
+        essayType = ESSAY_TYPES.VACUUM;
+        vacuumPrepareCounter();
         response = 'B| CAL| PCS| ACK00000| Z| ';
         break;
       case 'STD00000':
@@ -180,13 +180,13 @@ function getMockResponse(command) {
           case ESSAY_TYPES.CONTRAST:
             response = contrastGetResult();
             break;
-          case ESSAY_TYPES.VACUUM:
-            vacuumIncrementCounter();
-            response = vacuumGetResult();
-            break;
           case ESSAY_TYPES.BOOT:
             bootIncrementCounter();
             response = bootGetResult();
+            break;
+          case ESSAY_TYPES.VACUUM:
+            vacuumIncrementCounter();
+            response = vacuumGetResult();
             break;
         }
         break;
