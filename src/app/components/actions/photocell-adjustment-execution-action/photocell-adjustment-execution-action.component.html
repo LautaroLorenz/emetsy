@@ -13,9 +13,16 @@
       styleClass="justify-content-start w-full mb-3"
     ></p-message>
 
-    <div class="border border-1 border-200 p-4 mb-4 border-round">
-      <app-devices [canConnect]="(canConnect$ | async) ? true : false">
-      </app-devices>
+    <div
+      class="animation"
+      [ngStyle]="{
+        'opacity': form.get('photocellAdjustmentExecutionComplete')?.value ? '0' : '1',
+        'height': form.get('photocellAdjustmentExecutionComplete')?.value ? '0' : 'initial'
+      }"
+    >
+      <div class="border border-1 border-200 p-4 mb-4 border-round">
+        <app-devices></app-devices>
+      </div>
     </div>
 
     <div class="flex flex-1 mb-3 mt-4">

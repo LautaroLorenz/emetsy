@@ -23,7 +23,6 @@ export class BootTestExecutionActionComponent implements ActionComponent, AfterV
   readonly phases$: BehaviorSubject<Phases | null> = new BehaviorSubject<Phases | null>(null);
   readonly results$: BehaviorSubject<StandResult[]> = new BehaviorSubject<StandResult[]>([]);
   readonly initialized$: BehaviorSubject<boolean | null> = new BehaviorSubject<boolean | null>(null);
-  readonly canConnect$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   readonly essayTimer = {
     parts: {
       min: {
@@ -149,7 +148,6 @@ export class BootTestExecutionActionComponent implements ActionComponent, AfterV
       tap(() => this.setReportParams(this.reportData)),
       tap(() => this.form.get('executionComplete')?.setValue(true)),
       switchMap((value) => this.usbHandlerService.disconnect$().pipe(
-        tap(() => this.canConnect$.next(false)),
         map(() => value)
       )),
     );
@@ -326,7 +324,6 @@ export class BootTestExecutionActionComponent implements ActionComponent, AfterV
     this.usbHandlerService.connected$.pipe(
       takeUntil(this.destroyed$),
       filter((isConnected) => isConnected),
-      tap(() => this.canConnect$.next(true)),
       tap(() => {
         this.results$.next([]);
         this.initialized$.next(false);

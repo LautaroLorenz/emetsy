@@ -7,7 +7,15 @@
       <span>{{name}}</span>
     </ng-template>
 
-    <app-devices [canConnect]="(canConnect$ | async) ? true : false"></app-devices>
+    <div
+      class="animation"
+      [ngStyle]="{
+        'opacity': form.get('executionComplete')?.value ? '0' : '1',
+        'height': form.get('executionComplete')?.value ? '0' : 'initial'
+      }"
+    >
+      <app-devices></app-devices>
+    </div>
 
     <div class="flex flex-1 mb-3 mt-4">
       <ng-container *ngIf="phases$ | async as phases">

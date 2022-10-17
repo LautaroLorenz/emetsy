@@ -27,4 +27,4 @@ export const moveAnimation = trigger('moveAnimation', [
 	transition('move-from-start-up => move-done', animate('120ms ease-out')),
 	transition('move-from-start-down => move-done', animate('120ms ease-out')),
 	transition('move-to-trash => move-to-trash-done', animate('250ms ease-out')),
-])
+]);
