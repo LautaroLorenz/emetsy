@@ -82,6 +82,10 @@ export class PhotocellAdjustmentExecutionActionComponent implements ActionCompon
       switchMap(() => this.generatorService.turnOn$(phases).pipe(
         filter(status => status === ResponseStatusEnum.ACK),
         switchMap(() => this.generatorService.getStatus$()),
+        filter(status => status === ResponseStatusEnum.ACK),
+        tap(() => {
+          this.generatorService.startRerporting();
+        }),
       )),
       filter(status => status === ResponseStatusEnum.ACK),
       switchMap(() => this.patternService.turnOn$(phases).pipe(

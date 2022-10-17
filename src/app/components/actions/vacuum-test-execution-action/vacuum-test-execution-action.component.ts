@@ -180,6 +180,7 @@ export class VacuumTestExecutionActionComponent implements ActionComponent, Afte
 
     interval(1000).pipe(
       takeUntil(timerControl$),
+      takeWhile(() => this.usbHandlerService.connected$.value),
       tap(() => {
         this.essayTimer.progressSeconds = this.essayTimer.progressSeconds + 1;
         const progressPercetange = Math.floor(100 * this.essayTimer.progressSeconds / this.essayTimer.durationSeconds);
@@ -197,6 +198,7 @@ export class VacuumTestExecutionActionComponent implements ActionComponent, Afte
       takeUntil(this.lisenResultsControl$),
       takeUntil(this.destroyed$),
       takeWhile(() => !this.executionComplete),
+      takeWhile(() => this.usbHandlerService.connected$.value),
       filter((value) => value !== null),
       map((value) => value as CalculatorParams),
       map(({ results }) => {
@@ -276,6 +278,10 @@ export class VacuumTestExecutionActionComponent implements ActionComponent, Afte
       switchMap(() => this.generatorService.turnOn$(this.executionParams.phases).pipe(
         filter(status => status === ResponseStatusEnum.ACK),
         switchMap(() => this.generatorService.getStatus$()),
+        filter(status => status === ResponseStatusEnum.ACK),
+        tap(() => {
+          this.generatorService.startRerporting();
+        }),
       )),
       filter(status => status === ResponseStatusEnum.ACK),
       switchMap(() => this.patternService.turnOn$(this.executionParams.phases).pipe(

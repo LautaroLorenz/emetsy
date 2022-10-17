@@ -198,6 +198,7 @@ export class BootTestExecutionActionComponent implements ActionComponent, AfterV
 
     interval(1000).pipe(
       takeUntil(timerControl$),
+      takeWhile(() => this.usbHandlerService.connected$.value),
       tap(() => {
         if (minDurationSeconds === 0) {
           this.essayTimer.parts.min.progressPercentage$.next(100);
@@ -254,6 +255,7 @@ export class BootTestExecutionActionComponent implements ActionComponent, AfterV
       takeUntil(this.lisenResultsControl$),
       takeUntil(this.destroyed$),
       takeWhile(() => !this.executionComplete),
+      takeWhile(() => this.usbHandlerService.connected$.value),
       filter((value) => value !== null),
       map((value) => value as CalculatorParams),
       map(({ results }) => {
@@ -335,6 +337,10 @@ export class BootTestExecutionActionComponent implements ActionComponent, AfterV
       switchMap(() => this.generatorService.turnOn$(this.executionParams.phases).pipe(
         filter(status => status === ResponseStatusEnum.ACK),
         switchMap(() => this.generatorService.getStatus$()),
+        filter(status => status === ResponseStatusEnum.ACK),
+        tap(() => {
+          this.generatorService.startRerporting();
+        }),
       )),
       filter(status => status === ResponseStatusEnum.ACK),
       switchMap(() => this.patternService.turnOn$(this.executionParams.phases).pipe(

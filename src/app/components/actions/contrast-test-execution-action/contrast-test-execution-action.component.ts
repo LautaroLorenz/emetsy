@@ -158,6 +158,7 @@ export class ContrastTestExecutionActionComponent implements ActionComponent, Af
       takeUntil(this.lisenResultsControl$),
       takeUntil(this.destroyed$),
       takeWhile(() => !this.executionComplete),
+      takeWhile(() => this.usbHandlerService.connected$.value),
       filter((value) => value !== null),
       map((value) => value as CalculatorParams),
       tap(() => {
@@ -257,6 +258,10 @@ export class ContrastTestExecutionActionComponent implements ActionComponent, Af
       switchMap(() => this.generatorService.turnOn$(this.executionParams.phases).pipe(
         filter(status => status === ResponseStatusEnum.ACK),
         switchMap(() => this.generatorService.getStatus$()),
+        filter(status => status === ResponseStatusEnum.ACK),
+        tap(() => {
+          this.generatorService.startRerporting();
+        }),
       )),
       filter(status => status === ResponseStatusEnum.ACK),
       switchMap(() => this.patternService.turnOn$(this.executionParams.phases).pipe(
