@@ -23,7 +23,6 @@ export class VacuumTestExecutionActionComponent implements ActionComponent, Afte
   readonly phases$: BehaviorSubject<Phases | null> = new BehaviorSubject<Phases | null>(null);
   readonly results$: BehaviorSubject<StandResult[]> = new BehaviorSubject<StandResult[]>([]);
   readonly initialized$: BehaviorSubject<boolean | null> = new BehaviorSubject<boolean | null>(null);
-  readonly canConnect$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   readonly essayTimer = {
     progressPercentage$: new BehaviorSubject<number>(0),
     progressSeconds: 0,
@@ -139,7 +138,6 @@ export class VacuumTestExecutionActionComponent implements ActionComponent, Afte
       tap(() => this.setReportParams(this.reportData)),
       tap(() => this.form.get('executionComplete')?.setValue(true)),
       switchMap((value) => this.usbHandlerService.disconnect$().pipe(
-        tap(() => this.canConnect$.next(false)),
         map(() => value)
       )),
     );
@@ -182,6 +180,7 @@ export class VacuumTestExecutionActionComponent implements ActionComponent, Afte
 
     interval(1000).pipe(
       takeUntil(timerControl$),
+      takeWhile(() => this.usbHandlerService.connected$.value),
       tap(() => {
         this.essayTimer.progressSeconds = this.essayTimer.progressSeconds + 1;
         const progressPercetange = Math.floor(100 * this.essayTimer.progressSeconds / this.essayTimer.durationSeconds);
@@ -199,6 +198,7 @@ export class VacuumTestExecutionActionComponent implements ActionComponent, Afte
       takeUntil(this.lisenResultsControl$),
       takeUntil(this.destroyed$),
       takeWhile(() => !this.executionComplete),
+      takeWhile(() => this.usbHandlerService.connected$.value),
       filter((value) => value !== null),
       map((value) => value as CalculatorParams),
       map(({ results }) => {
@@ -267,7 +267,6 @@ export class VacuumTestExecutionActionComponent implements ActionComponent, Afte
     this.usbHandlerService.connected$.pipe(
       takeUntil(this.destroyed$),
       filter((isConnected) => isConnected),
-      tap(() => this.canConnect$.next(true)),
       tap(() => {
         this.results$.next([]);
         this.initialized$.next(false);
@@ -279,6 +278,10 @@ export class VacuumTestExecutionActionComponent implements ActionComponent, Afte
       switchMap(() => this.generatorService.turnOn$(this.executionParams.phases).pipe(
         filter(status => status === ResponseStatusEnum.ACK),
         switchMap(() => this.generatorService.getStatus$()),
+        filter(status => status === ResponseStatusEnum.ACK),
+        tap(() => {
+          this.generatorService.startRerporting();
+        }),
       )),
       filter(status => status === ResponseStatusEnum.ACK),
       switchMap(() => this.patternService.turnOn$(this.executionParams.phases).pipe(

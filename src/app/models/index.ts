@@ -44,7 +44,6 @@ export * from "./protocol/command.model";
 export * from "./protocol/protocol.model";
 export * from "./protocol/pattern.model";
 export * from "./protocol/calculator.model";
-export * from "./protocol/working-parameters.model";
 export * from "./protocol/device.model";
 export * from "./forms/action.form.model";
 export * from "./forms/contrast-test-parameters-action.form.model";

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/core';
 import { BehaviorSubject, filter, Observable, ReplaySubject, skip, switchMap, take, takeUntil, tap } from 'rxjs';
 import { DeviceStatus, DeviceStatusEnum, LedColor, LedColorEnum } from 'src/app/models';
 import { CalculatorService } from 'src/app/services/calculator.service';
@@ -13,8 +13,6 @@ import { UsbHandlerService } from 'src/app/services/usb-handler.service';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class DevicesComponent implements OnInit, OnDestroy {
-
-  @Input() canConnect: boolean = true;
 
   connected$: BehaviorSubject<boolean | null> = new BehaviorSubject<boolean | null>(null);
   connectedColor$: BehaviorSubject<LedColor> = new BehaviorSubject<LedColor>(LedColorEnum.WHITE);
@@ -77,6 +75,8 @@ export class DevicesComponent implements OnInit, OnDestroy {
     this.generatorService.deviceStatus$.pipe(
       takeUntil(this.destroyed$),
       tap((status) => this.generatorStatusColor$.next(this.colorByStatus(status))),
+      filter((status) => status === DeviceStatusEnum.FAIL),
+      switchMap(() => this.usbHandlerService.disconnect$()),
     ).subscribe();
 
     this.patternService.deviceStatus$.pipe(
@@ -89,6 +89,8 @@ export class DevicesComponent implements OnInit, OnDestroy {
     this.calculatorService.deviceStatus$.pipe(
       takeUntil(this.destroyed$),
       tap((status) => this.calculatorStatusColor$.next(this.colorByStatus(status))),
+      filter((status) => status === DeviceStatusEnum.FAIL),
+      switchMap(() => this.usbHandlerService.disconnect$()),
     ).subscribe();
 
     this.connect();

@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { BehaviorSubject, delay, map, Observable, of, Subject, switchMap, takeUntil, tap } from "rxjs";
+import { BehaviorSubject, delay, filter, map, Observable, of, Subject, switchMap, take, takeUntil, takeWhile, tap } from "rxjs";
 import { Command, CommandManager, PROTOCOL, ResponseStatus, ResponseStatusEnum, Phases, Device, DeviceStatus, DeviceStatusEnum } from "../models";
 import { DeviceErrorCode } from "../pipes/device-error-code.pipe";
 import { UsbHandlerService } from "./usb-handler.service";
@@ -48,6 +48,24 @@ export class GeneratorService implements Device {
   }
 
   private setParams(params: string[]): void { }
+
+  private reportLoop$(): Observable<ResponseStatus> {
+    return of(true).pipe(
+      delay(PROTOCOL.TIME.LOOP.STATUS_REPORTING_LONG),
+      take(1),
+      switchMap(() => this.getStatus$()),
+      filter((status) => status === ResponseStatusEnum.ACK),
+      switchMap(() => this.reportLoop$())
+    );
+  }
+
+  startRerporting(): void {
+    this.sendStoper$.next();
+    this.reportLoop$().pipe(
+      takeUntil(this.sendStoper$),
+      takeWhile(() => this.usbHandlerService.connected$.value),
+    ).subscribe();
+  }
 
   clearStatus(): void {
     this.errorMessage$.next(null);
