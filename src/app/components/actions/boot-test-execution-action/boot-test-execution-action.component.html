@@ -23,6 +23,30 @@
       </ng-container>
     </div>
 
+    <ng-container
+      *ngIf="{ value: essayTimer.parts.min.progressPercentage$ | async } as progress"
+    >
+      <div class="flex flex-1 mb-1 mt-4 flex-column">
+        <span class="flex mb-1">Parte 1: Tiempo mínimo</span>
+        <p-progressBar
+          [value]="progress.value"
+          class="w-full"
+        ></p-progressBar>
+      </div>
+    </ng-container>
+
+    <ng-container
+      *ngIf="{ value: essayTimer.parts.max.progressPercentage$ | async } as progress"
+    >
+      <div class="flex flex-1 mb-1 mt-4 flex-column">
+        <span class="flex mb-1">Parte 2: Tiempo máximo</span>
+        <p-progressBar
+          [value]="progress.value"
+          class="w-full"
+        ></p-progressBar>
+      </div>
+    </ng-container>
+
     <div class="flex flex-1 mb-3 mt-4">
       <ng-container *ngIf="results$ | async as results">
         <app-stand-result [results]="results"></app-stand-result>

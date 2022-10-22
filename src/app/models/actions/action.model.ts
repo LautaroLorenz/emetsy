@@ -23,6 +23,8 @@ export enum ActionEnum {
   ContrastTestExecution = 'ContrastTestExecution',
   VacuumTestParameters = 'VacuumTestParameters',
   VacuumTestExecution = 'VacuumTestExecution',
+  BootTestParameters = 'BootTestParameters',
+  BootTestExecution = 'BootTestExecution',
   PhotocellAdjustmentExecution = 'PhotocellAdjustmentExecution',
   UserIdentification = 'UserIdentification',
   Report = 'Report',

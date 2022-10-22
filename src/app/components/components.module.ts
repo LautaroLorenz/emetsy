@@ -77,6 +77,8 @@ import { VacuumTestExecutionActionComponent } from './actions/vacuum-test-execut
 import { VacuumTestParametersActionComponent } from './actions/vacuum-test-parameters-action/vacuum-test-parameters-action.component';
 import { TerminalModule } from 'primeng/terminal';
 import { CommandLineComponent } from './command-line/command-line.component';
+import { BootTestParametersActionComponent } from './actions/boot-test-parameters-action/boot-test-parameters-action.component';
+import { BootTestExecutionActionComponent } from './actions/boot-test-execution-action/boot-test-execution-action.component';
 
 const PrimeNgModules = [
   MenubarModule,
@@ -154,6 +156,8 @@ const EmetsyComponents = [
   VacuumTestExecutionActionComponent,
   VacuumTestParametersActionComponent,
   CommandLineComponent,
+  BootTestParametersActionComponent,
+  BootTestExecutionActionComponent,
 ];
 
 @NgModule({

@@ -13,6 +13,7 @@ export const PROTOCOL = {
       GET_COMMAND: 250,
       POST_COMMAND: 500,
       STATUS_REPORTING: 700,
+      STATUS_REPORTING_LONG: 2100,
     },
     WAITING_RESPONSE_TIMEOUT: 2000,
     WAIT_STABILIZATION: 2000,
@@ -50,7 +51,8 @@ export const PROTOCOL = {
         STOP: 'STP00000',
         ESSAY: {
           CONTRAST: 'TS1xxxxx',
-          VACUUM: 'TS2xxxxx',
+          BOOT: 'TS2xxxxx',
+          VACUUM: 'TS3xxxxx',
         },
       }
     },

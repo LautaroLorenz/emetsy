@@ -34,22 +34,20 @@
 
 <div class="flex flex-1 mt-3 flex-column">
 
-  <ng-container *ngIf="canConnect">
-    <ng-container *ngIf="(connected$ | async) === false">
-      <div class="flex flex-1 align-items-center mt-3">
-        <p-message
-          severity="error"
-          text="Ocurrió un problema de comunicación con el hadware"
-          styleClass="flex flex-1 justify-content-start"
-        ></p-message>
-        <p-button
-          label="Reintentar"
-          styleClass="p-button-outlined ml-4"
-          (click)="connect()"
-        ></p-button>
-      </div>
-    </ng-container>
-  </ng-container>
+  <div *ngIf="(connected$ | async) === false">
+    <div class="flex flex-1 align-items-center mt-3">
+      <p-message
+        severity="error"
+        text="Ocurrió un problema de comunicación con el hadware"
+        styleClass="flex flex-1 justify-content-start"
+      ></p-message>
+      <p-button
+        label="Reintentar"
+        styleClass="p-button-outlined ml-4"
+        (click)="connect()"
+      ></p-button>
+    </div>
+  </div>
 
   <ng-container
     *ngIf="(generatorErrorMessage$ | async) as generatorErrorMessage"

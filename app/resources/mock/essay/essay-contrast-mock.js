@@ -1,6 +1,6 @@
 const { getRandomInt } = require('../random');
 
-exports.getContrastResult = () => {
+exports.getResult = () => {
   let response = `B| CAL| PCS|`;
   for (let i = 0; i < 20; i++) {
     const index = String(i + 1).padStart(2, '0');

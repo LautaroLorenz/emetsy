@@ -2,6 +2,7 @@ import { AfterViewInit, ChangeDetectionStrategy, Component, Input, OnDestroy } f
 import { FormGroup } from '@angular/forms';
 import { BehaviorSubject, filter, forkJoin, map, Observable, of, ReplaySubject, Subject, switchMap, take, takeUntil, takeWhile, tap } from 'rxjs';
 import { Action, ActionComponent, PatternParams, Phases, PhotocellAdjustmentExecutionAction, PhotocellAdjustmentValuesAction, ResponseStatus, ResponseStatusEnum } from 'src/app/models';
+import { CalculatorService } from 'src/app/services/calculator.service';
 import { GeneratorService } from 'src/app/services/generator.service';
 import { PatternService } from 'src/app/services/pattern.service';
 import { UsbHandlerService } from 'src/app/services/usb-handler.service';
@@ -17,7 +18,6 @@ export class PhotocellAdjustmentExecutionActionComponent implements ActionCompon
   @Input() action!: Action;
 
   readonly phases$: BehaviorSubject<Phases | null> = new BehaviorSubject<Phases | null>(null);
-  readonly canConnect$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(true);
   readonly initialized$: BehaviorSubject<boolean | null> = new BehaviorSubject<boolean | null>(null);
 
   get helpText(): string {
@@ -53,6 +53,7 @@ export class PhotocellAdjustmentExecutionActionComponent implements ActionCompon
     private readonly usbHandlerService: UsbHandlerService,
     private readonly generatorService: GeneratorService,
     private readonly patternService: PatternService,
+    private readonly calculatorService: CalculatorService,
   ) { }
 
   private listenPatternParams(): void {
@@ -76,10 +77,15 @@ export class PhotocellAdjustmentExecutionActionComponent implements ActionCompon
       tap(() => {
         this.generatorService.clearStatus();
         this.patternService.clearStatus();
+        this.calculatorService.clearStatus();
       }),
       switchMap(() => this.generatorService.turnOn$(phases).pipe(
         filter(status => status === ResponseStatusEnum.ACK),
         switchMap(() => this.generatorService.getStatus$()),
+        filter(status => status === ResponseStatusEnum.ACK),
+        tap(() => {
+          this.generatorService.startRerporting();
+        }),
       )),
       filter(status => status === ResponseStatusEnum.ACK),
       switchMap(() => this.patternService.turnOn$(phases).pipe(
@@ -108,7 +114,6 @@ export class PhotocellAdjustmentExecutionActionComponent implements ActionCompon
         switchMap(() => this.usbHandlerService.disconnect$()),
         tap(() => this.form.get('photocellAdjustmentExecutionComplete')?.setValue(true)),
       )),
-      tap(() => this.canConnect$.next(false)),
       tap(() => this.completing$.next(false)),
     ).subscribe();
   }

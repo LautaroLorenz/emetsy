@@ -1,6 +1,7 @@
 import { ReplaySubject } from "rxjs";
 import { EssayTemplateStep } from "../database/tables/essay-template-step.model";
 import { ReportBuilder } from "../report/report-builder.model";
+import { BootTestStep } from "./boot-test.step.model";
 import { ContrastTestStep } from "./contrast-test.step.model";
 import { PhotocellAdjustmentStep } from "./photocell-adjustment.step.model";
 import { ReportStep } from "./report.step.model";
@@ -14,7 +15,7 @@ export enum StepIdEnum {
   VacuumTestStep = 2,
   _3 = 3,
   ContrastTestStep = 4,
-  _5 = 5,
+  BootTestStep = 5,
   PhotocellAdjustmentStep = 6,
   UserIdentificationStep = 7,
 }
@@ -25,14 +26,16 @@ export class StepConstructor {
     switch (step_id) {
       case StepIdEnum.ReportStep:
         return new ReportStep(essayTemplateStep);
-      case StepIdEnum.VacuumTestStep:
-        return new VacuumTestStep(essayTemplateStep, destroyed$);
-      case StepIdEnum.ContrastTestStep:
-        return new ContrastTestStep(essayTemplateStep, destroyed$);
       case StepIdEnum.PhotocellAdjustmentStep:
         return new PhotocellAdjustmentStep(essayTemplateStep);
       case StepIdEnum.UserIdentificationStep:
         return new UserIdentificationStep(essayTemplateStep);
+      case StepIdEnum.VacuumTestStep:
+        return new VacuumTestStep(essayTemplateStep, destroyed$);
+      case StepIdEnum.ContrastTestStep:
+        return new ContrastTestStep(essayTemplateStep, destroyed$);
+      case StepIdEnum.BootTestStep:
+        return new BootTestStep(essayTemplateStep, destroyed$);
     }
 
     return new StepBuilder(essayTemplateStep, [], [], new ReportBuilder());

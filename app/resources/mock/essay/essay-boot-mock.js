@@ -2,7 +2,7 @@ const { getRandomInt } = require('../random');
 
 let pulses = 0;
 let counter = 0;
-const relation = 3;
+const relation = 7;
 
 exports.prepareCounters = () => {
   pulses = 0;

@@ -23,7 +23,6 @@ export class ContrastTestExecutionActionComponent implements ActionComponent, Af
   readonly phases$: BehaviorSubject<Phases | null> = new BehaviorSubject<Phases | null>(null);
   readonly results$: BehaviorSubject<StandResult[]> = new BehaviorSubject<StandResult[]>([]);
   readonly initialized$: BehaviorSubject<boolean | null> = new BehaviorSubject<boolean | null>(null);
-  readonly canConnect$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   get executionComplete(): boolean {
     return this.form.get('executionComplete')?.value;
   }
@@ -134,7 +133,6 @@ export class ContrastTestExecutionActionComponent implements ActionComponent, Af
       tap(() => this.setReportParams(this.reportData)),
       tap(() => this.form.get('executionComplete')?.setValue(true)),
       switchMap((value) => this.usbHandlerService.disconnect$().pipe(
-        tap(() => this.canConnect$.next(false)),
         map(() => value)
       )),
     );
@@ -150,11 +148,8 @@ export class ContrastTestExecutionActionComponent implements ActionComponent, Af
     ).subscribe();
   }
 
-  private lisenResults(
-    stands: StandArrayFormValue[],
-    maxAllowedError: number,
-    numberOfDiscardedResults: number
-  ): void {
+  private lisenResults(executionParams: typeof this.executionParams): void {
+    const { numberOfDiscardedResults, maxAllowedError, stands } = executionParams;
     this.lisenResultsControl$.next();
     this.results$.next([]);
     let remainingDiscartedResultsCounter = numberOfDiscardedResults;
@@ -163,6 +158,7 @@ export class ContrastTestExecutionActionComponent implements ActionComponent, Af
       takeUntil(this.lisenResultsControl$),
       takeUntil(this.destroyed$),
       takeWhile(() => !this.executionComplete),
+      takeWhile(() => this.usbHandlerService.connected$.value),
       filter((value) => value !== null),
       map((value) => value as CalculatorParams),
       tap(() => {
@@ -184,7 +180,7 @@ export class ContrastTestExecutionActionComponent implements ActionComponent, Af
               reportStand.value = calculatorErrorValue;
               reportStand.result = resultReal;
 
-              if(resultReal === ResultEnum.APPROVED) {
+              if (resultReal === ResultEnum.APPROVED) {
                 this.staticsService.increment$(MetricEnum.meterApproves, { meter: reportStand?.brandModel ?? '' }).pipe(take(1)).subscribe();
               }
             } else {
@@ -217,7 +213,7 @@ export class ContrastTestExecutionActionComponent implements ActionComponent, Af
     const phases: Phases = this.enterTestValuesAction.getPhases();
     const { maxAllowedError, numberOfDiscardedResults } = this.contrastTestParametersAction.form.getRawValue();
     this.reportData.maxAllowedError = maxAllowedError ?? 0;
-  
+
     const stands = this.standIdentificationAction.standArray.getRawValue();
     this.activeStands = stands.filter(({ isActive }) => isActive);
     this.reportData.standsLength = this.activeStands.length;
@@ -243,15 +239,14 @@ export class ContrastTestExecutionActionComponent implements ActionComponent, Af
 
     this.executionParams = {
       phases,
+      stands,
       maxAllowedError: maxAllowedError as number,
       numberOfDiscardedResults: numberOfDiscardedResults as number,
-      stands,
     };
 
     this.usbHandlerService.connected$.pipe(
       takeUntil(this.destroyed$),
       filter((isConnected) => isConnected),
-      tap(() => this.canConnect$.next(true)),
       tap(() => {
         this.results$.next([]);
         this.initialized$.next(false);
@@ -263,6 +258,10 @@ export class ContrastTestExecutionActionComponent implements ActionComponent, Af
       switchMap(() => this.generatorService.turnOn$(this.executionParams.phases).pipe(
         filter(status => status === ResponseStatusEnum.ACK),
         switchMap(() => this.generatorService.getStatus$()),
+        filter(status => status === ResponseStatusEnum.ACK),
+        tap(() => {
+          this.generatorService.startRerporting();
+        }),
       )),
       filter(status => status === ResponseStatusEnum.ACK),
       switchMap(() => this.patternService.turnOn$(this.executionParams.phases).pipe(
@@ -280,11 +279,7 @@ export class ContrastTestExecutionActionComponent implements ActionComponent, Af
         }),
       )),
       filter(status => status === ResponseStatusEnum.ACK),
-      tap(() => this.lisenResults(
-        this.executionParams.stands,
-        this.executionParams.maxAllowedError,
-        this.executionParams.numberOfDiscardedResults
-      )),
+      tap(() => this.lisenResults(this.executionParams)),
       tap(() => this.initialized$.next(true)),
     ).subscribe();
   }

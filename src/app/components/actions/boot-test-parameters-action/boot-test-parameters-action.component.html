@@ -9,10 +9,9 @@
 
     <div class="flex flex-1 flex-column">
       <label
-        for="maxAllowedPulses"
+        for="allowedPulses"
         class="mb-2"
-      >Cantidad de impulsos máxima permitida<span
-          class="ml-1 text-red-300">*</span>
+      >Cantidad de impulsos permitida<span class="ml-1 text-red-300">*</span>
       </label>
       <div class="p-inputgroup">
         <span
@@ -31,15 +30,16 @@
         >
           <ng-template pTemplate>
             <div class="text-sm text-700 flex flex-column">
-              Para superar la prueba la cantidad de impulsos debe ser menor o
-              igual al máximo permitido. Y debe suceder antes de que se cumpla el tiempo.
+              Para superar la prueba la cantidad de impulsos debe ser igual o
+              mayor a la permitida y debe suceder luego del tiempo mínimo y
+              antes del tiempo máximo.
             </div>
           </ng-template>
         </p-overlayPanel>
         <p-inputNumber
           styleClass="flex flex-1"
-          id="maxAllowedPulses"
-          formControlName="maxAllowedPulses"
+          id="allowedPulses"
+          formControlName="allowedPulses"
           autofocus
           [useGrouping]="false"
         ></p-inputNumber>
@@ -48,16 +48,32 @@
 
     <div class="flex flex-1 flex-column mt-3">
       <label
-        for="durationSeconds"
+        for="minDurationSeconds"
         class="mb-2"
-      >Tiempo de ejecución [s]<span
-          class="ml-1 text-red-300">*</span>
+      >Tiempo de ejecución mínimo [s]<span class="ml-1 text-red-300">*</span>
       </label>
       <div class="p-inputgroup">
         <p-inputNumber
           styleClass="flex flex-1"
-          id="durationSeconds"
-          formControlName="durationSeconds"
+          id="minDurationSeconds"
+          formControlName="minDurationSeconds"
+          autofocus
+          [useGrouping]="false"
+        ></p-inputNumber>
+      </div>
+    </div>
+
+    <div class="flex flex-1 flex-column mt-3">
+      <label
+        for="maxDurationSeconds"
+        class="mb-2"
+      >Tiempo de ejecución máximo [s]<span class="ml-1 text-red-300">*</span>
+      </label>
+      <div class="p-inputgroup">
+        <p-inputNumber
+          styleClass="flex flex-1"
+          id="maxDurationSeconds"
+          formControlName="maxDurationSeconds"
           autofocus
           [useGrouping]="false"
         ></p-inputNumber>
