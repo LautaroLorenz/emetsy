@@ -1,10 +1,9 @@
 const { ipcMain } = require('electron');
 const fs = require("fs");
 
-const logsdir = '/Users/gabi/dev/emetsy';
+const logsdir = '/Users/gabi/dev/emetsy/logs';
 
 ipcMain.handle('get-log', (_, logdate) => {
-    console.log(logdate);
     let output = '';
     try {
         output = fs.readFileSync(`${logsdir}/emetsy${logdate}.log`).toString();

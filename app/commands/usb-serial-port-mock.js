@@ -5,6 +5,7 @@ const { DelimiterParser } = require('serialport');
 const { getRandomInt } = require('../resources/mock/random');
 const { getContrastResult } = require('../resources/mock/essay/essay-contrast-mock');
 const { prepareCounters, incrementCounter, getVacuumResult } = require('../resources/mock/essay/essay-vacuum-mock');
+const { log } = require('../utils/logger');
 
 let serialPort;
 const parser = new DelimiterParser({ delimiter: '\n', includeDelimiter: false });
@@ -109,10 +110,12 @@ ipcMain.handle('post-command', async (_, { command }) => {
 
 function logFromSoftwareToSimulator(command) {
   console.log('write', `[${command}]`);
+  log(command);
 }
 
 function logFromSimulatorToSoftware(command, queue) {
   console.log('read', `[${command}]`, `total: ${queue.length}`);
+  log(command);
 }
 
 /*

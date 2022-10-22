@@ -22,13 +22,13 @@ export class CommandLineComponent implements OnInit {
 
   handleCommands = (input: string) => {
     const [command, param] = input.split(' ');
-    const dateRegex = /^(0[1-9]|[12][0-9]|3[01])(0[1-9]|1[012])\d{2}$/;
+    const dateRegex = /^(0[1-9]|[12][0-9]|3[01])(0[1-9]|1[012])\d{4}$/;
 
     if (command !== 'log') {
-      this.terminalService.sendResponse('Comando no reconocido: ' + command);
+      this.terminalService.sendResponse('Comando no reconocido. Para ver los logs utilice log 05112022');
     }
     if (command === 'log' && !param?.match(dateRegex)) {
-      this.terminalService.sendResponse('Debe especificar la fecha con formato ddmmaa. Ejemplo de ejecución: log 310722');
+      this.terminalService.sendResponse('Debe especificar la fecha con formato ddmmaa. Ejemplo de ejecución: log 31072022');
     }
     if (command === 'log' && param?.match(dateRegex)) {
       this.handleLogCommand(param);

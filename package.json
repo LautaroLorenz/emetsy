@@ -49,6 +49,7 @@
     "@angular/router": "^14.0.0",
     "chart.js": "^3.9.1",
     "dot-object": "^2.1.4",
+    "electron-log": "^4.4.8",
     "jszip": "^3.10.1",
     "knex": "^2.1.0",
     "primeflex": "^3.2.1",
