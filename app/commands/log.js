@@ -1,7 +1,8 @@
 const { ipcMain } = require('electron');
 const fs = require("fs");
 
-const logsdir = '/Users/gabi/dev/emetsy/logs';
+const { dirname } = require('path');
+const logsdir = dirname(require.main.filename) + '/logs';
 
 ipcMain.handle('get-log', (_, logdate) => {
     let output = '';

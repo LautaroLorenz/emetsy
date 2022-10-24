@@ -3,7 +3,9 @@ const path = require('path');
 
 const { getNowDate } = require('../utils/date');
 
-const logsdir = '/Users/gabi/dev/emetsy/logs';
+const { dirname } = require('path');
+const logsdir = dirname(require.main.filename) + '/logs';
+
 let logChunk = [];
 const SIZE_POLICY = 10;
 const TIME_MS_POLICY = 10000;
