@@ -12,15 +12,14 @@
     "productName": "EMeTSy",
     "files": [
       "dist/**/*",
-      {
-        "from": "app",
-        "to": "app/**/*"
-      },
-      "**/*",
+      "app/**/*",
+      "src/**/*",
+      "node_modules/**/*",
       "!**/*.ts",
       "!*.map",
       "!package.json",
-      "!package-lock.json"
+      "!package-lock.json",
+      "*.js"
     ],
     "directories": {
       "output": "release",
@@ -28,11 +27,13 @@
     },
     "asar": false,
     "win": {
+      "icon": "dist/assets/icons",
       "target": [
         "portable"
       ]
     },
     "mac": {
+      "icon": "dist/assets/icons",
       "target": [
         "dmg"
       ]
