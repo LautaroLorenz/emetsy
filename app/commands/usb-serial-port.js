@@ -1,5 +1,6 @@
 const { ipcMain } = require('electron');
 const { SerialPort, DelimiterParser } = require('serialport');
+const { log } = require('../utils/logger');
 
 let serialPort;
 const parser = new DelimiterParser({ delimiter: '\n', includeDelimiter: false });
@@ -130,6 +131,7 @@ function addCommandToQueue(command, queue, MAX_QUEUE_SIZE) {
     queue.pop(); // discard older command
   }
   console.log('read', `[${command}]`, `total: ${queue.length}`);
+  log(command);
   queue.unshift(command);
 }
 
@@ -169,6 +171,7 @@ ipcMain.handle('post-command', async (_, { command }) => {
   const commandBuffer = Buffer.concat([buffer, checksumBuffer]);
 
   console.log('write', `[${commandBuffer}]`);
+  log(command);
   // console.log('checksum', checksum);
   // console.log('length', commandBuffer.length);
   // console.log('write', commandBuffer.toString('hex').match(/../g).join(' '));

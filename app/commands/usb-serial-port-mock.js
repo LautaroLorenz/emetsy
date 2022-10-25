@@ -3,6 +3,7 @@ const { MockBinding } = require('@serialport/binding-mock')
 const { SerialPortStream } = require('@serialport/stream')
 const { DelimiterParser } = require('serialport');
 const { getRandomInt } = require('../resources/mock/random');
+const { log } = require('../utils/logger');
 const { getResult: contrastGetResult } = require('../resources/mock/essay/essay-contrast-mock');
 const { prepareCounters: vacuumPrepareCounter, incrementCounter: vacuumIncrementCounter, getResult: vacuumGetResult } = require('../resources/mock/essay/essay-vacuum-mock');
 const { prepareCounters: bootPrepareCounter, incrementCounter: bootIncrementCounter, getResult: bootGetResult } = require('../resources/mock/essay/essay-boot-mock');
@@ -110,10 +111,12 @@ ipcMain.handle('post-command', async (_, { command }) => {
 
 function logFromSoftwareToSimulator(command) {
   console.log('write', `[${command}]`);
+  log(command);
 }
 
 function logFromSimulatorToSoftware(command, queue) {
   console.log('read', `[${command}]`, `total: ${queue.length}`);
+  log(command);
 }
 
 /*
