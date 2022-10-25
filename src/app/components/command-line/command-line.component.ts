@@ -1,5 +1,6 @@
-import { Component, OnInit } from '@angular/core';
-import { TerminalService } from 'primeng/terminal';
+import { Component, OnDestroy, ViewChild } from '@angular/core';
+import { Terminal, TerminalService } from 'primeng/terminal';
+import { ReplaySubject, takeUntil } from 'rxjs';
 import { IpcService } from "../../services/ipc.service";
 
 @Component({
@@ -8,16 +9,21 @@ import { IpcService } from "../../services/ipc.service";
   providers: [TerminalService],
   styleUrls: ['./command-line.component.scss']
 })
-export class CommandLineComponent implements OnInit {
+export class CommandLineComponent implements OnDestroy {
+
+
+  private readonly destroyed$: ReplaySubject<boolean> = new ReplaySubject(1);
+  @ViewChild('terminal', { static: true }) terminal!: Terminal;
 
   constructor(
     private terminalService: TerminalService,
     private readonly ipcService: IpcService,
   ) {
-    this.terminalService.commandHandler.subscribe(this.handleCommands);
-  }
-
-  ngOnInit(): void {
+    this.terminalService.commandHandler
+      .pipe(
+        takeUntil(this.destroyed$),
+      )
+      .subscribe(this.handleCommands);
   }
 
   handleCommands = (input: string) => {
@@ -38,8 +44,14 @@ export class CommandLineComponent implements OnInit {
   handleLogCommand(param: string) {
     this.ipcService.invoke("get-log", param).then((value) => {
       this.terminalService.sendResponse(value);
+      this.terminal.cd.detectChanges(); // Force primeng/terminal to detect an async response
     });
-    this.terminalService.sendResponse('Presione enter para ver el log');
+    this.terminalService.sendResponse('Cargando...'); // Sync response will be replaced with async response at change detection
+  }
+
+  ngOnDestroy() {
+    this.destroyed$.next(true);
+    this.destroyed$.complete();
   }
 
 }
