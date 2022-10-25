@@ -1,8 +1,7 @@
 const { ipcMain } = require('electron');
 const fs = require("fs");
 
-const { dirname } = require('path');
-const logsdir = dirname(require.main.filename) + '/logs';
+const logsdir = `${__dirname}/../../src/assets/logs`;
 
 ipcMain.handle('get-log', (_, logdate) => {
     let output = '';

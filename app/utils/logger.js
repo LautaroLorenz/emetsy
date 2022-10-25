@@ -3,8 +3,7 @@ const path = require('path');
 
 const { getNowDate } = require('../utils/date');
 
-const { dirname } = require('path');
-const logsdir = dirname(require.main.filename) + '/logs';
+const logsdir = `${__dirname}/../../src/assets/logs`;
 
 let logChunk = [];
 const SIZE_POLICY = 10;
